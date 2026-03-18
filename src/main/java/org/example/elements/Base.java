@@ -2,12 +2,9 @@ package org.example.elements;
 
 import org.example.CompositeShape;
 import org.example.Main;
-import org.example.Shape;
 import org.example.ShapeBuilder;
 
-import java.awt.*;
-
-public class base extends CompositeShape {
+public class Base extends CompositeShape {  //车板类
     public int axl;
     public int side;
     boolean tobasare_flg = false;
@@ -19,25 +16,32 @@ public class base extends CompositeShape {
     float yy;
     float old_x;
     float old_y;
-    float base_move_x;
-    float base_move_y;
+    float base_move_x = 0;
+    float base_move_y = 0;
 
-    public base(float X, float Y, int S) {
+    public Base(float X, float Y, int S) {
         super(X, Y);
         this.side = S;
         this.axl = 1;
         this.xx = x;
         this.yy = y;
-        ShapeBuilder.into(this)
+        this.old_x = x;
+        this.old_y = y;
+        ShapeBuilder.into(this)     //一个圆角矩形两个圆形
                 .roundedRectangle(-190,-14,380,40,10)
                 .circle(-108.7F,20,30)
                 .circle(108.7F,20,30);
-        Main.elements.add(this);
+        id = Main.addElement(this);
         Main.wall[side].addShape(this);
     }
 
+    public void kill() {
+        Main.bases[side] = null;
+        Main.elements.remove(id);
+    }
+
     @Override
-    public void step(){
+    public void step(){     //照搬原版逻辑
         this.xs = this.xs + (float) this.axl / 1000;
         if (Main.hp0_flg[this.side] >= 3) {
             this.xs = 0;
@@ -77,7 +81,7 @@ public class base extends CompositeShape {
             }
             Main.hp[this.side] -= (int) - this.wrk;
             System.out.println("hit wall");
-            //Main.core[side].dmg_flg = true;
+            Main.cores[side].dmg_flg = true;
         }
     }
 }

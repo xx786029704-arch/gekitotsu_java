@@ -2,8 +2,11 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.example.Shape;
 
-public class GameWindow extends JFrame {
+public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和我没关系，反正最后也不用可视化
     private final GameCanvas canvas;
 
     public GameWindow(int width, int height, int targetFPS) {
@@ -32,11 +35,15 @@ public class GameWindow extends JFrame {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
-
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setColor(Color.WHITE);
-
-            for (Shape s : Main.elements) {
+            g2d.drawString("frame: " + Main.time, 12, 18);
+            g2d.drawString(Integer.toString(Main.hp[0]), 12, 32);
+            g2d.drawString(Integer.toString(Main.hp[1]), 1200, 32);
+            g2d.scale(0.9, 0.9);
+            g2d.translate(-10, 320);
+            List<Shape> keys = new ArrayList<>(Main.elements.values());
+            for (Shape s : keys) {
                 s.draw(g2d);
             }
         }

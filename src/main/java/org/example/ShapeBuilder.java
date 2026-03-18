@@ -1,8 +1,6 @@
 package org.example;
 
-import org.example.elements.base;
-
-public class ShapeBuilder {
+public class ShapeBuilder {     //复合图形建造者
     private final CompositeShape composite;
 
     private ShapeBuilder(float x, float y){
@@ -19,21 +17,21 @@ public class ShapeBuilder {
 
     public static ShapeBuilder into(CompositeShape shape) {
         return new ShapeBuilder(shape);
-    }
+    }   //改为给指定复合图形增加图形
 
-    public ShapeBuilder circle(float x, float y, float r){
+    public ShapeBuilder circle(float x, float y, float r){      //增加一个圆
         composite.addShape(new Round(composite.x+x,composite.y+y,r));
         return this;
     }
 
-    public ShapeBuilder polygon(float x, float y, float[][] vxy){
+    public ShapeBuilder polygon(float x, float y, float[][] vxy){       //增加一个多边形
         float xx = composite.x+x;
         float yy = composite.y+y;
         composite.addShape(new Polygon(composite.x+x,composite.y+y,vxy));
         return this;
     }
 
-    public ShapeBuilder rectangle(float x, float y, float w, float h){
+    public ShapeBuilder rectangle(float x, float y, float w, float h){      //增加一个矩形
         float xx = composite.x+x;
         float yy = composite.y+y;
         float[][] vxy = {{0,0},{w,0},{w,h},{0,h}};
@@ -41,11 +39,11 @@ public class ShapeBuilder {
         return this;
     }
 
-    public ShapeBuilder roundedRectangle(float x, float y, float w, float h, float r){
+    public ShapeBuilder roundedRectangle(float x, float y, float w, float h, float r){      //增加一个圆角矩形
         if (r <= 0) return rectangle(x,y,w,h);
         r = Math.min(r, Math.min(w,h) * 0.5f);
-        float innerW = w - 2*r;
-        float innerH = h - 2*r;
+        float innerW = w - 2 * r;
+        float innerH = h - 2 * r;
         rectangle(x + r, y, innerW, h);
         rectangle(x, y + r, w, innerH);
         circle(x + r, y + r, r);
@@ -55,7 +53,7 @@ public class ShapeBuilder {
         return this;
     }
 
-    public ShapeBuilder shape(Shape s){
+    public ShapeBuilder shape(Shape s){     //增加指定图形
         composite.addShape(s);
         return this;
     }

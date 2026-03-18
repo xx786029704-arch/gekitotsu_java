@@ -3,11 +3,17 @@ package org.example;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-public class CompositeShape extends Shape {
+public class CompositeShape extends Shape {     //复合形状类
 
-    private final List<Shape> shapes = new CopyOnWriteArrayList<>();
+    private final List<Shape> shapes = new ArrayList<>();   //所有包含的子形状
+
+    /*
+     这里可以直接用{{x, y, r}, {x, y, r}...}的二维数组存储所有的圆而不是用子形状
+     然后修改下面的点碰撞判定，可以减少对象数量（不再需要圆形子形状）
+     但是原版没有特别复杂的复合形状，仅可用来优化要塞核心，车板等少数形状
+     后续如果有需求可以优化
+     */
 
     public CompositeShape(float X, float Y) {
         super(X, Y);
@@ -34,11 +40,9 @@ public class CompositeShape extends Shape {
     }
 
     @Override
-    public Boolean HitTestPoint(float X, float Y){
-        float localX = X - this.x;
-        float localY = Y - this.y;
+    public Boolean hitTestPoint(float X, float Y){
         for (Shape s : shapes){
-            if (s.HitTestPoint(localX, localY))
+            if (s.hitTestPoint(X, Y))
                 return true;
         }
         return false;

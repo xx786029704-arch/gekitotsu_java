@@ -3,15 +3,22 @@ package org.example;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
-public class Polygon extends Shape{
+public class Polygon extends Shape{     //多边形，存储各个顶点坐标数据
     public float[][] localVertices;
+
+    /*
+     可以再做一个特化的矩形类，只存储坐标和长宽，
+     在点碰撞检测中比多边形更快
+     对要塞壁应该有明显优化
+     后续有需求可以做
+     */
 
     public Polygon(float X, float Y, float[][] vertices) {
         super(X, Y);
         this.localVertices = vertices;
     }
 
-    private float[][] getWorldVertices() {
+    private float[][] getWorldVertices() {      //获取顶点的世界绝对坐标
         float[][] worldVerts = new float[localVertices.length][2];
         for (int i = 0; i < localVertices.length; i++) {
             worldVerts[i][0] = localVertices[i][0] + this.x;
@@ -21,7 +28,7 @@ public class Polygon extends Shape{
     }
 
     @Override
-    public Boolean HitTestPoint(float X, float Y) {
+    public Boolean hitTestPoint(float X, float Y) {
         float[][] verts = getWorldVertices();
         boolean hit = false;
         float minX = verts[0][0];

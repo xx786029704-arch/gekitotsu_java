@@ -2,7 +2,7 @@ package org.example;
 
 import java.awt.*;
 
-public class Round extends Shape{
+public class Round extends Shape{   //圆形类
     public float r;
 
     public Round(float X, float Y, float R) {
@@ -10,15 +10,8 @@ public class Round extends Shape{
         this.r = R;
     }
 
-    public Boolean HitTest(Round other){
-        float dx = this.x - other.x;
-        float dy = this.y - other.y;
-        float sr = this.r + other.r;
-        return dx * dx + dy * dy < sr * sr;
-    }
-
     @Override
-    public Boolean HitTestPoint(float X, float Y){
+    public Boolean hitTestPoint(float X, float Y){
         if (X - x > r || Y - y > r || x - X > r || y - Y > r){
             return false;
         }
