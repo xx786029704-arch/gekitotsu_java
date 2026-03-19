@@ -25,11 +25,10 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
         canvas = new GameCanvas(width, height);
         add(canvas);
 
-        int delay = 1000 / targetFPS;
-        Timer renderTimer = new Timer(delay, e -> {
-            canvas.repaint();
-        });
-        renderTimer.start();
+    }
+
+    public void requestRender() {
+        canvas.repaint();
     }
 
     private static class GameCanvas extends JPanel {

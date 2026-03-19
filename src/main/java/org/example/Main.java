@@ -23,7 +23,7 @@ import java.util.*;
 
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
-    public static final int LOGIC_TPS = 10;      //帧率限制，0代表无限制
+    public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
 
     static boolean end = false;
     static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
@@ -50,6 +50,7 @@ public class Main {
     public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
     public static CompositeShape[] repair = {new CompositeShape(0,0), new CompositeShape(0,0)}; //修复
     static String default_code = "000Nuzxk5t8nxk5vOmxk5AEoxk5Fuvx6dvxGx6dOCw vs 000P6R";    //默认对战代码，为空时在运行时手动输入
+    private static GameWindow window;
 
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
@@ -70,7 +71,7 @@ public class Main {
         }
         if (ENABLE_VISUALIZATION) {
             java.awt.EventQueue.invokeLater(() -> {
-                GameWindow window = new GameWindow(1920, 960, 60);
+                window = new GameWindow(1920, 960, 60);
                 window.setVisible(true);
             });
         }
@@ -85,6 +86,10 @@ public class Main {
                 base_move();    //要塞车移动
                 judge();    //判断对局是否应该结束
                 update();   //调用所有元素step()方法
+                if (ENABLE_VISUALIZATION && window != null) {
+                    GameWindow target = window;
+                    java.awt.EventQueue.invokeLater(target::requestRender);
+                }
             }
         }
     }
