@@ -4,13 +4,25 @@ import org.example.elements.Ball;
 import org.example.elements.Base;
 import org.example.elements.Core;
 import org.example.elements.units.BowBall;
+import org.example.elements.units.BombBall;
+import org.example.elements.units.CannonBall;
+import org.example.elements.units.GuideBall;
+import org.example.elements.units.GekiBall;
 import org.example.elements.units.GunBall;
+import org.example.elements.units.KakuBall;
+import org.example.elements.units.DokyuBall;
+import org.example.elements.units.TonBall;
+import org.example.elements.units.NinBall;
+import org.example.elements.units.HaneBall;
+import org.example.elements.units.ShotgunBall;
+import org.example.elements.units.RetsuBall;
+import org.example.elements.units.HanaBall;
 
 import java.util.*;
 
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
-    public static final int LOGIC_TPS = 0;      //帧率限制，0代表无限制
+    public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
 
     static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
     static int j;   //怒土遍历用的变量
@@ -35,7 +47,7 @@ public class Main {
     public static CompositeShape[] team = {new CompositeShape(0,0), new CompositeShape(0,0)};   //队伍
     public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
     public static CompositeShape[] repair = {new CompositeShape(0,0), new CompositeShape(0,0)}; //修复
-    static String default_code = "000Ghf200hyC vs 000VR41mKSrU1mKURt";    //默认对战代码，为空时在运行时手动输入
+    static String default_code = "000e1tBpqRqD vs 000P6R";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
@@ -211,6 +223,18 @@ public class Main {
         switch (TYPE){
             case 1: new BowBall(X, Y, R, S, TYPE);break;
             case 2: new GunBall(X, Y, R, S, TYPE);break;
+            case 11: new HaneBall(X, Y, R, S, TYPE);break;
+            case 12: new RetsuBall(X, Y, R, S, TYPE);break;
+            case 13: new ShotgunBall(X, Y, R, S, TYPE);break;
+            case 7: new DokyuBall(X, Y, R, S, TYPE);break;
+            case 5: new BombBall(X, Y, R, S, TYPE);break;
+            case 9: new CannonBall(X, Y, R, S, TYPE);break;
+            case 16: new GuideBall(X, Y, R, S, TYPE);break;
+            case 32: new GekiBall(X, Y, R, S, TYPE);break;
+            case 35: new NinBall(X, Y, R, S, TYPE);break;
+            case 33: new TonBall(X, Y, R, S, TYPE);break;
+            case 49: new KakuBall(X, Y, R, S, TYPE);break;
+            case 37: new HanaBall(X, Y, R, S, TYPE);break;
             default: new Ball(X, Y, R, S, TYPE);break;
         }
         switch (wrk){

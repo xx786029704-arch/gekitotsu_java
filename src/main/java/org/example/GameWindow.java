@@ -11,12 +11,18 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
 
     public GameWindow(int width, int height, int targetFPS) {
         setTitle("Game Render Window");
-        setSize(width, height);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = Math.max(200, screenSize.width - 80);
+        int maxHeight = Math.max(200, screenSize.height - 120);
+        float scale = Math.min(1f, Math.min((float) maxWidth / width, (float) maxHeight / height));
+        int windowWidth = Math.round(width * scale);
+        int windowHeight = Math.round(height * scale);
+        setSize(windowWidth, windowHeight);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // 居中显示
         setResizable(false);
 
-        canvas = new GameCanvas();
+        canvas = new GameCanvas(width, height);
         add(canvas);
 
         int delay = 1000 / targetFPS;
@@ -27,8 +33,14 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
     }
 
     private static class GameCanvas extends JPanel {
-        public GameCanvas() {
+        private final int logicalWidth;
+        private final int logicalHeight;
+        private static final float CAMERA_OFFSET_Y = 240f;
+
+        public GameCanvas(int logicalWidth, int logicalHeight) {
             setBackground(Color.BLACK);
+            this.logicalWidth = logicalWidth;
+            this.logicalHeight = logicalHeight;
         }
 
         @Override
@@ -36,12 +48,19 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int w = getWidth();
+            int h = getHeight();
+            float scale = Math.min((float) w / logicalWidth, (float) h / logicalHeight);
+            float drawW = logicalWidth * scale;
+            float drawH = logicalHeight * scale;
+            float offsetX = (w - drawW) / 2f;
+            float offsetY = (h - drawH) / 2f + CAMERA_OFFSET_Y;
+            g2d.translate(offsetX, offsetY);
+            g2d.scale(scale, scale);
             g2d.setColor(Color.WHITE);
             g2d.drawString("frame: " + Main.time, 12, 18);
             g2d.drawString(Integer.toString(Main.hp[0]), 12, 32);
             g2d.drawString(Integer.toString(Main.hp[1]), 1200, 32);
-            g2d.scale(0.9, 0.9);
-            g2d.translate(-10, 320);
             List<Shape> keys = new ArrayList<>(Main.elements.values());
             for (Shape s : keys) {
                 s.draw(g2d);
