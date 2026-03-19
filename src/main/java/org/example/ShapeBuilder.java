@@ -53,6 +53,11 @@ public class ShapeBuilder {     //复合图形建造者
         return this;
     }
 
+    public ShapeBuilder sector(float x, float y, float r, float angle, float direction){      //增加一个扇形
+        composite.addShape(new Sector(composite.x+x,composite.y+y, r, angle, direction));
+        return this;
+    }
+
     public ShapeBuilder shape(Shape s){     //增加指定图形
         composite.addShape(s);
         return this;

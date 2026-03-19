@@ -7,11 +7,11 @@ import org.example.elements.hit.HitsDrop;
 public class Bullet extends Round {     //子弹基类
     public int id;
     public int side;
-    public int gei_flg = 0;
+    public int gei_flg = 1;
     public float xs = 0;
     public float ys = 0;
     public float rot = 0;
-    public float gravity = 0.32F;
+    public float gravity = 0;
 
     public Bullet(float X, float Y, int S) {
         super(X, Y, 15.5F);
@@ -33,7 +33,7 @@ public class Bullet extends Round {     //子弹基类
         if (Main.team[1-this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
             if (!hit()) return;
         }
-        if (!move()) return;
+        move();
     }
 
     public boolean hit_ground(){    //撞击地面
@@ -57,6 +57,12 @@ public class Bullet extends Round {     //子弹基类
     public Bullet setVec(float vx, float vy){     //设置运动向量
         xs = vx;
         ys = vy;
+        return this;
+    }
+
+    public Bullet setVecMult(float vx, float vy, float mult){     //设置运动向量
+        xs = vx * mult;
+        ys = vy * mult;
         return this;
     }
 

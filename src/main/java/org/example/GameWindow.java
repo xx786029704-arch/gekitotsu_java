@@ -35,7 +35,7 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
     private static class GameCanvas extends JPanel {
         private final int logicalWidth;
         private final int logicalHeight;
-        private static final float CAMERA_OFFSET_Y = 240f;
+        private static final float CAMERA_OFFSET_Y = 60f;
 
         public GameCanvas(int logicalWidth, int logicalHeight) {
             setBackground(Color.BLACK);
@@ -55,14 +55,16 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             float drawH = logicalHeight * scale;
             float offsetX = (w - drawW) / 2f;
             float offsetY = (h - drawH) / 2f + CAMERA_OFFSET_Y;
-            g2d.translate(offsetX, offsetY);
-            g2d.scale(scale, scale);
             g2d.setColor(Color.WHITE);
             g2d.drawString("frame: " + Main.time, 12, 18);
             g2d.drawString(Integer.toString(Main.hp[0]), 12, 32);
             g2d.drawString(Integer.toString(Main.hp[1]), 1200, 32);
-            List<Shape> keys = new ArrayList<>(Main.elements.values());
-            for (Shape s : keys) {
+            g2d.translate(offsetX, offsetY);
+            g2d.scale(scale, scale);
+            g2d.scale(0.96, 0.96);
+            g2d.translate(-10, 320);
+            List<Shape> values = new ArrayList<>(Main.elements.values());
+            for (Shape s : values) {
                 s.draw(g2d);
             }
         }

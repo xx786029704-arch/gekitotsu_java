@@ -1,0 +1,41 @@
+package org.example.elements.atk;
+
+import org.example.Main;
+import org.example.Round;
+import org.example.elements.Bullet;
+import org.example.elements.hit.HitsBomb;
+
+public class GekiBullet extends Bullet {
+    private float speed;
+    public float cos_rot;
+    public float sin_rot;
+
+    public GekiBullet(float X, float Y, int S, float cos_rot, float sin_rot) {
+        super(X, Y, S);
+        this.cos_rot = cos_rot;
+        this.sin_rot = sin_rot;
+        this.speed = 5;
+        this.xs = cos_rot * 5;
+        this.ys = sin_rot * 5;
+    }
+
+    @Override
+    public void step() {
+        if (this.y < -1200 || this.x > 2560 || this.x < -640) {
+            kill();
+            return;
+        }
+        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2) {
+            new HitsBomb(this.x, this.y, this.side);
+            kill();
+            return;
+        }
+        if (this.speed < 25F) {
+            this.speed = this.speed + 1F;
+        }
+        this.xs = cos_rot * this.speed;
+        this.ys = sin_rot * this.speed;
+        this.x = this.x + this.xs;
+        this.y = this.y + this.ys;
+    }
+}

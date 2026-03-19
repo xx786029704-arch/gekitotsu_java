@@ -1,7 +1,7 @@
 package org.example.elements.units;
 
 import org.example.elements.Ball;
-import org.example.elements.CannonBullet;
+import org.example.elements.atk.CannonBullet;
 
 public class CannonBall extends Ball {
     public CannonBall(float X, float Y, float R, int S, int TYPE) {
@@ -10,19 +10,13 @@ public class CannonBall extends Ball {
     }
 
     @Override
-    public void stepEx() {
+    public void stepEx() {      //使用诱导公式简化了计算
         if (this.cnt == this.speed) {
             this.cnt = 0;
-            float fireRad = (float) Math.toRadians(this.rot);
-            float aRot = this.rot - 90;
-            boolean flipped = !(this.rot < 90 + this.side || this.rot > 270 - this.side);
-            if (flipped) {
-                aRot -= 180;
-            }
-            float spawnRad = (float) Math.toRadians(aRot);
-            float spawnX = this.x + (float) Math.cos(spawnRad) * 38;
-            float spawnY = this.y + (float) Math.sin(spawnRad) * 38;
-            new CannonBullet(spawnX, spawnY, this.side).setVecR(fireRad, 10);
+            int flipped = this.rot > 90 + this.side && this.rot < 270 - this.side ? -1 : 1;
+            float spawnX = this.x + sin_rot * 38 * flipped;
+            float spawnY = this.y - cos_rot * 38 * flipped;
+            new CannonBullet(spawnX, spawnY, this.side).setVecMult(cos_rot, sin_rot, 10);
         }
     }
 }

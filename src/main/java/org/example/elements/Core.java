@@ -16,14 +16,14 @@ public class Core extends CompositeShape {      //核心类
         unit_x = X;
         unit_y = Y;
         dmg_flg = false;
-        float[][] vxy1 = {{-28.7F,-35.8F},{-35.8F,-28.7F},{28.7F,35.8F},{35.8F,28.7F}};
-        float[][] vxy2 = {{-28.7F,35.8F},{-35.8F,28.7F},{28.7F,-35.8F},{35.8F,-28.7F}};
+        float[][] vxy1 = {{-27.63934F,-36.86066F},{-36.86066F,-27.63934F},{27.63934F,36.86066F},{36.86066F,27.63934F}};
+        float[][] vxy2 = {{-27.63934F,36.86066F},{-36.86066F,27.63934F},{27.63934F,-36.86066F},{36.86066F,-27.63934F}};
         ShapeBuilder.into(this)     //5个圆2个多边形
-                .circle(-40,-40,12)
-                .circle(-40,40,12)
-                .circle(40,40,12)
-                .circle(40,-40,12)
-                .circle(0,-0,32)
+                .circle(-40,-40,13.5F)
+                .circle(-40,40,13.5F)
+                .circle(40,40,13.5F)
+                .circle(40,-40,13.5F)
+                .circle(0,-0,33.5F)
                 .polygon(0,0,vxy1)
                 .polygon(0,0,vxy2);
         id = Main.addElement(this);

@@ -28,9 +28,9 @@ public class Base extends CompositeShape {  //车板类
         this.old_x = x;
         this.old_y = y;
         ShapeBuilder.into(this)     //一个圆角矩形两个圆形
-                .roundedRectangle(-190,-14,380,40,10)
-                .circle(-108.7F,20,30)
-                .circle(108.7F,20,30);
+                .roundedRectangle(-191.5F,-15.5F,383,43,11.5F)
+                .circle(-108.7F,20,31.5F)
+                .circle(108.7F,20,31.5F);
         id = Main.addElement(this);
         Main.wall[side].addShape(this);
     }

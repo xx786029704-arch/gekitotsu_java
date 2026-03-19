@@ -1,7 +1,7 @@
 package org.example.elements.units;
 
 import org.example.elements.Ball;
-import org.example.elements.BombBullet;
+import org.example.elements.atk.BombBullet;
 
 public class BombBall extends Ball {
     private boolean attackQueued = false;
@@ -19,8 +19,7 @@ public class BombBall extends Ball {
         else if (this.cnt == this.speed + 1 && this.attackQueued) {
             this.attackQueued = false;
             this.cnt = 0;
-            float fireRad = (float) Math.toRadians(this.rot);
-            new BombBullet(this.x, this.y - 10, this.side).setVecR(fireRad, 10);
+            new BombBullet(this.x, this.y - 10, this.side).setVecMult(cos_rot, sin_rot, 10).setGravity(0.32F);
         }
     }
 }

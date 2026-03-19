@@ -11,10 +11,9 @@ public class BowBall extends Ball {     //弓玉
 
     @Override
     public void stepEx(){
-        if (this.cnt == this.speed + 6)
-        {
+        if (this.cnt == this.speed + 6) {
             this.cnt = 0;
-            new Bullet(this.x, this.y, this.side).setVecR(rot_radius, 15);
+            new Bullet(this.x, this.y, this.side).setVecMult(cos_rot, sin_rot, 15).setGravity(0.32F);
         }
     }
 }

@@ -11,13 +11,11 @@ public class GunBall extends Ball {     //铳玉
 
     @Override
     public void stepEx(){
-        if (this.cnt == this.speed || this.cnt == this.speed + 2 || this.cnt == this.speed + 4)
-        {
-            if (cnt == this.speed + 4)
-            {
+        if (this.cnt == this.speed || this.cnt == this.speed + 2 || this.cnt == this.speed + 4) {
+            if (cnt == this.speed + 4) {
                 this.cnt = 0;
             }
-            new Bullet(this.x, this.y, this.side).setVecR(rot_radius, 20).setGravity(0);
+            new Bullet(this.x, this.y, this.side).setVecMult(cos_rot, sin_rot, 20).move();
         }
     }
 }

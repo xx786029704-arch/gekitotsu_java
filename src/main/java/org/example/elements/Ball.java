@@ -18,6 +18,8 @@ public class Ball extends Round {       //兵玉基类
     public float xs = 0;
     public float ys = 0;
     public float rot_radius;    //角度（弧度制）可以提前算好，遇到旋转壁再更新
+    public float cos_rot;
+    public float sin_rot;
 
 
     public Ball(float X, float Y, float R, int S, int TYPE) {
@@ -27,6 +29,8 @@ public class Ball extends Round {       //兵玉基类
         this.rot = R;
         this.type = TYPE;
         this.rot_radius = R * 0.01745329252F;
+        this.cos_rot = (float) Math.cos(rot_radius);
+        this.sin_rot = (float) Math.sin(rot_radius);
         id = Main.addElement(this);
         Main.unit[side].addShape(this);
     }
@@ -38,7 +42,9 @@ public class Ball extends Round {       //兵玉基类
 
     @Override
     public void step(){     //照搬原版unit_func()
-        hurt_time--;
+        if(hurt_time > 0){
+            hurt_time--;
+        };
         if (jump_flg != 1) {
             if (jump_flg != 2) {
                 if (!land()) return;
@@ -55,7 +61,6 @@ public class Ball extends Round {       //兵玉基类
             hp--;
         }
         if (hp <= 0 || Main.hp0_flg[on_side] > 0 && jump_flg == 0) {
-            System.out.println("hurt");
             kill();
             return;
         }

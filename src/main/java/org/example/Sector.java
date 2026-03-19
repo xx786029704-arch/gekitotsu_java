@@ -14,10 +14,10 @@ public class Sector extends Shape {     //扇形类
     public Sector(float X, float Y, float R, float angle, float direction){
         super(X, Y);
         r = R;
-        a = angle;
-        dir = direction;
-        dirX = (float)Math.cos(direction);
-        dirY = (float)Math.sin(direction);
+        a = angle * 0.01745329252F;
+        dir = direction * 0.01745329252F;
+        dirX = (float)Math.cos(dir);
+        dirY = (float)Math.sin(dir);
         cosHalfAngle = (float)Math.cos(angle * 0.5f);
     }
 
@@ -44,12 +44,11 @@ public class Sector extends Shape {     //扇形类
 
     @Override
     public void draw(Graphics2D g2d) {
-        float direction = (float) Math.atan2(dirY, dirX);
-        float angle = (float) Math.acos(cosHalfAngle) * 2;
-        int startAngle = (int) Math.toDegrees(-(direction + angle / 2));
-        int arcAngle = (int) Math.toDegrees(angle);
+        float wrk = 0.01745329252F;
+        int startAngle = (int) (-(dir + a / 2) / wrk);
+        int arcAngle = (int) (a / wrk);
         g2d.drawArc((int)(x - r), (int)(y - r), (int)(r * 2), (int)(r * 2), startAngle, arcAngle);
-        g2d.drawLine((int)x, (int)y, (int)(x + r * Math.cos(direction + angle/2)), (int)(y + r * Math.sin(direction + angle/2)));
-        g2d.drawLine((int)x, (int)y, (int)(x + r * Math.cos(direction - angle/2)), (int)(y + r * Math.sin(direction - angle/2)));
+        g2d.drawLine((int)x, (int)y, (int)(x + r * Math.cos(dir + a/2)), (int)(y + r * Math.sin(dir + a/2)));
+        g2d.drawLine((int)x, (int)y, (int)(x + r * Math.cos(dir - a/2)), (int)(y + r * Math.sin(dir- a/2)));
     }
 }

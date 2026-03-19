@@ -1,7 +1,7 @@
 package org.example.elements.units;
 
 import org.example.elements.Ball;
-import org.example.elements.GekiBullet;
+import org.example.elements.atk.GekiBullet;
 
 public class GekiBall extends Ball {
     public GekiBall(float X, float Y, float R, int S, int TYPE) {
@@ -13,10 +13,9 @@ public class GekiBall extends Ball {
     public void stepEx() {
         if (this.cnt == this.speed) {
             this.cnt = 0;
-            float fireRad = (float) Math.toRadians(this.rot);
-            float spawnX = this.x + (float) Math.cos(fireRad) * 45;
-            float spawnY = this.y + (float) Math.sin(fireRad) * 45;
-            new GekiBullet(spawnX, spawnY, this.side, this.rot);
+            float spawnX = this.x + cos_rot * 45;
+            float spawnY = this.y + sin_rot * 45;
+            new GekiBullet(spawnX, spawnY, this.side, this.cos_rot, this.sin_rot);
         }
     }
 }
