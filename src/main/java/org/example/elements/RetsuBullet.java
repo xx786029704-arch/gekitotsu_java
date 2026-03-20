@@ -2,10 +2,10 @@ package org.example.elements;
 
 import org.example.Main;
 
-public class RetsuBullet extends Bullet {
+public class RetsuBullet extends Bullet {   //裂玉子弹
     private final float power;
 
-    public RetsuBullet(float X, float Y, int S, float rotation, float power) {
+    public RetsuBullet(float X, float Y, int S, float rotation, float power) {   //初始化
         super(X, Y, S);
         this.power = power;
         this.rot = rotation;
@@ -16,7 +16,7 @@ public class RetsuBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.ys > 7 || this.gei_flg == 2) {
             float splitRot = (float) Math.toDegrees(Math.atan2(this.ys, this.xs));
             for (int i = 0; i < 7; i++) {

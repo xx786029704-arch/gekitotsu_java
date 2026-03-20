@@ -32,10 +32,7 @@ public class ShapeBuilder {     //复合图形建造者
     }
 
     public ShapeBuilder rectangle(float x, float y, float w, float h){      //增加一个矩形
-        float xx = composite.x+x;
-        float yy = composite.y+y;
-        float[][] vxy = {{0,0},{w,0},{w,h},{0,h}};
-        composite.addShape(new Polygon(xx,yy,vxy));
+        composite.addShape(new Rectangle(composite.x + x, composite.y + y, w, h));
         return this;
     }
 

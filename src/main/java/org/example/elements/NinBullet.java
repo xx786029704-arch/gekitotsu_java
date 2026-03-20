@@ -3,10 +3,10 @@ package org.example.elements;
 import org.example.Main;
 import org.example.elements.hit.HitsDrop;
 
-public class NinBullet extends Bullet {
+public class NinBullet extends Bullet {   //忍玉手里剑
     private int bounceCount = 0;
 
-    public NinBullet(float X, float Y, int S, float rotation) {
+    public NinBullet(float X, float Y, int S, float rotation) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
         this.gei_flg = 1;
@@ -19,7 +19,7 @@ public class NinBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.x > 1920) {
             if (this.side != 1) {
                 this.bounceCount = 99;

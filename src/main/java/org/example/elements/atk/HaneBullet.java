@@ -4,16 +4,16 @@ import org.example.Main;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsDrop;
 
-public class HaneBullet extends Bullet {
+public class HaneBullet extends Bullet {   //跳玉子弹
     private int bounceCount = 0;
 
-    public HaneBullet(float X, float Y, int S) {
+    public HaneBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
         this.r *= 0.8F;
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.y > 570 || this.y < -600) {
             this.ys = -this.ys;
             this.bounceCount++;
@@ -31,7 +31,6 @@ public class HaneBullet extends Bullet {
             kill();
             return;
         }
-        this.x += this.xs;
-        this.y += this.ys;
+        move();
     }
 }

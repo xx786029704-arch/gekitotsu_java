@@ -3,10 +3,10 @@ package org.example.elements;
 import org.example.Main;
 import org.example.elements.hit.HitsDrop;
 
-public class HanabiBullet extends Bullet {
+public class HanabiBullet extends Bullet {   //花玉子弹
     private int cnt = 0;
 
-    public HanabiBullet(float X, float Y, int S, float rotation) {
+    public HanabiBullet(float X, float Y, int S, float rotation) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
         this.gei_flg = 1;
@@ -20,7 +20,7 @@ public class HanabiBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         this.cnt++;
         if (this.y < -600 || this.x > 1920 || this.x < 0) {
             kill();

@@ -3,11 +3,11 @@ package org.example.elements;
 import org.example.Main;
 import org.example.Round;
 
-public class KakuBullet extends Bullet {
+public class KakuBullet extends Bullet {   //核玉核弹
     private float speed = 1F;
     private int hp = 4;
 
-    public KakuBullet(float X, float Y, int S, float rotation) {
+    public KakuBullet(float X, float Y, int S, float rotation) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
         this.gei_flg = 1;
@@ -15,7 +15,7 @@ public class KakuBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.y < -1200 || this.x > 2560 || this.x < -640) {
             kill();
             return;
@@ -43,18 +43,18 @@ public class KakuBullet extends Bullet {
         this.y = this.y + this.ys;
     }
 
-    private void explode(float multiplier) {
+    private void explode(float multiplier) {   //触发爆炸
         new ExplosionHit(this.x, this.y, this.side, new float[]{30F, 60F, 39F, 12F}, multiplier);
     }
 
-    private static class ExplosionHit extends Round {
+    private static class ExplosionHit extends Round {   //爆炸范围判定
         private int frame;
         private final int side;
         private final int id;
         private final float[] baseRadii;
         private final float multiplier;
 
-        public ExplosionHit(float X, float Y, int side, float[] baseRadii, float multiplier) {
+        public ExplosionHit(float X, float Y, int side, float[] baseRadii, float multiplier) {   //初始化
             super(X, Y, baseRadii[0] * multiplier);
             this.side = side;
             this.baseRadii = baseRadii;
@@ -64,7 +64,7 @@ public class KakuBullet extends Bullet {
         }
 
         @Override
-        public void step() {
+        public void step() {   //扩散动画
             frame++;
             if (frame < baseRadii.length) {
                 this.r = baseRadii[frame] * multiplier;

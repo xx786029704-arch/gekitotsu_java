@@ -3,12 +3,12 @@ package org.example.elements;
 import org.example.Main;
 import org.example.Round;
 
-public class TonBullet extends Bullet {
+public class TonBullet extends Bullet {   //弹玉弹球
     private final float power = 10F;
     private int hp = 3;
     private int bounceCount = 0;
 
-    public TonBullet(float X, float Y, int S, float rotation) {
+    public TonBullet(float X, float Y, int S, float rotation) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
         this.gei_flg = 1;
@@ -19,7 +19,7 @@ public class TonBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.y < -1200 || this.x > 2560 || this.x < -640) {
             spawnImpact();
             kill();
@@ -49,15 +49,15 @@ public class TonBullet extends Bullet {
         this.ys = this.ys + 0.32F;
     }
 
-    private void spawnImpact() {
+    private void spawnImpact() {   //触发冲击判定
         new ImpactHit(this.x, this.y, this.side, 31F);
     }
 
-    private static class ImpactHit extends Round {
+    private static class ImpactHit extends Round {   //冲击范围判定
         private final int side;
         private final int id;
 
-        public ImpactHit(float X, float Y, int side, float radius) {
+        public ImpactHit(float X, float Y, int side, float radius) {   //初始化
             super(X, Y, radius);
             this.side = side;
             this.id = Main.addElement(this);
@@ -65,7 +65,7 @@ public class TonBullet extends Bullet {
         }
 
         @Override
-        public void step() {
+        public void step() {   //单帧判定
             Main.elements.remove(id);
             Main.atk[side].removeShape(this);
         }

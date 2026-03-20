@@ -33,6 +33,7 @@ public class Core extends CompositeShape {      //核心类
     public void kill() {
         Main.cores[side] = null;
         Main.elements.remove(id);
+        Main.wall[side].removeShape(this);
     }
 
     @Override

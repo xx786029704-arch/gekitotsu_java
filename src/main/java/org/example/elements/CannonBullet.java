@@ -3,17 +3,17 @@ package org.example.elements;
 import org.example.Main;
 import org.example.Round;
 
-public class CannonBullet extends Bullet {
+public class CannonBullet extends Bullet {   //加农炮弹
     private int hp = 3;
 
-    public CannonBullet(float X, float Y, int S) {
+    public CannonBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
         gravity = 0.08F;
         gei_flg = 1;
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.y > 570) {
             this.hp = 0;
         }
@@ -36,14 +36,14 @@ public class CannonBullet extends Bullet {
         }
     }
 
-    private static class ExplosionHit extends Round {
+    private static class ExplosionHit extends Round {   //爆炸范围判定
         private int frame;
         private final int side;
         private final int id;
         private final float[] baseRadii;
         private final float multiplier;
 
-        public ExplosionHit(float X, float Y, int side, float[] baseRadii, float multiplier) {
+        public ExplosionHit(float X, float Y, int side, float[] baseRadii, float multiplier) {   //初始化
             super(X, Y, baseRadii[0] * multiplier);
             this.side = side;
             this.baseRadii = baseRadii;
@@ -53,7 +53,7 @@ public class CannonBullet extends Bullet {
         }
 
         @Override
-        public void step() {
+        public void step() {   //扩散动画
             frame++;
             if (frame < baseRadii.length) {
                 this.r = baseRadii[frame] * multiplier;

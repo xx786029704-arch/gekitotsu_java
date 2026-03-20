@@ -3,12 +3,12 @@ package org.example.elements;
 import org.example.Main;
 import org.example.Round;
 
-public class MissileBullet extends Bullet {
+public class MissileBullet extends Bullet {   //导玉导弹
     private int cnt = 0;
     private float rotation;
     private float speed = 4F;
 
-    public MissileBullet(float X, float Y, int S, float rotation) {
+    public MissileBullet(float X, float Y, int S, float rotation) {   //初始化
         super(X, Y, S);
         this.rotation = rotation;
         this.rot = rotation;
@@ -17,7 +17,7 @@ public class MissileBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         cnt++;
         if (this.y < -1200 || this.x > 2560 || this.x < -640) {
             kill();
@@ -49,20 +49,20 @@ public class MissileBullet extends Bullet {
         this.y = this.y + this.ys;
     }
 
-    private void updateVelocity() {
+    private void updateVelocity() {   //更新速度向量
         float rad = (float) Math.toRadians(this.rotation);
         this.xs = (float) Math.cos(rad) * this.speed;
         this.ys = (float) Math.sin(rad) * this.speed;
     }
 
-    private static class ExplosionHit extends Round {
+    private static class ExplosionHit extends Round {   //爆炸范围判定
         private int frame;
         private final int side;
         private final int id;
         private final float[] baseRadii;
         private final float multiplier;
 
-        public ExplosionHit(float X, float Y, int side, float[] baseRadii, float multiplier) {
+        public ExplosionHit(float X, float Y, int side, float[] baseRadii, float multiplier) {   //初始化
             super(X, Y, baseRadii[0] * multiplier);
             this.side = side;
             this.baseRadii = baseRadii;
@@ -72,7 +72,7 @@ public class MissileBullet extends Bullet {
         }
 
         @Override
-        public void step() {
+        public void step() {   //扩散动画
             frame++;
             if (frame < baseRadii.length) {
                 this.r = baseRadii[frame] * multiplier;

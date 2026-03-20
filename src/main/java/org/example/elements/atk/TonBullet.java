@@ -5,17 +5,17 @@ import org.example.Round;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsDrop;
 
-public class TonBullet extends Bullet {
+public class TonBullet extends Bullet {   //弹玉弹球
     private int hp = 3;
     private int bounceCount = 0;
 
-    public TonBullet(float X, float Y, int S) {
+    public TonBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
         this.r = this.r * 1.2F;
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.y < -1200 || this.x > 2560 || this.x < -640) {
             new HitsDrop(this.x, this.y, Main.atk[this.side]);
             kill();

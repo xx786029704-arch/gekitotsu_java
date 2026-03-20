@@ -18,6 +18,12 @@ import org.example.elements.units.HaneBall;
 import org.example.elements.units.ShotgunBall;
 import org.example.elements.units.RetsuBall;
 import org.example.elements.units.HanaBall;
+import org.example.elements.units.MinigunBall;
+import org.example.elements.units.SniperBall;
+import org.example.elements.units.ConBall;
+import org.example.elements.units.PushBall;
+import org.example.elements.units.ShaBall;
+import org.example.elements.units.UkiBall;
 
 import java.util.*;
 
@@ -33,7 +39,7 @@ public class Main {
     public static String pskey = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";      //密码表
     public static int ID = 0;   //待分配的ID，只会一直增长
     static float wrk;   //怒土の神秘小变量
-    static int max_run_time = 65536;    //最大运行帧数
+    static int max_run_time = 88600;//65536;    //最大运行帧数
     static Scanner scanner = new Scanner(System.in);
     public static int[] hp = {100, 100};    //要塞血量
     public static int[] hp0_flg = {0, 0};   //要塞爆炸标记
@@ -49,7 +55,7 @@ public class Main {
     public static CompositeShape[] team = {new CompositeShape(0,0), new CompositeShape(0,0)};   //队伍
     public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
     public static CompositeShape[] repair = {new CompositeShape(0,0), new CompositeShape(0,0)}; //修复
-    static String default_code = "000Nuzxk5t8nxk5vOmxk5AEoxk5Fuvx6dvxGx6dOCw vs 000P6R";    //默认对战代码，为空时在运行时手动输入
+    static String default_code = "000P6Rf004ol vs 000P6RO00iDc";    //默认对战代码，为空时在运行时手动输入
     private static GameWindow window;
 
     public static void main(String[] args) {
@@ -239,12 +245,18 @@ public class Main {
             case 11: new HaneBall(X, Y, R, S, TYPE);break;
             case 12: new RetsuBall(X, Y, R, S, TYPE);break;
             case 13: new ShotgunBall(X, Y, R, S, TYPE);break;
+            case 14: new SniperBall(X, Y, R, S, TYPE);break;
+            case 15: new UkiBall(X, Y, R, S, TYPE);break;
             case 16: new GuideBall(X, Y, R, S, TYPE);break;
+            case 22: new MinigunBall(X, Y, R, S, TYPE);break;
             case 32: new GekiBall(X, Y, R, S, TYPE);break;
             case 33: new TonBall(X, Y, R, S, TYPE);break;
             case 35: new NinBall(X, Y, R, S, TYPE);break;
             case 37: new HanaBall(X, Y, R, S, TYPE);break;
+            case 39: new PushBall(X, Y, R, S, TYPE);break;
             case 49: new KakuBall(X, Y, R, S, TYPE);break;
+            case 50: new ShaBall(X, Y, R, S, TYPE);break;
+            case 52: new ConBall(X, Y, R, S, TYPE);break;
             default: new Ball(X, Y, R, S, TYPE);break;
         }
         switch (wrk){
