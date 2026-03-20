@@ -19,6 +19,11 @@ public abstract class Shape {   //最基本的抽象形状类
         y += Y;
     }
 
+    public void moveTo(float X, float Y) {
+        x = X;
+        y = Y;
+    }
+
     public void step(){     //每帧执行的代码
     }
 

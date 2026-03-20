@@ -38,6 +38,13 @@ public class CompositeShape extends Shape {     //复合形状类
             s.move(X,Y);
         }
     }
+    @Override
+    public void moveTo(float X, float Y) {
+        for (Shape s : shapes) {
+            s.move(X - this.x, Y - this.y);
+        }
+        super.moveTo(X, Y);
+    }
 
     @Override
     public Boolean hitTestPoint(float X, float Y){
