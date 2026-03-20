@@ -8,6 +8,8 @@ import org.example.elements.hit.HitsKen;
 public class SwordBall extends Ball {     //剑玉
     public SwordBall(float X, float Y, float R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
+        hp = 30;
+        max_hp = 30;
         speed = 10;
     }
 
@@ -16,7 +18,7 @@ public class SwordBall extends Ball {     //剑玉
         if (this.cnt == this.speed)
         {
             this.cnt = 0;
-            new HitsKen(x, y, rot, side, id);
+            new HitsKen(x, y, rot, side, id, cos_rot, sin_rot);
         }
     }
 }

@@ -1,12 +1,13 @@
 package org.example.elements.hit;
 
-import org.example.*;
-import org.example.elements.Ball;
+import org.example.CompositeShape;
+import org.example.EllipticalSector;
+import org.example.Main;
+import org.example.ShapeBuilder;
 
 import java.awt.*;
-import java.awt.geom.Path2D;
 
-public class HitsKen extends EllipticalSector {   //剑玉剑气
+public class HitsKnight extends EllipticalSector {   //骑玉剑气
     int side;
     int frame;
     int user;
@@ -17,8 +18,8 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
     @Deprecated
     float rot_radius; //仅渲染使用，后期可删除
 
-    public HitsKen(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
-        super(X, Y, 61, 74, 273, 1.1296296F, 0.052335956243F, -0.998629534754F, 0.79863551F);
+    public HitsKnight(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
+        super(X, Y, 77, 74, 273, 1.132F, 0.052335956243F, -0.998629534754F, 0.79863551F);
         frame = 0;
         rot = (R % 360 + 360) % 360;
         user = USER;

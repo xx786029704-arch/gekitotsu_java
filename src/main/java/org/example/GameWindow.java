@@ -31,7 +31,13 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
         canvas.repaint();
     }
 
+    public GameWindow setList(List<Shape> list){
+        GameCanvas.shapeList = list;
+        return this;
+    }
+
     private static class GameCanvas extends JPanel {
+        private static List<Shape> shapeList;
         private final int logicalWidth;
         private final int logicalHeight;
         private static final float CAMERA_OFFSET_Y = 60f;
@@ -62,8 +68,10 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             g2d.scale(scale, scale);
             g2d.scale(0.96, 0.96);
             g2d.translate(-10, 320);
-            List<Shape> values = new ArrayList<>(Main.elements.values());
-            for (Shape s : values) {
+            for (Shape s : shapeList) {
+                if (!Main.elements.containsValue(s)) {
+                    continue;
+                }
                 s.draw(g2d);
             }
         }

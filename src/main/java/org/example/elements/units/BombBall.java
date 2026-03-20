@@ -3,8 +3,7 @@ package org.example.elements.units;
 import org.example.elements.Ball;
 import org.example.elements.atk.BombBullet;
 
-public class BombBall extends Ball {   //爆玉
-    private boolean attackQueued = false;
+public class BombBall extends Ball {
 
     public BombBall(float X, float Y, float R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
@@ -13,11 +12,7 @@ public class BombBall extends Ball {   //爆玉
 
     @Override
     public void stepEx() {   //攻击逻辑
-        if (this.cnt == this.speed && this.jump_flg != 1) {
-            this.attackQueued = true;
-        }
-        else if (this.cnt == this.speed + 1 && this.attackQueued) {
-            this.attackQueued = false;
+        if (this.cnt == this.speed + 1) {
             this.cnt = 0;
             new BombBullet(this.x, this.y - 10, this.side).setVecMult(cos_rot, sin_rot, 10).setGravity(0.32F);
         }

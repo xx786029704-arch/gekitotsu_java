@@ -4,8 +4,8 @@ import org.example.Main;
 import org.example.Round;
 
 public class Ball extends Round {       //兵玉基类
-    public int side = 0;
-    public int type = 0;
+    public int side;
+    public int type;
     public int cnt = 0;
     public int jump_flg = 0;
     public int speed = 0;
@@ -13,7 +13,7 @@ public class Ball extends Round {       //兵玉基类
     public int hp = 10;
     public int max_hp = 10;
     public int hurt_time = 0;
-    public float rot = 0;
+    public float rot;
     public float drop_y = 0;
     public float xs = 0;
     public float ys = 0;
@@ -73,7 +73,6 @@ public class Ball extends Round {       //兵玉基类
             }
         }
         stepEx();
-        return;
     }
 
     public void stepEx(){   //如果基础行动判定通过则进行的额外行为
