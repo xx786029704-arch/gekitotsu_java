@@ -13,6 +13,7 @@ public class HitsYari extends CompositeShape {   //剑玉剑气
 
     public HitsYari(float X, float Y, float R, int S, int USER) {
         super(X, Y);
+        xySync();
         frame = 0;
         rot = (R % 360 + 360) % 360;
         user = USER;

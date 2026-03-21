@@ -3,6 +3,7 @@ package org.example.elements.atk;
 import java.util.ArrayList;
 import java.util.List;
 import org.example.Main;
+import org.example.Shape;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
@@ -16,7 +17,7 @@ public class ConBullet extends Bullet {   //梱玉导弹
     public ConBullet(float X, float Y, int S, float rotation) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
-        this.r *= 0.8F;
+        this.r = 12.4F;
         updateVelocity();
     }
 
@@ -49,31 +50,20 @@ public class ConBullet extends Bullet {   //梱玉导弹
     }
 
     private void spawnMissiles() {   //生成子导弹
-        int targetId = pickTargetId();
-        new ConMissileBullet(this.x, this.y, this.side, this.rot - 90, targetId);
-        targetId = pickTargetId();
-        new ConMissileBullet(this.x, this.y, this.side, this.rot + 90, targetId);
+        new ConMissileBullet(this.x, this.y, this.side, this.rot - 90, pickTargetId());
+        new ConMissileBullet(this.x, this.y, this.side, this.rot + 90, pickTargetId());
     }
 
     private int pickTargetId() {   //挑选目标
-        List<Ball> targets = new ArrayList<>();
-        for (Object value : Main.elements.values()) {
-            if (value instanceof Ball) {
-                Ball ball = (Ball) value;
-                if (ball.side != this.side) {
-                    targets.add(ball);
-                }
-            }
-        }
+        List<Shape> targets = Main.unit[1-side].getShapes();
         if (targets.isEmpty()) {
             return -1;
         }
         if (nextTargetIndex < 0 || nextTargetIndex >= targets.size()) {
             nextTargetIndex = targets.size() - 1;
         }
-        Ball target = targets.get(nextTargetIndex);
         nextTargetIndex--;
-        return target.id;
+        return targets.get(nextTargetIndex).id;
     }
 
     private void updateVelocity() {   //更新速度向量

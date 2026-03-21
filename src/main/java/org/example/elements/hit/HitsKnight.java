@@ -20,6 +20,7 @@ public class HitsKnight extends EllipticalSector {   //骑玉剑气
 
     public HitsKnight(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
         super(X, Y, 77, 74, 273, 1.132F, 0.052335956243F, -0.998629534754F, 0.79863551F);
+        xySync();
         frame = 0;
         rot = (R % 360 + 360) % 360;
         user = USER;

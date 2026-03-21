@@ -15,6 +15,7 @@ public class Bullet extends Round {     //子弹基类
 
     public Bullet(float X, float Y, int S) {
         super(X, Y, 15.5F);
+        xySync();
         side = S;
         id = Main.addElement(this);
         Main.atk[side].addShape(this);
@@ -41,11 +42,12 @@ public class Bullet extends Round {     //子弹基类
         return false;
     }
 
-    public boolean move(){      //移动
+    public Bullet move(){      //移动
         this.x = this.x + this.xs;
         this.y = this.y + this.ys;
+        xySync();
         this.ys = this.ys + gravity;
-        return true;
+        return this;
     }
 
     public boolean hit(){   //被摧毁

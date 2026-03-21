@@ -34,15 +34,13 @@ public class SniperBall extends Ball {   //狙玉
             } else if (this.rot < 0) {
                 this.rot += 360;
             }
-            this.rot_radius = this.rot * 0.01745329252F;
-            this.cos_rot = (float) Math.cos(this.rot_radius);
-            this.sin_rot = (float) Math.sin(this.rot_radius);
+            updateRadiusCache();
         }
         if (this.cnt == this.speed) {
             this.cnt = 0;
             float spawnX = this.x + this.cos_rot * 40;
             float spawnY = this.y + this.sin_rot * 40;
-            new SniperBullet(spawnX, spawnY, this.side, this.rot);
+            new SniperBullet(spawnX, spawnY, this.side, cos_rot * 10F, sin_rot * 10F);
         }
     }
 }

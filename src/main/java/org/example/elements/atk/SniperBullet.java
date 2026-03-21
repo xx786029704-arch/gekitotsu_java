@@ -2,67 +2,16 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.Round;
+import org.example.elements.hit.HitsDrop;
+import org.example.elements.hit.HitsDropFrames;
 
-public class SniperBullet extends Round {   //狙玉内部射线
-    private final int side;
-    private final int id;
-    private float xs;
-    private float ys;
+public class SniperBullet extends ShaBullet {   //狙玉内部射线
 
-    public SniperBullet(float X, float Y, int S, float rotation) {   //初始化
-        super(X, Y, 15.5F);
-        this.side = S;
-        float rad = (float) Math.toRadians(rotation);
-        this.xs = (float) Math.cos(rad) * 10F;
-        this.ys = (float) Math.sin(rad) * 10F;
-        this.id = Main.addElement(this);
+    public SniperBullet(float X, float Y, int S, float _xs, float _ys) {   //初始化
+        super(X, Y, S, _xs, _ys);
     }
 
-    public void kill() {   //销毁
-        Main.elements.remove(id);
-    }
-
-    @Override
-    public void step() {   //每帧逻辑
-        boolean hit = false;
-        for (int i = 0; i < 1000; i++) {
-            this.x += this.xs;
-            this.y += this.ys;
-            if (this.y < -600 || this.x > 1920 || this.x < 0) {
-                hit = false;
-                break;
-            }
-            if (Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570) {
-                hit = true;
-                break;
-            }
-        }
-        if (hit) {
-            new ImpactHit(this.x, this.y, this.side, 3);
-        }
-        kill();
-    }
-
-    private static class ImpactHit extends Round {   //冲击范围判定
-        private int frames;
-        private final int side;
-        private final int id;
-
-        public ImpactHit(float X, float Y, int side, int frames) {   //初始化
-            super(X, Y, 15.5F);
-            this.side = side;
-            this.frames = frames;
-            this.id = Main.addElement(this);
-            Main.atk[side].addShape(this);
-        }
-
-        @Override
-        public void step() {   //单帧消散
-            frames--;
-            if (frames <= 0) {
-                Main.elements.remove(id);
-                Main.atk[side].removeShape(this);
-            }
-        }
+    public void hit(){
+        new HitsDropFrames(this.x, this.y, Main.atk[side], 3, 1.3F);
     }
 }

@@ -2,6 +2,7 @@ package org.example.elements.units;
 
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
+import org.example.elements.atk.GunBullet;
 
 public class GunBall extends Ball {     //铳玉
     public GunBall(float X, float Y, float R, int S, int TYPE) {
@@ -15,7 +16,7 @@ public class GunBall extends Ball {     //铳玉
             if (cnt == this.speed + 4) {
                 this.cnt = 0;
             }
-            new Bullet(this.x, this.y, this.side).setVecMult(cos_rot, sin_rot, 20).move();
+            new GunBullet(this.x, this.y, this.side).setVecMult(cos_rot, sin_rot, 20).move();
         }
     }
 }

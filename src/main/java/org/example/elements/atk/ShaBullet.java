@@ -2,21 +2,23 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.Round;
-public class ShaBullet extends Round {   //射玉瞄准射线
-    private final int side;
-    private final int id;
-    private float xs;
-    private float ys;
+import org.example.elements.hit.HitsDropFrames;
 
-    public ShaBullet(float X, float Y, int S, float rotation) {   //初始化
+public class ShaBullet extends Round {   //射玉瞄准射线
+    protected final int side;
+    private final int id;
+    private final float xs;
+    private final float ys;
+
+    public ShaBullet(float X, float Y, int S, float _xs, float _ys) {   //初始化
         super(X, Y, 15.5F);
         this.side = S;
-        float rad = (float) Math.toRadians(rotation);
-        this.xs = (float) Math.cos(rad) * 10F;
-        this.ys = (float) Math.sin(rad) * 10F;
+        this.xs = _xs;
+        this.ys = _ys;
         this.x = X;
         this.y = Y;
         this.id = Main.addElement(this);
+        xySync();
     }
 
     public void kill() {   //销毁
@@ -30,40 +32,20 @@ public class ShaBullet extends Round {   //射玉瞄准射线
             this.x += this.xs;
             this.y += this.ys;
             if (this.y < -600 || this.x > 1920 || this.x < 0) {
-                hit = false;
                 break;
             }
-            if (Main.unit[1 - this.side].hitTestPoint(this.x, this.y) || Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570) {
+            if (Main.fort[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570) {
                 hit = true;
                 break;
             }
         }
         if (hit) {
-            new ImpactHit(this.x, this.y, this.side, 6, 1.3F);
+            hit();
         }
         kill();
     }
 
-    private static class ImpactHit extends Round {   //冲击范围判定
-        private int frames;
-        private final int side;
-        private final int id;
-
-        public ImpactHit(float X, float Y, int side, int frames, float scale) {   //初始化
-            super(X, Y, 15.5F * scale);
-            this.side = side;
-            this.frames = frames;
-            this.id = Main.addElement(this);
-            Main.atk[side].addShape(this);
-        }
-
-        @Override
-        public void step() {   //单帧消散
-            frames--;
-            if (frames <= 0) {
-                Main.elements.remove(id);
-                Main.atk[side].removeShape(this);
-            }
-        }
+    public void hit(){
+        new HitsDropFrames(this.x, this.y, Main.atk[side], 6, 1.3F);
     }
 }

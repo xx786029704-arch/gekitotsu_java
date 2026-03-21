@@ -1,6 +1,7 @@
 package org.example.elements.atk;
 
 import org.example.Main;
+import org.example.Shape;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
 import org.example.elements.Core;
@@ -9,8 +10,8 @@ import org.example.elements.hit.HitsDrop;
 public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
     private float speed = 12F;
     private int cnt = 0;
-    private int targetId = -1;
-    private float desiredRot = 0F;
+    private final int targetId;
+    private float desiredRot;
 
     public ConMissileBullet(float X, float Y, int S, float rotation, int targetId) {   //初始化
         super(X, Y, S);
@@ -56,11 +57,8 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
 
     private float computeTargetRot() {   //计算追踪角度
         if (targetId != -1) {
-            Object target = Main.elements.get(targetId);
-            if (target instanceof Ball) {
-                Ball ball = (Ball) target;
-                desiredRot = Math.round((float) (Math.atan2(ball.y - this.y, ball.x - this.x) * 180 / Math.PI));
-            }
+            Shape target = Main.elements.get(targetId);
+            desiredRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
             return desiredRot;
         }
         Core core = Main.cores[1 - this.side];

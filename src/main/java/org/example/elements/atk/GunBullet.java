@@ -2,8 +2,8 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.elements.Bullet;
-public class MinigunBullet extends Bullet {   //机玉子弹
-    public MinigunBullet(float X, float Y, int S) {   //初始化
+public class GunBullet extends Bullet {   //机玉子弹
+    public GunBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
     }
 

@@ -24,6 +24,7 @@ public class Ball extends Round {       //兵玉基类
 
     public Ball(float X, float Y, float R, int S, int TYPE) {
         super(X, Y, 23.25F);
+        xySync();
         this.side = S;
         this.on_side = S;
         this.rot = R;
@@ -101,6 +102,7 @@ public class Ball extends Round {       //兵玉基类
             }
         }
         y = drop_y;
+        ySync();
         return true;
     }
 
@@ -118,6 +120,7 @@ public class Ball extends Round {       //兵玉基类
         ys += 0.32F;
         x = x + xs;
         y = y + ys;
+        ySync();
         if (y >= 566) {
             y = 566;
             xs = 0;
@@ -139,4 +142,10 @@ public class Ball extends Round {       //兵玉基类
     public void hurt(boolean is_crash){
         hurt_time = 3;
     }   //受伤
+
+    public void updateRadiusCache(){
+        this.rot_radius = rot * 0.01745329252F;
+        this.cos_rot = (float) Math.cos(rot_radius);
+        this.sin_rot = (float) Math.sin(rot_radius);
+    }
 }

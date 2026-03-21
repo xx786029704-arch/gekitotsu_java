@@ -19,6 +19,7 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
 
     public HitsKen(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
         super(X, Y, 61, 74, 273, 1.1296296F, 0.052335956243F, -0.998629534754F, 0.79863551F);
+        xySync();
         frame = 0;
         rot = (R % 360 + 360) % 360;
         user = USER;

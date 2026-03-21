@@ -7,23 +7,19 @@ import org.example.elements.hit.HitsBombMult;
 public class UkiBullet extends Round {   //浮玉子弹
     private final int side;
     private final int id;
-    private int gei_flg = 0;
     private int hp = 1;
-    private float rot = 0;
     private float xs = 0;
     private float ys = 0;
     private float yrot = 0;
-    private float yrad = 0;
     private float ysin = 0;
     private float ycos = 0;
 
-    public UkiBullet(float X, float Y, int S, float rotation) {   //初始化
+    public UkiBullet(float X, float Y, int S, float _xs, float _ys) {   //初始化
         super(X, Y, 15.5F);
+        xySync();
         this.side = S;
-        this.rot = rotation;
-        float rad = (float) Math.toRadians(this.rot);
-        this.xs = (float) Math.cos(rad) * 3F;
-        this.ys = (float) Math.sin(rad) * 3F;
+        this.xs = _xs;
+        this.ys = _ys;
         this.id = Main.addElement(this);
         Main.unit[side].addShape(this);
     }
@@ -34,19 +30,20 @@ public class UkiBullet extends Round {   //浮玉子弹
         if (this.y > 570) {
             this.hp = 0;
         }
-        else if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
-            if (Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
+        else if (Main.team[1 - this.side].hitTestPoint(this.x, this.y)) {
+            if (Main.fort[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
                 this.hp = 0;
             }
             else {
                 this.hp--;
             }
         }
-        this.rot = this.rot + this.xs;
         this.x = this.x + this.xs;
         this.y = this.y + this.ys;
+        xySync();
         this.x = this.x + this.ycos;
         this.y = this.y + this.ysin;
+        xySync();
         if (this.y < -600 || this.x > 1920 || this.x < 0) {
             kill();
             return;
@@ -67,8 +64,8 @@ public class UkiBullet extends Round {   //浮玉子弹
         if (this.yrot > 360F) {
             this.yrot = this.yrot - 360F;
         }
-        this.yrad = (float) Math.toRadians(this.yrot);
-        this.ysin = (float) Math.sin(this.yrad);
-        this.ycos = (float) Math.cos(this.yrad);
+        float yrad = (float) Math.toRadians(this.yrot);
+        this.ysin = (float) Math.sin(yrad);
+        this.ycos = (float) Math.cos(yrad);
     }
 }

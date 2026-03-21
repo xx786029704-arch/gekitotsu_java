@@ -15,7 +15,7 @@ public class UkiBall extends Ball {   //浮玉
             this.cnt = 0;
             float spawnX = this.x + cos_rot * 50;
             float spawnY = this.y + sin_rot * 50;
-            new UkiBullet(spawnX, spawnY, this.side, this.rot);
+            new UkiBullet(spawnX, spawnY, this.side, cos_rot * 3, sin_rot * 3);
         }
     }
 }

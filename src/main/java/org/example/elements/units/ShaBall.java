@@ -15,7 +15,7 @@ public class ShaBall extends Ball {   //射玉
             this.cnt = 0;
             float spawnX = this.x + cos_rot * 70;
             float spawnY = this.y + sin_rot * 70;
-            new ShaBullet(spawnX, spawnY, this.side, this.rot);
+            new ShaBullet(spawnX, spawnY, this.side, cos_rot * 10F, sin_rot * 10F);
         }
     }
 }

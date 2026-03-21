@@ -20,7 +20,7 @@ public class CannonBullet extends Bullet {   //炮玉炮弹
             this.hp = 0;
         }
         else if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
-            if (Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
+            if (Main.fort[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
                 this.hp = 0;
             }
             else {

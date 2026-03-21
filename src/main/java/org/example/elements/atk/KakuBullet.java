@@ -35,7 +35,7 @@ public class KakuBullet extends Bullet {   //核玉核弹
             kill();
             return;
         }
-        if (Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
+        if (Main.fort[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
             new HitsBombMult(this.x, this.y, this.side, 8);
             kill();
             return;

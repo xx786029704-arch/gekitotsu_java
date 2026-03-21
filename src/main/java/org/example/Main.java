@@ -32,14 +32,13 @@ import java.util.*;
 
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
-    public static final int LOGIC_TPS = 10;      //帧率限制，0代表无限制
+    public static final int LOGIC_TPS = 1000;      //帧率限制，0代表无限制
     public static boolean hitTestMode = false;       //碰撞测试模式，开启后可在下面的代码中测试你想测试碰撞箱的图形
 
     static boolean end = false;
     static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
     static int j;   //怒土遍历用的变量
     static int i;   //怒土遍历用的变量
-    static int pointer;
     public static String pskey = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";      //密码表
     private static GameWindow window;
     public static int ID = 0;   //待分配的ID，只会一直增长
@@ -57,12 +56,17 @@ public class Main {
     public static CompositeShape[] unit = {new CompositeShape(0,0), new CompositeShape(0,0)};   //单位
     public static CompositeShape[] shield = {new CompositeShape(0,0), new CompositeShape(0,0)}; //屏障
     public static CompositeShape[] atk = {new CompositeShape(0,0), new CompositeShape(0,0)};    //攻击
+    public static CompositeShape[] fort = {new CompositeShape(0,0), new CompositeShape(0,0)};   //要塞主体
     public static CompositeShape[] team = {new CompositeShape(0,0), new CompositeShape(0,0)};   //队伍
     public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
     public static CompositeShape[] repair = {new CompositeShape(0,0), new CompositeShape(0,0)}; //修复
-    static String default_code = "000wjI8nChCuMfbltRMoUblB vs 000wjI8nChCuMfbltRMoUblB";    //默认对战代码，为空时在运行时手动输入
+    static String default_code = "000In3xkncxCxkn5yjxkmWubxkn1wrx5qaPNx5q5sYx69m5k vs 000In3xkncxCxkn5yjxkmWubxkn1wrx5qaPNx5q5sYx69m5k";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
+        for (int i = 0; i <= 1; i++){
+            fort[i].addShape(wall[i]);
+            fort[i].addShape(unit[i]);
+        }
         for (int i = 0; i <= 1; i++){
             team[i].addShape(wall[i]);
             team[i].addShape(unit[i]);

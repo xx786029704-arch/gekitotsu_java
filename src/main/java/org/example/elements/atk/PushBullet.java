@@ -10,15 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PushBullet extends Bullet {   //押玉叭↑叭↓
-    public PushBullet(float X, float Y, int S, float rotation) {   //初始化
+    public PushBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
-        this.rot = rotation;
-        this.gei_flg = 1;
-        float rad = (float) Math.toRadians(this.rot);
-        this.xs = (float) Math.cos(rad) * 20F;
-        this.ys = (float) Math.sin(rad) * 20F;
-        this.x = X + this.xs;
-        this.y = Y + this.ys;
     }
 
     @Override
@@ -40,21 +33,19 @@ public class PushBullet extends Bullet {   //押玉叭↑叭↓
         List<Shape> targets = new ArrayList<>(Main.unit[1 - this.side].getShapes());
         for (Shape shape : targets) {
             if (shape instanceof Ball target) {
-                if (target.type < 25 || (target.type > 30 && target.type < 55)) {
-                    float dx = this.x - target.x;
-                    float dy = this.y - target.y;
-                    float dis = (float) Math.sqrt(dx * dx + dy * dy);
-                    if (dis <= 30F) {
-                        target.y = target.y + this.ys * 2;
-                        target.x = target.x + this.xs * 2;
-                        if (target.y >= 566) {
-                            target.y = 566;
-                        }
-                        if (target.x < 0 || target.x > 1920) {
-                            target.kill();
-                            kill();
-                            return false;
-                        }
+                float dx = this.x - target.x;
+                float dy = this.y - target.y;
+                if (dx * dx + dy * dy <= 900F) {
+                    target.y = target.y + this.ys * 2;
+                    target.x = target.x + this.xs * 2;
+                    target.xySync();
+                    if (target.y >= 566) {
+                        target.y = 566;
+                    }
+                    if (target.x < 0 || target.x > 1920) {
+                        target.kill();
+                        kill();
+                        return false;
                     }
                 }
             }

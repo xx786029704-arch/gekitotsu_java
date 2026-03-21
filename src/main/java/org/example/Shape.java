@@ -29,6 +29,19 @@ public abstract class Shape {   //最基本的抽象形状类
         y = Y;
     }
 
+    public void xySync(){       //复刻 flash引擎量子化特性，在任何非0.05倍数移动时调用
+        x = (int) (20 * x) * 0.05F;
+        y = (int) (20 * y) * 0.05F;
+    }
+
+    public void xSync(){       //仅针对 x 值的量子化
+        x = (int) (20 * x) * 0.05F;
+    }
+
+    public void ySync(){       //仅针对 y 值的量子化
+        y = (int) (20 * y) * 0.05F;
+    }
+
     public void step(){     //每帧执行的代码
     }
 
