@@ -5,7 +5,7 @@ import org.example.elements.hit.HitsNagi;
 
 import java.awt.*;
 
-public class NagiBall extends Ball {     //薙玉
+public class NagiBall extends Ball {
     public NagiBall(float X, float Y, float R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         hp = 30;

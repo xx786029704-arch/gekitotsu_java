@@ -4,13 +4,12 @@ import org.example.CompositeShape;
 import org.example.Main;
 import org.example.ShapeBuilder;
 
-//继承CompositeShape仅用作渲染，最终成品可以移除相关代码
 public class HitsJump extends CompositeShape {
     private final CompositeShape parent;
 
     public HitsJump(float X, float Y, CompositeShape s) {
         super(X, Y);
-        ShapeBuilder.into(this)     //一个圆角矩形
+        ShapeBuilder.into(this)
                 .roundedRectangle(-17.15F,-17.5F,34.35F,35F,4F);
         id = Main.addElement(this);
         parent = s;
@@ -23,7 +22,6 @@ public class HitsJump extends CompositeShape {
         parent.removeShape(this);
     }
 
-    //重写 HitTestPoint，只需要一次AABB检测而非原先的6次，分成9个区域进行检测，5个区域可直接通过，剩下4个区域拼成一个圆形再检测，极大程度节省性能
     @Override
     public boolean hitTestPoint(float X, float Y){
         float dx = X - x + 0.3F;

@@ -1,12 +1,11 @@
 package org.example.elements.hit;
 
-import org.example.EllipticalSector;
 import org.example.Main;
 import org.example.Sector;
 
 import java.awt.*;
 
-public class HitsNagi extends Sector {   //薙玉剑气
+public class HitsNagi extends Sector {
     int side;
     int frame;
     int user;
@@ -15,7 +14,7 @@ public class HitsNagi extends Sector {   //薙玉剑气
     float cos_rot;
     float sin_rot;
     @Deprecated
-    float rot_radius; //仅渲染使用，后期可删除
+    float rot_radius;
 
     public HitsNagi(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
         super(X, Y, 63, 45, 292.5F);
@@ -36,10 +35,6 @@ public class HitsNagi extends Sector {   //薙玉剑气
         Main.elements.remove(id);
         Main.atk[side].removeShape(this);
     }
-
-    /*
-        可能的优化：可以不使用update而是直接硬编码dirX dirY cosHalfAngle，但有可能编译器已经帮我们干了，目前不确定需不需要手动干
-     */
 
     @Override
     public void step(){

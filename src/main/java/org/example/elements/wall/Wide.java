@@ -26,7 +26,7 @@ public class Wide extends Wall {
         }
     }
 
-    public void stepEx(){   //额外行为
+    public void stepEx(){
         cnt++;
         if (cnt == speed) {
             cnt = 0;

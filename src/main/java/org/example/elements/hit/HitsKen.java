@@ -1,8 +1,6 @@
 package org.example.elements.hit;
 
 import org.example.*;
-import org.example.elements.Ball;
-
 import java.awt.*;
 import java.awt.geom.Path2D;
 
@@ -81,7 +79,7 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
     }
 
     @Override
-    public boolean hitTestPoint(float X, float Y){
+    public Boolean hitTestPoint(float X, float Y){
         float dx = ((X - x) * cos_rot + (Y - y) * sin_rot);
         float dy = ((Y - y) * cos_rot - (X - x) * sin_rot);
         dy *= flatness;

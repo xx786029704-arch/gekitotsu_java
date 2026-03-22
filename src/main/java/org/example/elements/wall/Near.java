@@ -9,7 +9,7 @@ public class Near extends Wall {
         super(X, Y, S, TYPE);
     }
 
-    public void stepEx(){   //额外行为
+    public void stepEx(){
         if (Main.norikomi_flg) {
             new HitsJump(x, y - 35, Main.jump_u[side]);
         }

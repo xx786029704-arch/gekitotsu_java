@@ -24,6 +24,7 @@ public class MinigunBall extends Ball {   //机玉
 
     @Override
     public void hurt(boolean is_crash) {   //受击重置计时
+        super.hurt(is_crash);
         if (!is_crash) {
             this.cnt = 0;
         }

@@ -1,9 +1,7 @@
 package org.example.elements.hit;
 
-import org.example.CompositeShape;
 import org.example.EllipticalSector;
 import org.example.Main;
-import org.example.ShapeBuilder;
 
 import java.awt.*;
 
@@ -82,7 +80,7 @@ public class HitsKnight extends EllipticalSector {   //骑玉剑气
     }
 
     @Override
-    public boolean hitTestPoint(float X, float Y){
+    public Boolean hitTestPoint(float X, float Y){
         float dx = ((X - x) * cos_rot + (Y - y) * sin_rot);
         float dy = ((Y - y) * cos_rot - (X - x) * sin_rot);
         dy *= flatness;

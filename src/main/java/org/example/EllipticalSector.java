@@ -40,7 +40,7 @@ public class EllipticalSector extends Shape {     //椭圆扇形类
     }
 
     @Override
-    public boolean hitTestPoint(float X, float Y){
+    public Boolean hitTestPoint(float X, float Y){
         float dx = X - x;
         float dy = (Y - y) * flatness;
         if (dx > r || dy > r || dx < -r || dy < -r){

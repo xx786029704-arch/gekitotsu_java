@@ -15,7 +15,7 @@ public class Far extends Wall {
         cnt = side == 0 ? (int_x - 50) % speed : (380 - (int_x - 1490)) % speed;
     }
 
-    public void stepEx(){   //额外行为
+    public void stepEx(){
         cnt++;
         if (cnt == speed) {
             cnt = 0;

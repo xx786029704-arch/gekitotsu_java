@@ -29,8 +29,9 @@ public class HitsYari extends CompositeShape {   //剑玉剑气
     }
 
     @Override
-    public boolean hitTestPoint(float X,float Y){
-        boolean a= super.hitTestPoint(X,Y);
+    public Boolean hitTestPoint(float X,float Y){
+        Boolean a= super.hitTestPoint(X,Y);
+
         //System.out.println("hittest"+X+","+Y+","+a);
         return a;
     }

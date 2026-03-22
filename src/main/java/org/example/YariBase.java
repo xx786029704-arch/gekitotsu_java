@@ -26,7 +26,7 @@ public class YariBase extends Shape {     //枪玉判定图形单元类
     }
 
     @Override
-    public boolean hitTestPoint(float X, float Y) {
+    public Boolean hitTestPoint(float X, float Y) {
         //先把测试点反向旋转本对象的角度，然后如果有翻转再翻转，这样就得到了相当于该判定是无翻转旋转的时候的测试点位置
         float rawDx = X - this.x;
         float rawDy = Y - this.y;

@@ -49,7 +49,7 @@ public class CompositeShape extends Shape {     //复合形状类
     }
 
     @Override
-    public boolean hitTestPoint(float X, float Y){
+    public Boolean hitTestPoint(float X, float Y){
         for (Shape s : shapes){
             if (s.hitTestPoint(X, Y))
                 return true;

@@ -2,9 +2,10 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import org.example.Shape;
+import org.example.elements.Ball;
+import org.example.elements.Wall;
 
 public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和我没关系，反正最后也不用可视化
     private final GameCanvas canvas;
@@ -73,6 +74,19 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
                     continue;
                 }
                 s.draw(g2d);
+                if (Main.SHOW_UNIT_HP && s instanceof Ball) {
+                    Ball unit = (Ball) s;
+                    Color prev = g2d.getColor();
+                    g2d.setColor(Color.GREEN);
+                    g2d.drawString(Integer.toString(unit.hp), (int) unit.x - 4, (int) unit.y + 4);
+                    g2d.setColor(prev);
+                } else if (Main.SHOW_UNIT_HP && s instanceof Wall) {
+                    Wall wall = (Wall) s;
+                    Color prev = g2d.getColor();
+                    g2d.setColor(Color.CYAN);
+                    g2d.drawString(Integer.toString(wall.hp), (int) wall.x - 4, (int) wall.y + 4);
+                    g2d.setColor(prev);
+                }
             }
         }
     }

@@ -29,7 +29,7 @@ public class TateBall extends Ball {     //盾玉
     public void stepEx(){
         if(hurt_time > 0){
             hurt_time--;
-        };
+        }
     }
 
     @Override

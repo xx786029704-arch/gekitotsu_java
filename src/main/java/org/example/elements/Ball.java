@@ -19,7 +19,6 @@ public class Ball extends Round {       //兵玉基类
     public float rot_radius;    //角度（弧度制）可以提前算好，遇到旋转壁再更新
     public float cos_rot;
     public float sin_rot;
-    //TODO：因为玉的角度都是整数，所以可以尝试做一个0-359度的正余弦值表
 
 
     public Ball(float X, float Y, float R, int S, int TYPE) {
@@ -84,8 +83,10 @@ public class Ball extends Round {       //兵玉基类
             return;
         }
 
-        if (hp < max_hp) {
-            if (Main.heal[side].hitTestPoint(x, y)) {
+        if (hp < max_hp)
+        {
+            if (Main.heal[side].hitTestPoint(x, y))
+            {
                 hp++;
             }
         }
@@ -124,7 +125,8 @@ public class Ball extends Round {       //兵玉基类
 
     public boolean ground(){    //地面
         cnt++;
-        if (Main.wall[1 - side].hitTestPoint(x, y)) {
+        if (Main.wall[1 - side].hitTestPoint(x, y))
+        {
             kill();
             return false;
         }
@@ -135,7 +137,7 @@ public class Ball extends Round {       //兵玉基类
         ys += 0.32F;
         x = x + xs;
         y = y + ys;
-        xySync();
+        ySync();
         if (y >= 566) {
             y = 566;
             xs = 0;

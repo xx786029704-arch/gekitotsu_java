@@ -13,7 +13,7 @@ public class Rectangle extends Shape {   //矩形类
     }
 
     @Override
-    public boolean hitTestPoint(float X, float Y) {   //点碰撞
+    public Boolean hitTestPoint(float X, float Y) {   //点碰撞
         float minX = Math.min(this.x, this.x + this.width);
         float maxX = Math.max(this.x, this.x + this.width);
         float minY = Math.min(this.y, this.y + this.height);

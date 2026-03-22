@@ -3,46 +3,28 @@ package org.example;
 import org.example.elements.Ball;
 import org.example.elements.Base;
 import org.example.elements.Core;
+import org.example.elements.hit.HitsKen;
+import org.example.elements.hit.KekkaiField;
 import org.example.elements.units.*;
 import org.example.elements.wall.*;
-import org.example.elements.units.BowBall;
-import org.example.elements.units.BombBall;
-import org.example.elements.units.CannonBall;
-import org.example.elements.units.GuideBall;
-import org.example.elements.units.GekiBall;
-import org.example.elements.units.GunBall;
-import org.example.elements.units.SwordBall;
-import org.example.elements.units.KakuBall;
-import org.example.elements.units.DokyuBall;
-import org.example.elements.units.TonBall;
-import org.example.elements.units.NinBall;
-import org.example.elements.units.HaneBall;
-import org.example.elements.units.ShotgunBall;
-import org.example.elements.units.RetsuBall;
-import org.example.elements.units.HanaBall;
-import org.example.elements.units.MinigunBall;
-import org.example.elements.units.SniperBall;
-import org.example.elements.units.ConBall;
-import org.example.elements.units.PushBall;
-import org.example.elements.units.ShaBall;
-import org.example.elements.units.UkiBall;
 
 import java.util.*;
 
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
-    public static final int LOGIC_TPS = 120;      //帧率限制，0代表无限制
+    public static final boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
+    public static final int LOGIC_TPS = 0;      //帧率限制，0代表无限制
     public static boolean hitTestMode = false;       //碰撞测试模式，开启后可在下面的代码中测试你想测试碰撞箱的图形
 
     static boolean end = false;
-    public static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
+    static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
     static int j;   //怒土遍历用的变量
     static int i;   //怒土遍历用的变量
     public static String pskey = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";      //密码表
     private static GameWindow window;
     public static int ID = 0;   //待分配的ID，只会一直增长
     static float wrk;   //怒土の神秘小变量
-    static int max_run_time = 65536;    //最大运行帧数
+    static int max_run_time = 806;//65536;    //最大运行帧数
     static Scanner scanner = new Scanner(System.in);
     public static int[] hp = {100, 100};    //要塞血量
     public static int[] hp0_flg = {0, 0};   //要塞爆炸标记
@@ -66,7 +48,9 @@ public class Main {
     public static CompositeShape[] snipe = {new CompositeShape(0,0), new CompositeShape(0,0)}; //狙击
     public static CompositeShape[] turn_ccw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //顺时针
     public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
-    static String default_code = "000vrYa8GexWT01AOxa7B8jla4lVw9a4lSPdp01Ailp01zL9a8GhdEa8GewI8e2hNCr01tkTp01zeW vs 000dYpu00mPWu00mjGu00lw4";    //默认对战代码，为空时在运行时手动输入
+    public static List<Integer>[] kekkaiIds = new ArrayList[]{new ArrayList<>(), new ArrayList<>()};
+    public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
+    static String default_code = "001crQimKJ4Qp01ye3jn8aMeN0equXp017QEp01z0Wp01pRfp01gYU9mPie49mPsr19mY0MR9mYoru9oDvGd9oQWlO9oUVPh80aje6w05AoI7oHUqE7oI0gJ7k5Xi77k638cr01AB9 vs 001h0Mp01AOxonQsEBo2bLgxt01aibp01AR7p01ASsp01ARNp01ACIt01aibt01aibt01aibt01aibt01aibt01aibt01aibt01aibp01kcOp01AQtp00hNR";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
@@ -90,8 +74,13 @@ public class Main {
             main_setup(default_code.split(" vs "));
         }
         else {                                              //碰撞箱测试 ↓ 需开启碰撞箱测试模式
-            hitboxTest(new Wood(500, 300, 0, 25), 401, 401, 400, 400, 1);
+            hitboxTest(new HitsKen(500, 500, 0, 0, 1, 1, 0), 400, 400, 580, 580, 2);
             time = max_run_time;
+        }
+        for (int side = 0; side <= 1; side++) {
+            if (kekkaiFields[side] == null) {
+                kekkaiFields[side] = new KekkaiField(side);
+            }
         }
         if (ENABLE_VISUALIZATION || hitTestMode) {
             java.awt.EventQueue.invokeLater(() -> {
@@ -121,6 +110,8 @@ public class Main {
     private static void game_set(){     //判断局势
         System.out.println("对局结束，用时: " + time);
         System.out.println("1P血量: " + hp[0] + ", 2P血量: " + hp[1]);
+        System.out.println(hp0_flg[0]);
+        System.out.println(hp0_flg[1]);
         if (hp0_flg[0] > 0 || hp0_flg[1] > 0){
             if(hp0_flg[0] == 0){
                 System.out.println("1P获胜");
@@ -149,9 +140,13 @@ public class Main {
             }
             core_x[i] = cores[i].x;
             core_y[i] = cores[i].y;
+            i++;
+        }
+        i = 0;
+        while (i <= 1) {
             j = 6;
             while (j < code[i].length()) {
-                xyr = to_xyr(code[i].substring(j+1, j+6));
+                int[] xyr = to_xyr(code[i].substring(j+1, j+6));
                 if (i == 1) {
                     xyr[0] = (380 - xyr[0]) + 1490;
                     xyr[2] = 180 - xyr[2];
@@ -289,6 +284,9 @@ public class Main {
             case 14: new SniperBall(X, Y, R, S, TYPE);break;
             case 15: new UkiBall(X, Y, R, S, TYPE);break;
             case 16: new GuideBall(X, Y, R, S, TYPE);break;
+            case 17: new RepairBall(X, Y, R, S, TYPE);break;
+            case 18: new HealBall(X, Y, R, S, TYPE);break;
+            case 24: new KekkaiBall(X, Y, R, S, TYPE);break;
             case 22: new MinigunBall(X, Y, R, S, TYPE);break;
             case 25: new Wood(X, Y, S, TYPE); wrk = 1; break;
             case 26: new Stone(X, Y, S, TYPE); wrk = 1; break;
@@ -306,6 +304,7 @@ public class Main {
             case 49: new KakuBall(X, Y, R, S, TYPE);break;
             case 50: new ShaBall(X, Y, R, S, TYPE);break;
             case 52: new ConBall(X, Y, R, S, TYPE);break;
+            case 53: new KanBall(X, Y, R, S, TYPE);break;
             case 55: new Near(X, Y, S, TYPE); wrk = 1; break;
             case 56: new Far(X, Y, S, TYPE); wrk = 1; break;
             case 57: new Wide(X, Y, S, TYPE); wrk = 1; break;
