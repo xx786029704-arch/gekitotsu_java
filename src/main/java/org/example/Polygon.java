@@ -28,7 +28,7 @@ public class Polygon extends Shape{     //多边形，存储各个顶点坐标�
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y) {
+    public boolean hitTestPoint(float X, float Y) {
         float[][] verts = getWorldVertices();
         boolean hit = false;
         float minX = verts[0][0];

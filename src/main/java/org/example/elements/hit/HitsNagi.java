@@ -1,12 +1,12 @@
 package org.example.elements.hit;
 
-import org.example.*;
-import org.example.elements.Ball;
+import org.example.EllipticalSector;
+import org.example.Main;
+import org.example.Sector;
 
 import java.awt.*;
-import java.awt.geom.Path2D;
 
-public class HitsKen extends EllipticalSector {   //剑玉剑气
+public class HitsNagi extends Sector {   //薙玉剑气
     int side;
     int frame;
     int user;
@@ -17,8 +17,8 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
     @Deprecated
     float rot_radius; //仅渲染使用，后期可删除
 
-    public HitsKen(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
-        super(X, Y, 61, 74, 273, 1.1296296F, 0.052335956243F, -0.998629534754F, 0.79863551F);
+    public HitsNagi(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
+        super(X, Y, 63, 45, 292.5F);
         xySync();
         frame = 0;
         rot = (R % 360 + 360) % 360;
@@ -48,31 +48,35 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
             this.y = Main.elements.get(user).y;
         }
         switch (frame){
-            case 0:{
-                a = 124 * 0.017453292519943295F;
-                dir = 298 * 0.017453292519943295F;
-                update();
-                break;
-            }
-            case 1:{
-                a = 161 * 0.017453292519943295F;
-                dir = 316.5F * 0.017453292519943295F;
-                update();
+            case 0, 1:{
+                a += 45 * 0.017453292519943295F;
+                dir += 22.5F * 0.017453292519943295F;
+                dirX = (float)Math.cos(dir);
+                dirY = (float)Math.sin(dir);
+                cosHalfAngle = (float)Math.cos(a * 0.5f);
                 break;
             }
             case 2:{
-                a = 87 * 0.017453292519943295F;
-                dir = 353.5F * 0.017453292519943295F;
-                update();
+                dir = 22.5F * 0.017453292519943295F;
+                dirX = (float)Math.cos(dir);
+                dirY = (float)Math.sin(dir);
                 break;
             }
-            case 3:{
-                a = 37 * 0.017453292519943295F;
-                dir = 18.5F * 0.017453292519943295F;
-                update();
+            case 3, 4, 5, 6:{
+                dir += 45F * 0.017453292519943295F;
+                dirX = (float)Math.cos(dir);
+                dirY = (float)Math.sin(dir);
                 break;
             }
-            case 4:{
+            case 7, 8:{
+                a -= 45 * 0.017453292519943295F;
+                dir += 22.5F * 0.017453292519943295F;
+                dirX = (float)Math.cos(dir);
+                dirY = (float)Math.sin(dir);
+                cosHalfAngle = (float)Math.cos(a * 0.5f);
+                break;
+            }
+            case 9:{
                 kill();
                 break;
             }
@@ -84,10 +88,10 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
     public boolean hitTestPoint(float X, float Y){
         float dx = ((X - x) * cos_rot + (Y - y) * sin_rot);
         float dy = ((Y - y) * cos_rot - (X - x) * sin_rot);
-        dy *= flatness;
         if (flipped){
             dy = -dy;
         }
+        dx -= 18.4F;
         if (dx > r || dy > r || dx < -r || dy < -r){
             return false;
         }
@@ -96,7 +100,7 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
             return false;
         float dot = dx * dirX + dy * dirY;
         float cos2 = cosHalfAngle * cosHalfAngle;
-        return dot > 0 && dot * dot >= dist2 * cos2;
+        return dot * dot >= dist2 * cos2;
     }
 
     @Override
@@ -107,7 +111,17 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
             g2d.translate(0, -y);
         }
         g2d.rotate(flipped ? -rot_radius : rot_radius, (int) x, (int) y);
-        super.draw(g2d);
+        float wrk = 0.017453292519943295F;
+        int startAngle = (int) (-(dir + a / 2) / wrk);
+        int arcAngle = (int) (a / wrk);
+        float biased = x + 18.4F;
+        g2d.drawArc((int)(biased - r), (int)(y - r), (int)(r * 2), (int)(r * 2), startAngle, arcAngle);
+        g2d.drawLine((int)biased, (int)y, (int)(biased + r * Math.cos(dir + a/2)), (int)(y + r * Math.sin(dir + a/2)));
+        g2d.drawLine((int)biased, (int)y, (int)(biased + r * Math.cos(dir - a/2)), (int)(y + r * Math.sin(dir- a/2)));
+        startAngle += 180;
+        g2d.drawArc((int)(biased - r), (int)(y - r), (int)(r * 2), (int)(r * 2), startAngle, arcAngle);
+        g2d.drawLine((int)biased, (int)y, (int)(biased - r * Math.cos(dir + a/2)), (int)(y - r * Math.sin(dir + a/2)));
+        g2d.drawLine((int)biased, (int)y, (int)(biased - r * Math.cos(dir - a/2)), (int)(y - r * Math.sin(dir- a/2)));
         g2d.rotate(flipped ? rot_radius : -rot_radius, (int) x, (int) y);
         if (flipped) {
             g2d.translate(0, y);

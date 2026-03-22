@@ -9,12 +9,13 @@ import java.awt.geom.Path2D;
 
 public class TateBall extends Ball {     //盾玉
     private final boolean flipped;
+    public int hurt_time = 0;
 
     public TateBall(float X, float Y, float R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         hp = 30;
         max_hp = 30;
-        flipped = rot > 90 + side && rot < 270 - side;
+        flipped = rot >= 90 + side && rot <= 270 + side;
     }
 
     @Override
@@ -25,7 +26,14 @@ public class TateBall extends Ball {     //盾玉
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y){
+    public void stepEx(){
+        if(hurt_time > 0){
+            hurt_time--;
+        };
+    }
+
+    @Override
+    public boolean hitTestPoint(float X, float Y){
         float dx = X - x;
         float dy = Y - y;
         if (dx > 54F || dy > 54 || dx < -54F || dy < -54F){

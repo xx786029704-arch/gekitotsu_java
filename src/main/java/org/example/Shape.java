@@ -17,7 +17,7 @@ public abstract class Shape {   //最基本的抽象形状类
         可能的优化：使用对象池处理弹幕产生和销毁
      */
 
-    public abstract Boolean hitTestPoint(float X, float Y);     //点碰撞
+    public abstract boolean hitTestPoint(float X, float Y);     //点碰撞
 
     public void move(float X, float Y) {
         x += X;

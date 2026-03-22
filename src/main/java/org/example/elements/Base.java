@@ -16,8 +16,8 @@ public class Base extends CompositeShape {  //车板类
     float yy;
     float old_x;
     float old_y;
-    float base_move_x = 0;
-    float base_move_y = 0;
+    public float base_move_x = 0;
+    public float base_move_y = 0;
 
     //TODO：车板可以像要塞壁一样优化碰撞，同时也不再需要子图形（最终版本）
     public Base(float X, float Y, int S) {
@@ -80,7 +80,7 @@ public class Base extends CompositeShape {  //车板类
             {
                 this.wrk = 0;
             }
-            Main.hp[this.side] -= (int) - this.wrk;
+            Main.hp[this.side] -= (int) this.wrk;
             System.out.println("hit wall");
             Main.cores[side].dmg_flg = true;
         }

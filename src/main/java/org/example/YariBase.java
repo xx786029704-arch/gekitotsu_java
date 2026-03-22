@@ -17,7 +17,7 @@ public class YariBase extends Shape {     //枪玉判定图形单元类
     public YariBase(float X, float Y, float RDeg, float iSX, float iX,float iY) {
         super(X, Y);
         flipped = !(RDeg < 90 || RDeg > 270);
-        rotRad = (flipped ? (RDeg + 180) % 360 : RDeg) * 0.01745329252F;
+        rotRad = (flipped ? (RDeg + 180) % 360 : RDeg) * 0.017453292519943295F;
         internalX = iX;
         internalScaleX = iSX;
         internalY = iY;
@@ -26,7 +26,7 @@ public class YariBase extends Shape {     //枪玉判定图形单元类
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y) {
+    public boolean hitTestPoint(float X, float Y) {
         //先把测试点反向旋转本对象的角度，然后如果有翻转再翻转，这样就得到了相当于该判定是无翻转旋转的时候的测试点位置
         float rawDx = X - this.x;
         float rawDy = Y - this.y;

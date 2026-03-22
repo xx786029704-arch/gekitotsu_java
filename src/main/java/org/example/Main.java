@@ -3,7 +3,6 @@ package org.example;
 import org.example.elements.Ball;
 import org.example.elements.Base;
 import org.example.elements.Core;
-import org.example.elements.hit.HitsKen;
 import org.example.elements.units.*;
 import org.example.elements.wall.*;
 import org.example.elements.units.BowBall;
@@ -32,11 +31,11 @@ import java.util.*;
 
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
-    public static final int LOGIC_TPS = 1000;      //帧率限制，0代表无限制
+    public static final int LOGIC_TPS = 120;      //帧率限制，0代表无限制
     public static boolean hitTestMode = false;       //碰撞测试模式，开启后可在下面的代码中测试你想测试碰撞箱的图形
 
     static boolean end = false;
-    static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
+    public static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
     static int j;   //怒土遍历用的变量
     static int i;   //怒土遍历用的变量
     public static String pskey = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";      //密码表
@@ -50,6 +49,8 @@ public class Main {
     public static boolean[] dokkan_flg = {false, false};    //受到撞击标记，有贽玉不会变成true
     public static Base[] bases;     //双方车板
     public static Core[] cores = new Core[]{null, null};    //双方老家
+    public static float[] core_x = new float[]{0, 0};
+    public static float[] core_y = new float[]{0, 0};
     public static int time = 0;     //计时器
     public static LinkedHashMap<Integer, Shape> elements = new LinkedHashMap<>();   //所有需要参与循环的部件
     public static CompositeShape[] wall = {new CompositeShape(0,0), new CompositeShape(0,0)};   //墙体
@@ -60,7 +61,12 @@ public class Main {
     public static CompositeShape[] team = {new CompositeShape(0,0), new CompositeShape(0,0)};   //队伍
     public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
     public static CompositeShape[] repair = {new CompositeShape(0,0), new CompositeShape(0,0)}; //修复
-    static String default_code = "000In3xkncxCxkn5yjxkmWubxkn1wrx5qaPNx5q5sYx69m5k vs 000In3xkncxCxkn5yjxkmWubxkn1wrx5qaPNx5q5sYx69m5k";    //默认对战代码，为空时在运行时手动输入
+    public static CompositeShape[] jump_u = {new CompositeShape(0,0), new CompositeShape(0,0)}; //近突
+    public static CompositeShape[] jump_f = {new CompositeShape(0,0), new CompositeShape(0,0)}; //远突
+    public static CompositeShape[] snipe = {new CompositeShape(0,0), new CompositeShape(0,0)}; //狙击
+    public static CompositeShape[] turn_ccw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //顺时针
+    public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
+    static String default_code = "000vrYa8GexWT01AOxa7B8jla4lVw9a4lSPdp01Ailp01zL9a8GhdEa8GewI8e2hNCr01tkTp01zeW vs 000dYpu00mPWu00mjGu00lw4";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
@@ -84,7 +90,7 @@ public class Main {
             main_setup(default_code.split(" vs "));
         }
         else {                                              //碰撞箱测试 ↓ 需开启碰撞箱测试模式
-            hitboxTest(new HitsKen(500, 500, 0, 0, 1, 1, 0), 400, 400, 580, 580, 2);
+            hitboxTest(new Wood(500, 300, 0, 25), 401, 401, 400, 400, 1);
             time = max_run_time;
         }
         if (ENABLE_VISUALIZATION || hitTestMode) {
@@ -115,8 +121,6 @@ public class Main {
     private static void game_set(){     //判断局势
         System.out.println("对局结束，用时: " + time);
         System.out.println("1P血量: " + hp[0] + ", 2P血量: " + hp[1]);
-        System.out.println(hp0_flg[0]);
-        System.out.println(hp0_flg[1]);
         if (hp0_flg[0] > 0 || hp0_flg[1] > 0){
             if(hp0_flg[0] == 0){
                 System.out.println("1P获胜");
@@ -143,13 +147,11 @@ public class Main {
             if (code[i].startsWith("0")){
                 cores[i] = new Core(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
             }
-            i++;
-        }
-        i = 0;
-        while (i <= 1) {
+            core_x[i] = cores[i].x;
+            core_y[i] = cores[i].y;
             j = 6;
             while (j < code[i].length()) {
-                int[] xyr = to_xyr(code[i].substring(j+1, j+6));
+                xyr = to_xyr(code[i].substring(j+1, j+6));
                 if (i == 1) {
                     xyr[0] = (380 - xyr[0]) + 1490;
                     xyr[2] = 180 - xyr[2];
@@ -169,6 +171,23 @@ public class Main {
         dokkan_flg[0] = false;
         dokkan_flg[1] = false;
         norikomi_flg = false;
+        j = 0;
+        while (j <= 1) {
+            if (hp0_flg[j] > 0){
+                j++;
+                continue;
+            }
+            core_x[j] = cores[j].x;
+            core_y[j] = cores[j].y;
+            for (Shape s : unit[j].getShapes()) {
+                if (s instanceof TargetBall) {
+                    core_x[j] = s.x;
+                    core_y[j] = s.y;
+                    break;
+                }
+            }
+            j++;
+        }
         if (hp0_flg[0] == 0 && hp0_flg[1] == 0 && bases[1].x - bases[1].xs - (bases[0].x + bases[0].xs) <= 380) {
             norikomi_flg = true;
             System.out.println("要塞相撞，时间: " + time);
@@ -263,6 +282,7 @@ public class Main {
             case 7: new DokyuBall(X, Y, R, S, TYPE);break;
             case 8: new YariBall(X, Y, R, S, TYPE);break;
             case 9: new CannonBall(X, Y, R, S, TYPE);break;
+            case 10: new NagiBall(X, Y, R, S, TYPE);break;
             case 11: new HaneBall(X, Y, R, S, TYPE);break;
             case 12: new RetsuBall(X, Y, R, S, TYPE);break;
             case 13: new ShotgunBall(X, Y, R, S, TYPE);break;
@@ -281,10 +301,16 @@ public class Main {
             case 35: new NinBall(X, Y, R, S, TYPE);break;
             case 37: new HanaBall(X, Y, R, S, TYPE);break;
             case 39: new PushBall(X, Y, R, S, TYPE);break;
+            case 42: new TargetBall(X, Y, R, S, TYPE);break;
             case 48: new KnightBall(X, Y, R, S, TYPE);break;
             case 49: new KakuBall(X, Y, R, S, TYPE);break;
             case 50: new ShaBall(X, Y, R, S, TYPE);break;
             case 52: new ConBall(X, Y, R, S, TYPE);break;
+            case 55: new Near(X, Y, S, TYPE); wrk = 1; break;
+            case 56: new Far(X, Y, S, TYPE); wrk = 1; break;
+            case 57: new Wide(X, Y, S, TYPE); wrk = 1; break;
+            case 58: new Narrow(X, Y, S, TYPE); wrk = 1; break;
+            case 59: new Snipe(X, Y, S, TYPE); wrk = 1; break;
             default: new Ball(X, Y, R, S, TYPE);break;
         }
         switch (wrk){

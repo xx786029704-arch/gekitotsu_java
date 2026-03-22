@@ -11,7 +11,7 @@ public class Round extends Shape{   //圆形类
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y){
+    public boolean hitTestPoint(float X, float Y){
         if (X - x > r || Y - y > r || x - X > r || y - Y > r){
             return false;
         }

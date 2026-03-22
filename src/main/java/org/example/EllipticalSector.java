@@ -25,8 +25,8 @@ public class EllipticalSector extends Shape {     //椭圆扇形类
         super(X, Y);
         r = R;
         flatness = _flatness;
-        a = angle * 0.01745329252F;
-        dir = direction * 0.01745329252F;
+        a = angle * 0.017453292519943295F;
+        dir = direction * 0.017453292519943295F;
         dirX = (float)Math.cos(dir);
         dirY = (float)Math.sin(dir);
         cosHalfAngle = (float)Math.cos(angle * 0.5f);
@@ -40,7 +40,7 @@ public class EllipticalSector extends Shape {     //椭圆扇形类
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y){
+    public boolean hitTestPoint(float X, float Y){
         float dx = X - x;
         float dy = (Y - y) * flatness;
         if (dx > r || dy > r || dx < -r || dy < -r){
@@ -62,7 +62,7 @@ public class EllipticalSector extends Shape {     //椭圆扇形类
 
     @Override
     public void draw(Graphics2D g2d) {
-        float wrk = 0.01745329252F;
+        float wrk = 0.017453292519943295F;
         int startAngle = (int) (-(dir + a / 2) / wrk);
         int arcAngle = (int) (a / wrk);
         g2d.drawArc((int)(x - r), (int)(y - r / flatness), (int)(r * 2), (int)(r * 2 / flatness), startAngle, arcAngle);

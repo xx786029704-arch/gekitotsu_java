@@ -7,7 +7,7 @@ public class HinokoBullet extends Bullet {   //花玉小子弹
 
     public HinokoBullet(float X, float Y, int S, float rotation) {   //初始化
         super(X, Y, S);
-        float rot_radius = rotation * 0.01745329252F;
+        float rot_radius = rotation * 0.017453292519943295F;
         float cos_rot = (float) Math.cos(rot_radius);
         float sin_rot = (float) Math.sin(rot_radius);
         this.x = X + cos_rot * 14F;
