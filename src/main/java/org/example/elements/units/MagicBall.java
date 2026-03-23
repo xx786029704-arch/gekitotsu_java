@@ -5,7 +5,7 @@ import org.example.elements.hit.HitsKabe;
 import org.example.elements.hit.MagicLaser;
 import org.example.Utils;
 
-public class MagicBall extends Ball {   //壁玉
+public class MagicBall extends Ball {   //魔玉
     public boolean shooting;
     public MagicBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);

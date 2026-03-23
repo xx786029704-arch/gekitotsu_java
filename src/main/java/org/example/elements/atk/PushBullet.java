@@ -48,6 +48,16 @@ public class PushBullet extends Bullet {   //押玉叭↑叭↓
                         return false;
                     }
                 }
+            } else if (shape instanceof SyouBullet target) {
+                float dx = this.x - target.x;
+                float dy = this.y - target.y;
+                if (dx * dx + dy * dy <= 900F) {
+                    boolean removed = target.pushBy(this.xs * 2, this.ys * 2);
+                    if (removed) {
+                        kill();
+                        return false;
+                    }
+                }
             }
         }
         kill();

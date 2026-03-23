@@ -7,7 +7,7 @@ import org.example.elements.hit.HitsKnight;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
-public class KnightBall extends TateBall {     //盾玉
+public class KnightBall extends TateBall {     //骑玉
     public KnightBall(float X, float Y, int R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         hp = 50;
