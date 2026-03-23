@@ -12,7 +12,7 @@ import java.util.*;
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
     public static final boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
-    public static final int LOGIC_TPS = 90;      //帧率限制，0代表无限制
+    public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
     public static boolean hitTestMode = false;       //碰撞测试模式，开启后可在下面的代码中测试你想测试碰撞箱的图形
 
     private static boolean end = false;
@@ -23,7 +23,7 @@ public class Main {
     private static GameWindow window;
     public static int ID = 0;   //待分配的ID，只会一直增长
     private static float wrk;   //怒土の神秘小变量
-    static int max_run_time = 65536;    //最大运行帧数
+    static int max_run_time = 81000;//65536;    //最大运行帧数
     private static final Scanner scanner = new Scanner(System.in);
     public static int[] hp = {100, 100};    //要塞血量
     public static int[] hp0_flg = {0, 0};   //要塞爆炸标记
@@ -53,7 +53,7 @@ public class Main {
     public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
     public static LinkedList<Integer>[] kekkaiIds = new LinkedList[]{new LinkedList<Integer>(), new LinkedList<Integer>()};
     public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
-    static String default_code = "000P6Rp005pd6005Vs vs 000n7M";    //默认对战代码，为空时在运行时手动输入
+    static String default_code = "000P6RAnPDL9 vs 000P6R";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
@@ -295,6 +295,8 @@ public class Main {
             case 17: new RepairBall(X, Y, R, S, TYPE);break;
             case 18: new HealBall(X, Y, R, S, TYPE);break;
             case 19: new KabeBall(X, Y, R, S, TYPE);break;
+            case 20: new TobiBall(X, Y, R, S, TYPE);break;
+            case 21: new SenBall(X, Y, R, S, TYPE);break;
             case 22: new MinigunBall(X, Y, R, S, TYPE);break;
             case 24: new KekkaiBall(X, Y, R, S, TYPE);break;
             case 25: new Wood(X, Y, S, TYPE); wrk = 1; break;
@@ -308,11 +310,14 @@ public class Main {
             case 33: new TonBall(X, Y, R, S, TYPE);break;
             case 34: new HolyBall(X, Y, R, S, TYPE);break;
             case 35: new NinBall(X, Y, R, S, TYPE);break;
+            case 36: new SyouBall(X, Y, R, S, TYPE);break;
             case 37: new HanaBall(X, Y, R, S, TYPE);break;
             case 39: new PushBall(X, Y, R, S, TYPE);break;
             case 40: new GeiBall(X, Y, R, S, TYPE);break;
             case 41: new NieBall(X, Y, R, S, TYPE);break;
             case 42: new TargetBall(X, Y, R, S, TYPE);break;
+            case 43: new TuiBall(X, Y, R, S, TYPE);break;
+            case 46: new HeriBall(X, Y, R, S, TYPE);break;
             case 47: new SaiBall(X, Y, R, S, TYPE);break;
             case 48: new KnightBall(X, Y, R, S, TYPE);break;
             case 49: new KakuBall(X, Y, R, S, TYPE);break;
