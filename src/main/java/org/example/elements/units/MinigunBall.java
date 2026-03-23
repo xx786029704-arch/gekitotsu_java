@@ -5,7 +5,7 @@ import org.example.elements.Bullet;
 import org.example.elements.atk.GunBullet;
 
 public class MinigunBall extends Ball {   //机玉
-    public MinigunBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public MinigunBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 200;
     }
@@ -24,7 +24,6 @@ public class MinigunBall extends Ball {   //机玉
 
     @Override
     public void hurt(boolean is_crash) {   //受击重置计时
-        super.hurt(is_crash);
         if (!is_crash) {
             this.cnt = 0;
         }

@@ -4,7 +4,7 @@ import org.example.elements.Ball;
 import org.example.elements.atk.GekiBullet;
 
 public class GekiBall extends Ball {   //击玉
-    public GekiBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public GekiBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 120;
     }

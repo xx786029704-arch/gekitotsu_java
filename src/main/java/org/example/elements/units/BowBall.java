@@ -4,7 +4,7 @@ import org.example.elements.Ball;
 import org.example.elements.Bullet;
 
 public class BowBall extends Ball {     //弓玉
-    public BowBall(float X, float Y, float R, int S, int TYPE) {
+    public BowBall(float X, float Y, int R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         speed = 30;
     }

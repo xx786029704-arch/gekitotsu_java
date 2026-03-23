@@ -6,27 +6,27 @@ import java.awt.geom.Path2D;
 public class YariBase extends Shape {     //枪玉判定图形单元类
 
     //基本图形先缩放，再平移，
-    public float rotRad;
-    private float internalScaleX;    //单元本身的缩放尺寸
-    private float internalX;
-    private float internalY;
-    private boolean flipped;
-    private float cosRot;
-    private float sinRot;
+    public int flipRad;
+    private final float internalScaleX;    //单元本身的缩放尺寸
+    private final float internalX;
+    private final float internalY;
+    private final boolean flipped;
+    private final float cosRot;
+    private final float sinRot;
 
-    public YariBase(float X, float Y, float RDeg, float iSX, float iX,float iY) {
+    public YariBase(float X, float Y, int RDeg, float iSX, float iX,float iY) {
         super(X, Y);
         flipped = !(RDeg < 90 || RDeg > 270);
-        rotRad = (flipped ? (RDeg + 180) % 360 : RDeg) * 0.017453292519943295F;
+        flipRad = flipped ? (RDeg + 180) % 360 : RDeg;
         internalX = iX;
         internalScaleX = iSX;
         internalY = iY;
-        cosRot = (float) Math.cos(rotRad);
-        sinRot = (float) Math.sin(rotRad);
+        cosRot = Utils.cos(flipRad);
+        sinRot = Utils.sin(flipRad);
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y) {
+    public boolean hitTestPoint(float X, float Y) {
         //先把测试点反向旋转本对象的角度，然后如果有翻转再翻转，这样就得到了相当于该判定是无翻转旋转的时候的测试点位置
         float rawDx = X - this.x;
         float rawDy = Y - this.y;

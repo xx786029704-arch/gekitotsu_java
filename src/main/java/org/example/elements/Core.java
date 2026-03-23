@@ -4,6 +4,8 @@ import org.example.CompositeShape;
 import org.example.Main;
 import org.example.ShapeBuilder;
 
+import java.awt.*;
+
 public class Core extends CompositeShape {      //核心类
     public int side;
     public float unit_x;

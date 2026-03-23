@@ -1,17 +1,15 @@
 package org.example.elements.atk;
 
 import org.example.Main;
+import org.example.Utils;
 import org.example.elements.Bullet;
 public class HinokoBullet extends Bullet {   //花玉小子弹
     private int cnt = 0;
 
-    public HinokoBullet(float X, float Y, int S, float rotation) {   //初始化
+    public HinokoBullet(float X, float Y, int S, int rotation) {   //初始化
         super(X, Y, S);
-        float rot_radius = rotation * 0.017453292519943295F;
-        float cos_rot = (float) Math.cos(rot_radius);
-        float sin_rot = (float) Math.sin(rot_radius);
-        this.x = X + cos_rot * 14F;
-        this.y = Y + sin_rot * 14F;
+        this.x = X + Utils.cos(rotation) * 14F;
+        this.y = Y + Utils.sin(rotation) * 14F;
         xySync();
     }
 

@@ -6,27 +6,25 @@ import org.example.Main;
 import java.awt.*;
 
 public class HitsKnight extends EllipticalSector {   //骑玉剑气
-    int side;
-    int frame;
-    int user;
-    float rot;
-    boolean flipped;
-    float cos_rot;
-    float sin_rot;
+    private final int side;
+    private int frame;
+    private final int user;
+    private final boolean flipped;
+    private final float cos_rot;
+    private final float sin_rot;
     @Deprecated
-    float rot_radius; //仅渲染使用，后期可删除
+    private final float rot_radius; //仅渲染使用，后期可删除
 
-    public HitsKnight(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
+    public HitsKnight(float X, float Y, int R, int S, int USER, float _cos_rot, float _sin_rot) {
         super(X, Y, 77, 74, 273, 1.132F, 0.052335956243F, -0.998629534754F, 0.79863551F);
         xySync();
         frame = 0;
-        rot = (R % 360 + 360) % 360;
         user = USER;
         side = S;
         cos_rot = _cos_rot;
         sin_rot = _sin_rot;
         rot_radius = R * 0.017453292519943295F;
-        flipped = rot >= 90 + side && rot <= 270 + side;
+        flipped = R >= 90 + side && R <= 270 + side;
         id = Main.addElement(this);
         Main.atk[side].addShape(this);
     }
@@ -80,7 +78,7 @@ public class HitsKnight extends EllipticalSector {   //骑玉剑气
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y){
+    public boolean hitTestPoint(float X, float Y){
         float dx = ((X - x) * cos_rot + (Y - y) * sin_rot);
         float dy = ((Y - y) * cos_rot - (X - x) * sin_rot);
         dy *= flatness;

@@ -2,13 +2,14 @@ package org.example.elements;
 
 import org.example.CompositeShape;
 import org.example.Main;
+import org.example.Shape;
 import org.example.ShapeBuilder;
+import org.example.elements.units.NieBall;
 
 public class Base extends CompositeShape {  //车板类
     public int axl;
     public int side;
     boolean tobasare_flg = false;
-    boolean wrk_flg = false;
     float wrk;
     public float xs;
     public float ys;
@@ -16,8 +17,8 @@ public class Base extends CompositeShape {  //车板类
     float yy;
     float old_x;
     float old_y;
-    float base_move_x = 0;
-    float base_move_y = 0;
+    public float base_move_x = 0;
+    public float base_move_y = 0;
 
     //TODO：车板可以像要塞壁一样优化碰撞，同时也不再需要子图形（最终版本）
     public Base(float X, float Y, int S) {
@@ -68,21 +69,29 @@ public class Base extends CompositeShape {  //车板类
         }
         else if (this.x > 1730) {
             this.wrk = Math.round((-this.xs) * 5) + 1;
-            this.xx = 1731;
+            this.xx = 1729;
             this.xs = (-this.xs) / 2;
             this.tobasare_flg = true;
         }
         if (this.tobasare_flg && Main.hp0_flg[this.side] == 0) {
-            this.wrk_flg = true;
-            Main.dokkan_flg[this.side] = true;
-            wrk = Math.round(wrk);
-            if (this.wrk < 0)
-            {
-                this.wrk = 0;
-            }
-            Main.hp[this.side] -= (int) - this.wrk;
             System.out.println("hit wall");
-            Main.cores[side].dmg_flg = true;
+            boolean nie_flg = false;
+            for (Shape s : Main.unit[side].getShapes()) {
+                if (s instanceof NieBall nie) {
+                    nie.alarm = 6;
+                    nie_flg = true;
+                    break;
+                }
+            }
+            if (!nie_flg){
+                Main.dokkan_flg[this.side] = true;
+                wrk = Math.round(wrk);
+                if (this.wrk < 0) {
+                    this.wrk = 0;
+                }
+                Main.hp[this.side] -= (int) this.wrk;
+                Main.cores[side].dmg_flg = true;
+            }
         }
     }
 }

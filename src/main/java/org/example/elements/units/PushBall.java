@@ -5,7 +5,7 @@ import org.example.elements.atk.PushBullet;
 
 public class PushBall extends Ball {   //押玉
 
-    public PushBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public PushBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 80;
     }

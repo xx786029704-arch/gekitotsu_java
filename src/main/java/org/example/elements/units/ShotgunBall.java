@@ -4,7 +4,7 @@ import org.example.elements.Ball;
 import org.example.elements.atk.ShotgunBullet;
 
 public class ShotgunBall extends Ball {   //散玉
-    public ShotgunBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public ShotgunBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 50;
     }
@@ -16,7 +16,7 @@ public class ShotgunBall extends Ball {   //散玉
             float spawnX = this.x + cos_rot * 40;
             float spawnY = this.y + sin_rot * 40;
             for (int i = 0; i < 9; i++) {
-                float atkRot = this.rot - 40 + 10 * i;
+                int atkRot = this.rot - 40 + 10 * i;
                 new ShotgunBullet(spawnX, spawnY, this.side, atkRot);
             }
         }

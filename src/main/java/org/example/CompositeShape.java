@@ -2,12 +2,13 @@ package org.example;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class CompositeShape extends Shape {     //复合形状类
 
     //可能的优化：也许可以换成链表
-    private final List<Shape> shapes = new ArrayList<>();   //所有包含的子形状
+    private final LinkedList<Shape> shapes = new LinkedList<>();   //所有包含的子形状
 
     /*
      这里可以直接用{{x, y, r}, {x, y, r}...}的二维数组存储所有的圆而不是用子形状
@@ -49,7 +50,7 @@ public class CompositeShape extends Shape {     //复合形状类
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y){
+    public boolean hitTestPoint(float X, float Y){
         for (Shape s : shapes){
             if (s.hitTestPoint(X, Y))
                 return true;

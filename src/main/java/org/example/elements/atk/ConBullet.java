@@ -13,11 +13,16 @@ public class ConBullet extends Bullet {   //梱玉导弹
     private int hp = 5;
     private int cnt = 0;
     private int nextTargetIndex = -1;
+    private final int rot;
+    private final float cos_rot;
+    private final float sin_rot;
 
-    public ConBullet(float X, float Y, int S, float rotation) {   //初始化
+    public ConBullet(float X, float Y, int S, int rotation, float _cos_rot, float _sin_rot) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
         this.r = 12.4F;
+        cos_rot = _cos_rot;
+        sin_rot = _sin_rot;
         updateVelocity();
     }
 
@@ -67,8 +72,7 @@ public class ConBullet extends Bullet {   //梱玉导弹
     }
 
     private void updateVelocity() {   //更新速度向量
-        float rad = (float) Math.toRadians(this.rot);
-        this.xs = (float) Math.cos(rad) * this.speed;
-        this.ys = (float) Math.sin(rad) * this.speed;
+        this.xs = cos_rot * this.speed;
+        this.ys = sin_rot * this.speed;
     }
 }

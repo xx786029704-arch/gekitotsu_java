@@ -1,12 +1,13 @@
 package org.example.elements.units;
 
 import org.example.Main;
+import org.example.Utils;
 import org.example.elements.Ball;
 import org.example.elements.Core;
 import org.example.elements.atk.SniperBullet;
 
 public class SniperBall extends Ball {   //狙玉
-    public SniperBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public SniperBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 100;
     }
@@ -34,7 +35,8 @@ public class SniperBall extends Ball {   //狙玉
             } else if (this.rot < 0) {
                 this.rot += 360;
             }
-            updateRadiusCache();
+            cos_rot = Utils.cos(rot);
+            sin_rot = Utils.sin(rot);
         }
         if (this.cnt == this.speed) {
             this.cnt = 0;

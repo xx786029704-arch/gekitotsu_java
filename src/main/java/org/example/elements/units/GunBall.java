@@ -5,7 +5,7 @@ import org.example.elements.Bullet;
 import org.example.elements.atk.GunBullet;
 
 public class GunBall extends Ball {     //铳玉
-    public GunBall(float X, float Y, float R, int S, int TYPE) {
+    public GunBall(float X, float Y, int R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         speed = 60;
     }

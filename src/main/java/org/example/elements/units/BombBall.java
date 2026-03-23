@@ -5,7 +5,7 @@ import org.example.elements.atk.BombBullet;
 
 public class BombBall extends Ball {
 
-    public BombBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public BombBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 80;
     }

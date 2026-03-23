@@ -2,6 +2,7 @@ package org.example.elements;
 
 import org.example.Main;
 import org.example.Round;
+import org.example.Utils;
 import org.example.elements.hit.HitsDrop;
 
 public class Bullet extends Round {     //子弹基类
@@ -10,7 +11,6 @@ public class Bullet extends Round {     //子弹基类
     public int gei_flg = 1;
     public float xs = 0;
     public float ys = 0;
-    public float rot = 0;
     public float gravity = 0;
 
     public Bullet(float X, float Y, int S) {
@@ -68,8 +68,8 @@ public class Bullet extends Round {     //子弹基类
         return this;
     }
 
-    public Bullet setVecR(float r, float power){      //设置运动向量，极坐标版
-        setVec((float) Math.cos(r) * power, (float) Math.sin(r) * power);
+    public Bullet setVecR(int r, float power){      //设置运动向量，极坐标版
+        setVec(Utils.cos(r) * power, Utils.sin(r) * power);
         return this;
     }
 

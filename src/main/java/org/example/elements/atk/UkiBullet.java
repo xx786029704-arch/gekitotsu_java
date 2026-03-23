@@ -2,6 +2,7 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.Round;
+import org.example.Utils;
 import org.example.elements.hit.HitsBombMult;
 
 public class UkiBullet extends Round {   //浮玉子弹
@@ -10,7 +11,7 @@ public class UkiBullet extends Round {   //浮玉子弹
     private int hp = 1;
     private float xs = 0;
     private float ys = 0;
-    private float yrot = 0;
+    private int yrot = 0;
     private float ysin = 0;
     private float ycos = 0;
 
@@ -60,12 +61,11 @@ public class UkiBullet extends Round {   //浮玉子弹
     }
 
     private void updateFloatOffset() {
-        this.yrot = this.yrot + 10F;
-        if (this.yrot > 360F) {
-            this.yrot = this.yrot - 360F;
+        this.yrot = this.yrot + 10;
+        if (this.yrot > 360) {
+            this.yrot = this.yrot - 360;
         }
-        float yrad = (float) Math.toRadians(this.yrot);
-        this.ysin = (float) Math.sin(yrad);
-        this.ycos = (float) Math.cos(yrad);
+        this.ysin = Utils.sin(yrot);
+        this.ycos = Utils.cos(yrot);
     }
 }

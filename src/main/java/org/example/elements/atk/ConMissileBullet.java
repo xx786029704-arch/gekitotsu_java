@@ -12,8 +12,9 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
     private int cnt = 0;
     private final int targetId;
     private float desiredRot;
+    private float rot;
 
-    public ConMissileBullet(float X, float Y, int S, float rotation, int targetId) {   //初始化
+    public ConMissileBullet(float X, float Y, int S, int rotation, int targetId) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
         this.desiredRot = rotation;

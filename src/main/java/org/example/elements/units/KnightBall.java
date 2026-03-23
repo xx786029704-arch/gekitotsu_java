@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 
 public class KnightBall extends TateBall {     //盾玉
-    public KnightBall(float X, float Y, float R, int S, int TYPE) {
+    public KnightBall(float X, float Y, int R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         hp = 50;
         max_hp = 50;
@@ -17,8 +17,7 @@ public class KnightBall extends TateBall {     //盾玉
 
     @Override
     public void stepEx(){
-        if (this.cnt == this.speed)
-        {
+        if (this.cnt == this.speed) {
             this.cnt = 0;
             new HitsKnight(x, y, rot, side, id, cos_rot, sin_rot);
         }

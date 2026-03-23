@@ -9,8 +9,9 @@ import org.example.elements.hit.HitsBomb;
 public class MissileBullet extends Bullet {   //导玉导弹
     private int cnt = 0;
     private float speed = 4F;
+    private float rot;
 
-    public MissileBullet(float X, float Y, int S, float rotation) {   //初始化
+    public MissileBullet(float X, float Y, int S, int rotation) {   //初始化
         super(X, Y, S);
         this.rot = rotation;
         this.gei_flg = 1;

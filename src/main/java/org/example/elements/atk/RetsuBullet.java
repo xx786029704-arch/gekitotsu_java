@@ -16,7 +16,7 @@ public class RetsuBullet extends Bullet {   //裂玉子弹
             for (int i = 0; i < 7; i++) {
                 float atkRot = splitRot - 30 + 10 * i;
                 float rad = (float) Math.toRadians(atkRot);
-                new Bullet(this.x, this.y, this.side).setVecR(rad, 20).move();
+                new GunBullet(this.x, this.y, this.side).setVecMult((float)Math.cos(rad), (float)Math.sin(rad), 20).move();
             }
             kill();
             return;

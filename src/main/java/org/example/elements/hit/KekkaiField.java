@@ -5,110 +5,146 @@ import org.example.Shape;
 import org.example.elements.units.KekkaiBall;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
-public class KekkaiField extends Shape {   //界玉的结界
+public class KekkaiField extends Shape {        //界玉结界（gemini优化版)
     private static final float LINE_WIDTH = 30F;
-    private static final float HALF_WIDTH = LINE_WIDTH * 0.5F;
-    private final int side;
-    private final List<float[]> points = new ArrayList<>();
-    private final List<float[]> segments = new ArrayList<>();
+    private static final float HALF_WIDTH = 15F;
+    private static final float LIMIT_SQ = HALF_WIDTH * HALF_WIDTH;
 
-    public KekkaiField(int side) {   //初始化
+    private final int side;
+
+    // 1. 数组扁平化：彻底消灭 ArrayList 和 float[] 对象的每帧分配 (Zero GC)
+    private float[] pointsX = new float[4]; // 初始容量，会自动扩容
+    private float[] pointsY = new float[4];
+    private int activePoints = 0;
+
+    // 2. AABB 快速剔除边界
+    private float minX, maxX, minY, maxY;
+
+    // 3. 渲染对象缓存
+    private final Stroke cachedStroke = new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    private final Color cachedColor;
+
+    public KekkaiField(int side) {
         super(0, 0);
         this.side = side;
         this.id = Main.addElement(this);
+        this.cachedColor = (side == 0) ? new Color(0, 255, 255, 120) : new Color(255, 128, 0, 120);
         Main.shield[side].addShape(this);
     }
 
     @Override
-    public void step() {   //每帧更新结界线段
+    public void step() {
         rebuildSegments();
     }
 
     private void rebuildSegments() {
-        points.clear();
-        segments.clear();
         List<Integer> ids = Main.kekkaiIds[side];
-        for (int i = 0; i < ids.size(); i++) {
-            Integer id = ids.get(i);
-            if (!Main.elements.containsKey(id)) {
-                continue;
-            }
-            if (!(Main.elements.get(id) instanceof KekkaiBall)) {
-                continue;
-            }
-            KekkaiBall ball = (KekkaiBall) Main.elements.get(id);
-            if (ball.jump_flg != 0 || ball.side != ball.on_side || ball.hurt_time > 0) {
-                continue;
-            }
-            float px = ball.x + ball.cos_rot * 33F;
-            float py = ball.y + ball.sin_rot * 33F;
-            points.add(new float[]{px, py});
+        int size = ids.size();
+
+        // 确保数组容量充足，避免越界
+        if (pointsX.length < size) {
+            pointsX = new float[size * 2];
+            pointsY = new float[size * 2];
         }
-        if (points.size() < 2) {
-            return;
+
+        activePoints = 0;
+        float tMinX = Float.MAX_VALUE, tMaxX = -Float.MAX_VALUE;
+        float tMinY = Float.MAX_VALUE, tMaxY = -Float.MAX_VALUE;
+
+        for (int i = 0; i < size; i++) {
+            // 4. 优化 Map 查找：一次 get 搞定，干掉 containsKey
+            Shape s = Main.elements.get(ids.get(i));
+            if (s instanceof KekkaiBall ball) {
+                if (ball.jump_flg == 0 && ball.side == ball.on_side && ball.hurt_time <= 0) {
+                    float px = ball.x + ball.cos_rot * 33F;
+                    float py = ball.y + ball.sin_rot * 33F;
+
+                    pointsX[activePoints] = px;
+                    pointsY[activePoints] = py;
+                    activePoints++;
+
+                    // 维护 AABB 包围盒
+                    if (px < tMinX) tMinX = px;
+                    if (px > tMaxX) tMaxX = px;
+                    if (py < tMinY) tMinY = py;
+                    if (py > tMaxY) tMaxY = py;
+                }
+            }
         }
-        for (int i = 0; i < points.size(); i++) {
-            float[] p1 = points.get(i);
-            float[] p2 = points.get((i + 1) % points.size());
-            segments.add(new float[]{p1[0], p1[1], p2[0], p2[1]});
-        }
+
+        // 加上线宽半径作为最终 AABB 边界
+        this.minX = tMinX - HALF_WIDTH;
+        this.maxX = tMaxX + HALF_WIDTH;
+        this.minY = tMinY - HALF_WIDTH;
+        this.maxY = tMaxY + HALF_WIDTH;
     }
 
     @Override
-    public Boolean hitTestPoint(float X, float Y) {   //点碰撞
-        if (segments.isEmpty()) {
+    public boolean hitTestPoint(float X, float Y) {
+        if (activePoints < 2) return false;
+
+        // 5. Broad-Phase AABB 快速剔除：如果点在结界包围盒外，直接 O(1) 结束！
+        if (X < minX || X > maxX || Y < minY || Y > maxY) {
             return false;
         }
-        float limit2 = HALF_WIDTH * HALF_WIDTH;
-        for (int i = 0; i < segments.size(); i++) {
-            float[] s = segments.get(i);
-            if (distanceToSegmentSquared(X, Y, s[0], s[1], s[2], s[3]) <= limit2) {
+
+        // 6. 干掉 Segment 数组，直接使用点数组进行循环，并手动内联数学运算以榨干方法调用开销
+        for (int i = 0; i < activePoints; i++) {
+            float x1 = pointsX[i];
+            float y1 = pointsY[i];
+            // 取消耗时的取模运算 (%)
+            int nextIdx = (i + 1 == activePoints) ? 0 : i + 1;
+            float x2 = pointsX[nextIdx];
+            float y2 = pointsY[nextIdx];
+
+            // 以下为内联的 distanceToSegmentSquared
+            float vx = x2 - x1;
+            float vy = y2 - y1;
+            float wx = X - x1;
+            float wy = Y - y1;
+            float c1 = vx * wx + vy * wy;
+
+            float distSq;
+            if (c1 <= 0) {
+                float dx = X - x1;
+                float dy = Y - y1;
+                distSq = dx * dx + dy * dy;
+            } else {
+                float c2 = vx * vx + vy * vy;
+                if (c2 <= c1) {
+                    float dx = X - x2;
+                    float dy = Y - y2;
+                    distSq = dx * dx + dy * dy;
+                } else {
+                    float b = c1 / c2;
+                    float bx = x1 + b * vx;
+                    float by = y1 + b * vy;
+                    float dx = X - bx;
+                    float dy = Y - by;
+                    distSq = dx * dx + dy * dy;
+                }
+            }
+
+            if (distSq <= LIMIT_SQ) {
                 return true;
             }
         }
         return false;
     }
 
-    private float distanceToSegmentSquared(float px, float py, float x1, float y1, float x2, float y2) {
-        float vx = x2 - x1;
-        float vy = y2 - y1;
-        float wx = px - x1;
-        float wy = py - y1;
-        float c1 = vx * wx + vy * wy;
-        if (c1 <= 0) {
-            float dx = px - x1;
-            float dy = py - y1;
-            return dx * dx + dy * dy;
-        }
-        float c2 = vx * vx + vy * vy;
-        if (c2 <= c1) {
-            float dx = px - x2;
-            float dy = py - y2;
-            return dx * dx + dy * dy;
-        }
-        float b = c1 / c2;
-        float bx = x1 + b * vx;
-        float by = y1 + b * vy;
-        float dx = px - bx;
-        float dy = py - by;
-        return dx * dx + dy * dy;
-    }
-
     @Override
     public void draw(Graphics2D g2d) {
-        if (segments.isEmpty()) {
-            return;
-        }
+        if (activePoints < 2) return;
         Stroke prev = g2d.getStroke();
         Color prevColor = g2d.getColor();
-        g2d.setStroke(new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2d.setColor(side == 0 ? new Color(0, 255, 255, 120) : new Color(255, 128, 0, 120));
-        for (int i = 0; i < segments.size(); i++) {
-            float[] s = segments.get(i);
-            g2d.drawLine((int) s[0], (int) s[1], (int) s[2], (int) s[3]);
+        // 使用缓存的对象
+        g2d.setStroke(cachedStroke);
+        g2d.setColor(cachedColor);
+        for (int i = 0; i < activePoints; i++) {
+            int nextIdx = (i + 1 == activePoints) ? 0 : i + 1;
+            g2d.drawLine((int) pointsX[i], (int) pointsY[i], (int) pointsX[nextIdx], (int) pointsY[nextIdx]);
         }
         g2d.setStroke(prev);
         g2d.setColor(prevColor);

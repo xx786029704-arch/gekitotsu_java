@@ -11,7 +11,7 @@ public class HitsDropFrames extends Round {   //基础攻击判定（黑线）
 
     public HitsDropFrames(float X, float Y, CompositeShape S, int frame, float scale) {
         super(X, Y, 15.5F * scale);
-        xySync();
+        xySync();       //大概率可以删掉，不太确定
         this.frames = frame;
         id = Main.addElement(this);
         S.addShape(this);

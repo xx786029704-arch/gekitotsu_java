@@ -10,11 +10,14 @@ import java.awt.geom.Path2D;
 public class TateBall extends Ball {     //盾玉
     private final boolean flipped;
     public int hurt_time = 0;
+    @Deprecated
+    private float rot_radius;
 
-    public TateBall(float X, float Y, float R, int S, int TYPE) {
+    public TateBall(float X, float Y, int R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         hp = 30;
         max_hp = 30;
+        rot_radius = (float) Math.toRadians(R);
         flipped = rot >= 90 + side && rot <= 270 + side;
     }
 

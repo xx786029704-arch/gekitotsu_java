@@ -4,7 +4,7 @@ import org.example.elements.Ball;
 import org.example.elements.atk.RetsuBullet;
 
 public class RetsuBall extends Ball {   //裂玉
-    public RetsuBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public RetsuBall(float X, float Y,int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 120;
     }

@@ -6,12 +6,12 @@ import org.example.ShapeBuilder;
 import org.example.YariBase;
 
 public class HitsYari extends CompositeShape {   //剑玉剑气
-    int side;
+    private final int side;
     int frame;
-    int user;
-    float rot;
+    private final int user;
+    private final int rot;
 
-    public HitsYari(float X, float Y, float R, int S, int USER) {
+    public HitsYari(float X, float Y, int R, int S, int USER) {
         super(X, Y);
         xySync();
         frame = 0;
@@ -26,14 +26,6 @@ public class HitsYari extends CompositeShape {   //剑玉剑气
     public void kill() {
         Main.elements.remove(id);
         Main.atk[side].removeShape(this);
-    }
-
-    @Override
-    public Boolean hitTestPoint(float X,float Y){
-        Boolean a= super.hitTestPoint(X,Y);
-
-        //System.out.println("hittest"+X+","+Y+","+a);
-        return a;
     }
 
     @Override

@@ -6,27 +6,25 @@ import org.example.Sector;
 import java.awt.*;
 
 public class HitsNagi extends Sector {
-    int side;
-    int frame;
-    int user;
-    float rot;
-    boolean flipped;
-    float cos_rot;
-    float sin_rot;
+    private final int side;
+    private int frame;
+    private final int user;
+    private final boolean flipped;
+    private final float cos_rot;
+    private final float sin_rot;
     @Deprecated
-    float rot_radius;
+    private final float rot_radius;
 
-    public HitsNagi(float X, float Y, float R, int S, int USER, float _cos_rot, float _sin_rot) {
+    public HitsNagi(float X, float Y, int R, int S, int USER, float _cos_rot, float _sin_rot) {
         super(X, Y, 63, 45, 292.5F);
         xySync();
         frame = 0;
-        rot = (R % 360 + 360) % 360;
         user = USER;
         side = S;
         cos_rot = _cos_rot;
         sin_rot = _sin_rot;
         rot_radius = R * 0.017453292519943295F;
-        flipped = rot >= 90 + side && rot <= 270 + side;
+        flipped = R >= 90 + side && R <= 270 + side;
         id = Main.addElement(this);
         Main.atk[side].addShape(this);
     }
@@ -123,5 +121,6 @@ public class HitsNagi extends Sector {
             g2d.scale(1, -1);
             g2d.translate(0, -y);
         }
+
     }
 }

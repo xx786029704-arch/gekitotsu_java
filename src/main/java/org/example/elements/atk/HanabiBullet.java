@@ -4,11 +4,11 @@ import org.example.Main;
 import org.example.elements.Bullet;
 public class HanabiBullet extends Bullet {   //花玉子弹
     private int cnt = 0;
+    private final int rot;
 
-    public HanabiBullet(float X, float Y, int S) {   //初始化
+    public HanabiBullet(float X, float Y, int S, int R) {   //初始化
         super(X, Y, S);
-        this.gei_flg = 1;
-        this.gravity = 0;
+        this.rot = R;
         this.r = this.r * 0.8F;
     }
 
@@ -26,11 +26,10 @@ public class HanabiBullet extends Bullet {   //花玉子弹
         move();
     }
 
-    //TODO: 可以算出来20个角度的正余弦值，不过花玉使用频率较低且编译器有可能提前优化，修改优先级较低
     @Override
     public boolean hit() {   //触发散射
         for (int i = 0; i < 20; i++) {
-            float rot = this.rot + 18F * i;
+            int rot = this.rot + 18 * i;
             new HinokoBullet(this.x, this.y, this.side, rot).setVecR(rot, 30);
         }
         return super.hit();

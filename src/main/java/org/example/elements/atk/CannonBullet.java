@@ -11,7 +11,6 @@ public class CannonBullet extends Bullet {   //炮玉炮弹
     public CannonBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
         gravity = 0.08F;
-        gei_flg = 1;
     }
 
     @Override

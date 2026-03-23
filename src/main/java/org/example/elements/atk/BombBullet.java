@@ -8,7 +8,6 @@ import org.example.elements.hit.HitsBomb;
 public class BombBullet extends Bullet {   //爆玉子弹
     public BombBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
-        gei_flg = 1;
     }
 
     @Override

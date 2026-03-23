@@ -6,7 +6,7 @@ import org.example.elements.atk.TonBullet;
 
 public class TonBall extends Ball {   //弹玉
 
-    public TonBall(float X, float Y, float R, int S, int TYPE) {   //初始化
+    public TonBall(float X, float Y, int R, int S, int TYPE) {   //初始化
         super(X, Y, R, S, TYPE);
         speed = 70;
     }

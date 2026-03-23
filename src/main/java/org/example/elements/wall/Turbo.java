@@ -15,4 +15,26 @@ public class Turbo extends Wall {
         super.kill();
         Main.bases[side].axl-=2;
     }
+
+    @Override
+    public void step(){
+        if (Main.bases[side] == null){
+            super.kill();
+            return;
+        }
+        this.move(Main.bases[side].base_move_x,Main.bases[side].base_move_y);
+        stepEx();
+        if (Main.atk[1-side].hitTestPoint(this.x - 6, this.y - 6) ||
+                Main.atk[1-side].hitTestPoint(this.x + 6, this.y - 6) ||
+                Main.atk[1-side].hitTestPoint(this.x - 6, this.y + 6) ||
+                Main.atk[1-side].hitTestPoint(this.x + 6, this.y + 6)) {
+            hp--;
+            if (this.hp <= 0) {
+                kill();
+            }
+        }
+        if (hp < max_hp && Main.repair[side].hitTestPoint(this.x, this.y)) {
+            hp ++;
+        }
+    }
 }

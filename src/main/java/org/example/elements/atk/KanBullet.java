@@ -5,17 +5,9 @@ import org.example.elements.Bullet;
 import org.example.elements.hit.HitsDrop;
 
 public class KanBullet extends Bullet {   //贯玉子弹
-    private static final float SPEED = 40F;
 
-    public KanBullet(float X, float Y, int S, float rotation) {   //初始化
+    public KanBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
-        this.rot = rotation;
-        float rad = (float) Math.toRadians(rotation);
-        this.xs = (float) Math.cos(rad) * SPEED;
-        this.ys = (float) Math.sin(rad) * SPEED;
-        this.x = X + this.xs;
-        this.y = Y + this.ys;
-        xySync();
     }
 
     @Override

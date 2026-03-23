@@ -9,8 +9,8 @@ import org.example.elements.hit.HitsKen;
 public class Wall extends CompositeShape {  //要塞壁类
     public int side;
     public int type;
-    public int hp = 10;
-    public int max_hp = 10;
+    public int hp = 35;
+    public int max_hp = 35;
     public int breaking = 0;
 
     public Wall(float X, float Y, int S, int TYPE) {
@@ -30,6 +30,10 @@ public class Wall extends CompositeShape {  //要塞壁类
 
     @Override
     public void step(){
+        if (Main.bases[side] == null){
+            kill();
+            return;
+        }
         this.move(Main.bases[side].base_move_x,Main.bases[side].base_move_y);
         stepEx();
         if (breaking > 0 || Main.hp0_flg[this.side] > 0) {
@@ -57,7 +61,7 @@ public class Wall extends CompositeShape {  //要塞壁类
     }
 
     @Override   //重写 HitTestPoint，只需要一次AABB检测而非原先的6次，分成9个区域进行检测，5个区域可直接通过，剩下4个区域拼成一个圆形再检测，极大程度节省性能
-    public Boolean hitTestPoint(float X, float Y){
+    public boolean hitTestPoint(float X, float Y){
         float dx = X - x;
         float dy = Y - y;
         if (dx < -16.85F || dx > 17.5F || dy < -17.5F || dy > 17.5F){
@@ -81,6 +85,6 @@ public class Wall extends CompositeShape {  //要塞壁类
         } else {
             dy += 13.5F;
         }
-        return dx * dx + dy * dy < 16F;
+        return dx * dx + dy * dy <= 16F;     //此值<=12.27时，四段突可以生效
     }
 }

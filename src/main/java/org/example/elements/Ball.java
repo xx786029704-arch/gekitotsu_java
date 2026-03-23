@@ -2,6 +2,8 @@ package org.example.elements;
 
 import org.example.Main;
 import org.example.Round;
+import org.example.Utils;
+import org.example.elements.hit.HitsDrop;
 
 public class Ball extends Round {       //兵玉基类
     public int side;
@@ -12,25 +14,25 @@ public class Ball extends Round {       //兵玉基类
     public int on_side;
     public int hp = 10;
     public int max_hp = 10;
-    public float rot;
+    public int rot;
     public float drop_y = 0;
     public float xs = 0;
     public float ys = 0;
-    public float rot_radius;    //角度（弧度制）可以提前算好，遇到旋转壁再更新
     public float cos_rot;
     public float sin_rot;
+    //TODO：因为玉的角度都是整数，所以可以尝试做一个0-359度的正余弦值表
 
 
-    public Ball(float X, float Y, float R, int S, int TYPE) {
+
+    public Ball(float X, float Y, int R, int S, int TYPE) {
         super(X, Y, 23.25F);
         xySync();
         this.side = S;
         this.on_side = S;
         this.rot = R;
         this.type = TYPE;
-        this.rot_radius = R * 0.017453292519943295F;
-        this.cos_rot = (float) Math.cos(rot_radius);
-        this.sin_rot = (float) Math.sin(rot_radius);
+        this.cos_rot = Utils.cos(R);
+        this.sin_rot = Utils.sin(R);
         id = Main.addElement(this);
         Main.unit[side].addShape(this);
     }
@@ -52,6 +54,16 @@ public class Ball extends Round {       //兵玉基类
         }
         else {
             if (!jump()) return;
+        }
+        if (Main.saihai_cnt[side] > 0) {
+            if (jump_flg == 0 && side != on_side || jump_flg == 2) {
+                jump_flg = 1;
+                xs = Utils.cos(Main.saihai_rot[side]) * 4;
+                ys = -2 + Utils.sin(Main.saihai_rot[side]) * 4;
+                if (ys > -2) {
+                    ys = -2;
+                }
+            }
         }
         if (jump_flg == 0 && Main.jump_u[side].hitTestPoint(x, y)){
             jump_flg = 1;
@@ -79,14 +91,14 @@ public class Ball extends Round {       //兵玉基类
             hp--;
         }
         if (hp <= 0 || Main.hp0_flg[on_side] > 0 && jump_flg == 0) {
+            new HitsDrop(this.x, this.y, Main.unit[side]);
+            Main.dead_last[side] = type;
             kill();
             return;
         }
 
-        if (hp < max_hp)
-        {
-            if (Main.heal[side].hitTestPoint(x, y))
-            {
+        if (hp < max_hp) {
+            if (Main.heal[side].hitTestPoint(x, y)) {
                 hp++;
             }
         }
@@ -94,7 +106,6 @@ public class Ball extends Round {       //兵玉基类
     }
 
     public void stepEx(){   //如果基础行动判定通过则进行的额外行为
-
     }
 
     public boolean land(){      //正常
@@ -125,8 +136,8 @@ public class Ball extends Round {       //兵玉基类
 
     public boolean ground(){    //地面
         cnt++;
-        if (Main.wall[1 - side].hitTestPoint(x, y))
-        {
+        if (Main.wall[1 - side].hitTestPoint(x, y)) {
+            Main.dead_last[side] = type;
             kill();
             return false;
         }
@@ -137,7 +148,7 @@ public class Ball extends Round {       //兵玉基类
         ys += 0.32F;
         x = x + xs;
         y = y + ys;
-        ySync();
+        xySync();
         if (y >= 566) {
             y = 566;
             xs = 0;
@@ -159,12 +170,6 @@ public class Ball extends Round {       //兵玉基类
     public void hurt(boolean is_crash){
     }   //受伤
 
-    public void updateRadiusCache(){
-        this.rot_radius = rot * 0.017453292519943295F;
-        this.cos_rot = (float) Math.cos(rot_radius);
-        this.sin_rot = (float) Math.sin(rot_radius);
-    }
-
     public void snipe(){
         int wrk_target = (int) Math.round(Math.toDegrees(Math.atan2(Main.core_y[1 - side] - y, Main.core_x[1 - side] - x)));
         if (rot - 180 > wrk_target) {
@@ -174,14 +179,12 @@ public class Ball extends Round {       //兵玉基类
         }
         if (rot > wrk_target) {
             --rot;
-            rot_radius = rot * 0.017453292519943295F;
-            cos_rot = (float) Math.cos(rot_radius);
-            sin_rot = (float) Math.sin(rot_radius);
+            cos_rot = Utils.cos(rot);
+            sin_rot = Utils.sin(rot);
         } else if (rot < wrk_target) {
             ++rot;
-            rot_radius = rot * 0.017453292519943295F;
-            cos_rot = (float) Math.cos(rot_radius);
-            sin_rot = (float) Math.sin(rot_radius);
+            cos_rot = Utils.cos(rot);
+            sin_rot = Utils.sin(rot);
         }
         if (rot > 360) {
             rot = rot - 360;
@@ -192,9 +195,8 @@ public class Ball extends Round {       //兵玉基类
 
     public void turn(int degree){
         rot = rot + (on_side == 0 ? 1 : -1) * degree;
-        rot_radius = rot * 0.017453292519943295F;
-        cos_rot = (float) Math.cos(rot_radius);
-        sin_rot = (float) Math.sin(rot_radius);
+        cos_rot = Utils.cos(rot);
+        sin_rot = Utils.sin(rot);
         if (rot > 360) {
             rot = rot - 360;
         }

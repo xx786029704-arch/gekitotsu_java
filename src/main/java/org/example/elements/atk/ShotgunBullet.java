@@ -1,17 +1,16 @@
 package org.example.elements.atk;
 
 import org.example.Main;
+import org.example.Utils;
 import org.example.elements.Bullet;
 public class ShotgunBullet extends Bullet {   //散玉霰弹
     private int cnt = 0;
 
-    public ShotgunBullet(float X, float Y, int S, float rotation) {   //初始化
+    public ShotgunBullet(float X, float Y, int S, int rotation) {   //初始化
         super(X, Y, S);
-        this.rot = rotation;
         float power = 27F + (float) (Math.random() * 7F);
-        float rad = (float) Math.toRadians(this.rot);
-        this.xs = (float) Math.cos(rad) * power;
-        this.ys = (float) Math.sin(rad) * power;
+        this.xs = Utils.cos(rotation) * power;
+        this.ys = Utils.sin(rotation) * power;
     }
 
     @Override
