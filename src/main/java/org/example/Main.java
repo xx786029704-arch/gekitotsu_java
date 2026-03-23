@@ -13,7 +13,7 @@ import java.util.*;
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
     public static final boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
-    public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
+    public static final int LOGIC_TPS = 120;      //帧率限制，0代表无限制
     public static boolean hitTestMode = false;       //碰撞测试模式，开启后可在下面的代码中测试你想测试碰撞箱的图形
 
     static boolean end = false;
@@ -24,7 +24,7 @@ public class Main {
     private static GameWindow window;
     public static int ID = 0;   //待分配的ID，只会一直增长
     static float wrk;   //怒土の神秘小变量
-    static int max_run_time = 11111111;//65536;    //最大运行帧数
+    static int max_run_time = 2222222;//65536;    //最大运行帧数
     static Scanner scanner = new Scanner(System.in);
     public static int[] hp = {100, 100};    //要塞血量
     public static int[] hp0_flg = {0, 0};   //要塞爆炸标记
@@ -51,7 +51,7 @@ public class Main {
     public static List<Integer>[] kekkaiIds = new ArrayList[]{new ArrayList<>(), new ArrayList<>()};
     public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
     //static String default_code = "001crQimKJ4Qp01ye3jn8aMeN0equXp017QEp01z0Wp01pRfp01gYU9mPie49mPsr19mY0MR9mYoru9oDvGd9oQWlO9oUVPh80aje6w05AoI7oHUqE7oI0gJ7k5Xi77k638cr01AB9 vs 001h0Mp01AOxonQsEBo2bLgxt01aibp01AR7p01ASsp01ARNp01ACIt01aibt01aibt01aibt01aibt01aibt01aibt01aibt01aibp01kcOp01AQtp00hNR";    //默认对战代码，为空时在运行时手动输入
-    static String default_code = "000P6Rjo8jDvjm2yzs vs 000PTrN0exuc";
+    static String default_code = "000P6Rt00mSGa00mBK vs 000P6RU00adWj0084gU019ap6018lGU00NwvP15Qh4";
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
             fort[i].addShape(wall[i]);
@@ -274,6 +274,7 @@ public class Main {
             case 3: new SwordBall(X, Y, R, S, TYPE);break;
             case 4: new TateBall(X, Y, R, S, TYPE);break;
             case 5: new BombBall(X, Y, R, S, TYPE);break;
+            case 6: new MagicBall(X, Y, R, S, TYPE);break;
             case 7: new DokyuBall(X, Y, R, S, TYPE);break;
             case 8: new YariBall(X, Y, R, S, TYPE);break;
             case 9: new CannonBall(X, Y, R, S, TYPE);break;
@@ -304,6 +305,7 @@ public class Main {
             case 48: new KnightBall(X, Y, R, S, TYPE);break;
             case 49: new KakuBall(X, Y, R, S, TYPE);break;
             case 50: new ShaBall(X, Y, R, S, TYPE);break;
+            case 51: new StarBall(X, Y, R, S, TYPE);break;
             case 52: new ConBall(X, Y, R, S, TYPE);break;
             case 53: new KanBall(X, Y, R, S, TYPE);break;
             case 55: new Near(X, Y, S, TYPE); wrk = 1; break;

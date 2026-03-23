@@ -69,6 +69,11 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             g2d.scale(scale, scale);
             g2d.scale(0.96, 0.96);
             g2d.translate(-10, 320);
+            g2d.setColor(Color.gray);
+            g2d.drawLine(0,-600,0,582);
+            g2d.drawLine(1920,-600,1920,582);
+            g2d.drawLine(0,582,1920,582);
+            g2d.setColor(Color.WHITE);
             for (Shape s : shapeList) {
                 if (!Main.elements.containsValue(s)) {
                     continue;
