@@ -3,6 +3,7 @@ package org.example;
 import org.example.elements.Ball;
 import org.example.elements.Base;
 import org.example.elements.Core;
+import org.example.elements.BossCore;
 import org.example.elements.hit.HitsKen;
 import org.example.elements.hit.KekkaiField;
 import org.example.elements.units.*;
@@ -51,7 +52,7 @@ public class Main {
     public static List<Integer>[] kekkaiIds = new ArrayList[]{new ArrayList<>(), new ArrayList<>()};
     public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
     //static String default_code = "001crQimKJ4Qp01ye3jn8aMeN0equXp017QEp01z0Wp01pRfp01gYU9mPie49mPsr19mY0MR9mYoru9oDvGd9oQWlO9oUVPh80aje6w05AoI7oHUqE7oI0gJ7k5Xi77k638cr01AB9 vs 001h0Mp01AOxonQsEBo2bLgxt01aibp01AR7p01ASsp01ARNp01ACIt01aibt01aibt01aibt01aibt01aibt01aibt01aibt01aibp01kcOp01AQtp00hNR";    //默认对战代码，为空时在运行时手动输入
-    static String default_code = "000P6Rt00mSGa00mBK vs 000P6RU00adWj0084gU019ap6018lGU00NwvP15Qh4";
+    static String default_code = "000P6Rj1rWgjjolwRP600D1m vs 100P6R";
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
             fort[i].addShape(wall[i]);
@@ -135,7 +136,10 @@ public class Main {
             int[] xyr = to_xyr(code[i].substring(1,6));
             xyr[0] -= 190;
             xyr[1] -= 400;
-            if (code[i].startsWith("0")){
+            if (code[i].startsWith("1")){
+                cores[i] = new BossCore(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
+            }
+            else{
                 cores[i] = new Core(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
             }
             core_x[i] = cores[i].x;
