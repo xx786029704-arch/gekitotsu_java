@@ -3,56 +3,60 @@ package org.example;
 import org.example.elements.Ball;
 import org.example.elements.Base;
 import org.example.elements.Core;
-import org.example.elements.units.BowBall;
-import org.example.elements.units.BombBall;
-import org.example.elements.units.CannonBall;
-import org.example.elements.units.GuideBall;
-import org.example.elements.units.GekiBall;
-import org.example.elements.units.GunBall;
-import org.example.elements.units.SwordBall;
-import org.example.elements.units.KakuBall;
-import org.example.elements.units.DokyuBall;
-import org.example.elements.units.TonBall;
-import org.example.elements.units.NinBall;
-import org.example.elements.units.HaneBall;
-import org.example.elements.units.ShotgunBall;
-import org.example.elements.units.RetsuBall;
-import org.example.elements.units.HanaBall;
+import org.example.elements.hit.HitsKen;
+import org.example.elements.hit.KekkaiField;
+import org.example.elements.units.*;
+import org.example.elements.wall.*;
 
 import java.util.*;
 
 public class Main {
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
-    public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
+    public static final boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
+    public static final int LOGIC_TPS = 0;      //帧率限制，0代表无限制
+    public static boolean hitTestMode = false;       //碰撞测试模式，开启后可在下面的代码中测试你想测试碰撞箱的图形
 
     static boolean end = false;
     static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
     static int j;   //怒土遍历用的变量
     static int i;   //怒土遍历用的变量
-    static int pointer;
     public static String pskey = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";      //密码表
+    private static GameWindow window;
     public static int ID = 0;   //待分配的ID，只会一直增长
     static float wrk;   //怒土の神秘小变量
-    static int max_run_time = 65536;    //最大运行帧数
+    static int max_run_time = 806;//65536;    //最大运行帧数
     static Scanner scanner = new Scanner(System.in);
     public static int[] hp = {100, 100};    //要塞血量
     public static int[] hp0_flg = {0, 0};   //要塞爆炸标记
     public static boolean[] dokkan_flg = {false, false};    //受到撞击标记，有贽玉不会变成true
     public static Base[] bases;     //双方车板
     public static Core[] cores = new Core[]{null, null};    //双方老家
+    public static float[] core_x = new float[]{0, 0};
+    public static float[] core_y = new float[]{0, 0};
     public static int time = 0;     //计时器
     public static LinkedHashMap<Integer, Shape> elements = new LinkedHashMap<>();   //所有需要参与循环的部件
     public static CompositeShape[] wall = {new CompositeShape(0,0), new CompositeShape(0,0)};   //墙体
     public static CompositeShape[] unit = {new CompositeShape(0,0), new CompositeShape(0,0)};   //单位
     public static CompositeShape[] shield = {new CompositeShape(0,0), new CompositeShape(0,0)}; //屏障
     public static CompositeShape[] atk = {new CompositeShape(0,0), new CompositeShape(0,0)};    //攻击
+    public static CompositeShape[] fort = {new CompositeShape(0,0), new CompositeShape(0,0)};   //要塞主体
     public static CompositeShape[] team = {new CompositeShape(0,0), new CompositeShape(0,0)};   //队伍
     public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
     public static CompositeShape[] repair = {new CompositeShape(0,0), new CompositeShape(0,0)}; //修复
-    static String default_code = "000Nuzxk5t8nxk5vOmxk5AEoxk5Fuvx6dvxGx6dOCw vs 000P6R";    //默认对战代码，为空时在运行时手动输入
-    private static GameWindow window;
+    public static CompositeShape[] jump_u = {new CompositeShape(0,0), new CompositeShape(0,0)}; //近突
+    public static CompositeShape[] jump_f = {new CompositeShape(0,0), new CompositeShape(0,0)}; //远突
+    public static CompositeShape[] snipe = {new CompositeShape(0,0), new CompositeShape(0,0)}; //狙击
+    public static CompositeShape[] turn_ccw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //顺时针
+    public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
+    public static List<Integer>[] kekkaiIds = new ArrayList[]{new ArrayList<>(), new ArrayList<>()};
+    public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
+    static String default_code = "001crQimKJ4Qp01ye3jn8aMeN0equXp017QEp01z0Wp01pRfp01gYU9mPie49mPsr19mY0MR9mYoru9oDvGd9oQWlO9oUVPh80aje6w05AoI7oHUqE7oI0gJ7k5Xi77k638cr01AB9 vs 001h0Mp01AOxonQsEBo2bLgxt01aibp01AR7p01ASsp01ARNp01ACIt01aibt01aibt01aibt01aibt01aibt01aibt01aibt01aibp01kcOp01AQtp00hNR";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
+        for (int i = 0; i <= 1; i++){
+            fort[i].addShape(wall[i]);
+            fort[i].addShape(unit[i]);
+        }
         for (int i = 0; i <= 1; i++){
             team[i].addShape(wall[i]);
             team[i].addShape(unit[i]);
@@ -62,16 +66,25 @@ public class Main {
 
         bases = new Base[]{new Base(240, 532, 0), new Base(1680, 532, 1)};
 
-        if (default_code.isEmpty()) {   //处理代码导入
+        if (default_code.isEmpty() && !hitTestMode) {   //处理代码导入
             System.out.println("请输入对战代码：(输入格式: 1P代码 vs 2P代码)");
             String[] input = scanner.nextLine().split(" vs ");
             main_setup(input);
-        } else {
+        } else if (!hitTestMode){
             main_setup(default_code.split(" vs "));
         }
-        if (ENABLE_VISUALIZATION) {
+        else {                                              //碰撞箱测试 ↓ 需开启碰撞箱测试模式
+            hitboxTest(new HitsKen(500, 500, 0, 0, 1, 1, 0), 400, 400, 580, 580, 2);
+            time = max_run_time;
+        }
+        for (int side = 0; side <= 1; side++) {
+            if (kekkaiFields[side] == null) {
+                kekkaiFields[side] = new KekkaiField(side);
+            }
+        }
+        if (ENABLE_VISUALIZATION || hitTestMode) {
             java.awt.EventQueue.invokeLater(() -> {
-                window = new GameWindow(1920, 960, 60);
+                window = new GameWindow(1920, 960, 60).setList(new ArrayList<>(elements.values()));
                 window.setVisible(true);
             });
         }
@@ -87,8 +100,8 @@ public class Main {
                 judge();    //判断对局是否应该结束
                 update();   //调用所有元素step()方法
                 if (ENABLE_VISUALIZATION && window != null) {
-                    GameWindow target = window;
-                    java.awt.EventQueue.invokeLater(target::requestRender);
+                    window.setList(new ArrayList<>(elements.values()));
+                    window.requestRender();
                 }
             }
         }
@@ -125,6 +138,8 @@ public class Main {
             if (code[i].startsWith("0")){
                 cores[i] = new Core(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
             }
+            core_x[i] = cores[i].x;
+            core_y[i] = cores[i].y;
             i++;
         }
         i = 0;
@@ -151,6 +166,23 @@ public class Main {
         dokkan_flg[0] = false;
         dokkan_flg[1] = false;
         norikomi_flg = false;
+        j = 0;
+        while (j <= 1) {
+            if (hp0_flg[j] > 0){
+                j++;
+                continue;
+            }
+            core_x[j] = cores[j].x;
+            core_y[j] = cores[j].y;
+            for (Shape s : unit[j].getShapes()) {
+                if (s instanceof TargetBall) {
+                    core_x[j] = s.x;
+                    core_y[j] = s.y;
+                    break;
+                }
+            }
+            j++;
+        }
         if (hp0_flg[0] == 0 && hp0_flg[1] == 0 && bases[1].x - bases[1].xs - (bases[0].x + bases[0].xs) <= 380) {
             norikomi_flg = true;
             System.out.println("要塞相撞，时间: " + time);
@@ -227,24 +259,57 @@ public class Main {
         return ID++;
     }
 
+    /**
+     * @param X x
+     * @param Y y
+     * @param R 角度
+     * @param TYPE 种类 (1-60 间整数)
+     * @param S 所属方 (0 或 1)
+     */
     public static void unit_make(float X, float Y, float R, int TYPE, int S){   //创建单位
         int wrk = 0;
         switch (TYPE){
             case 1: new BowBall(X, Y, R, S, TYPE);break;
             case 2: new GunBall(X, Y, R, S, TYPE);break;
             case 3: new SwordBall(X, Y, R, S, TYPE);break;
+            case 4: new TateBall(X, Y, R, S, TYPE);break;
             case 5: new BombBall(X, Y, R, S, TYPE);break;
             case 7: new DokyuBall(X, Y, R, S, TYPE);break;
+            case 8: new YariBall(X, Y, R, S, TYPE);break;
             case 9: new CannonBall(X, Y, R, S, TYPE);break;
+            case 10: new NagiBall(X, Y, R, S, TYPE);break;
             case 11: new HaneBall(X, Y, R, S, TYPE);break;
             case 12: new RetsuBall(X, Y, R, S, TYPE);break;
             case 13: new ShotgunBall(X, Y, R, S, TYPE);break;
+            case 14: new SniperBall(X, Y, R, S, TYPE);break;
+            case 15: new UkiBall(X, Y, R, S, TYPE);break;
             case 16: new GuideBall(X, Y, R, S, TYPE);break;
+            case 17: new RepairBall(X, Y, R, S, TYPE);break;
+            case 18: new HealBall(X, Y, R, S, TYPE);break;
+            case 24: new KekkaiBall(X, Y, R, S, TYPE);break;
+            case 22: new MinigunBall(X, Y, R, S, TYPE);break;
+            case 25: new Wood(X, Y, S, TYPE); wrk = 1; break;
+            case 26: new Stone(X, Y, S, TYPE); wrk = 1; break;
+            case 27: new Paper(X, Y, S, TYPE); wrk = 1; break;
+            case 28: new Iron(X, Y, S, TYPE); wrk = 1; break;
+            case 29: new Jet(X, Y, S, TYPE); wrk = 1; break;
+            case 30: new Turbo(X, Y, S, TYPE); wrk = 1; break;
             case 32: new GekiBall(X, Y, R, S, TYPE);break;
             case 33: new TonBall(X, Y, R, S, TYPE);break;
             case 35: new NinBall(X, Y, R, S, TYPE);break;
             case 37: new HanaBall(X, Y, R, S, TYPE);break;
+            case 39: new PushBall(X, Y, R, S, TYPE);break;
+            case 42: new TargetBall(X, Y, R, S, TYPE);break;
+            case 48: new KnightBall(X, Y, R, S, TYPE);break;
             case 49: new KakuBall(X, Y, R, S, TYPE);break;
+            case 50: new ShaBall(X, Y, R, S, TYPE);break;
+            case 52: new ConBall(X, Y, R, S, TYPE);break;
+            case 53: new KanBall(X, Y, R, S, TYPE);break;
+            case 55: new Near(X, Y, S, TYPE); wrk = 1; break;
+            case 56: new Far(X, Y, S, TYPE); wrk = 1; break;
+            case 57: new Wide(X, Y, S, TYPE); wrk = 1; break;
+            case 58: new Narrow(X, Y, S, TYPE); wrk = 1; break;
+            case 59: new Snipe(X, Y, S, TYPE); wrk = 1; break;
             default: new Ball(X, Y, R, S, TYPE);break;
         }
         switch (wrk){
@@ -260,6 +325,28 @@ public class Main {
             }
             case 1: break;
             default: break;
+        }
+    }
+
+    /**
+     * @param s 图形
+     * @param from_x 测试范围左上角-x
+     * @param from_y 测试范围左上角-y
+     * @param to_x 测试范围右下角-x
+     * @param to_y 测试范围右下角-y
+     * @param step 步长
+     */
+    public static void hitboxTest(Shape s, int from_x, int from_y, int to_x, int to_y, int step){
+        int wrk_x;
+        while (from_y < to_y){
+            wrk_x = from_x;
+            while (wrk_x < to_x){
+                if (s.hitTestPoint(wrk_x, from_y)){
+                    addElement(new Round(wrk_x, from_y, 0.5F));
+                }
+                wrk_x += step;
+            }
+            from_y += step;
         }
     }
 }

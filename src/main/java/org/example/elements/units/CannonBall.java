@@ -3,7 +3,7 @@ package org.example.elements.units;
 import org.example.elements.Ball;
 import org.example.elements.atk.CannonBullet;
 
-public class CannonBall extends Ball {
+public class CannonBall extends Ball {  // 炮玉
     public CannonBall(float X, float Y, float R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);
         speed = 120;

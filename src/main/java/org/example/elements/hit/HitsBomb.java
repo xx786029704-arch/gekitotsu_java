@@ -9,6 +9,7 @@ public class HitsBomb extends Round {   //暴风（无倍率）
 
     public HitsBomb(float X, float Y, int S) {
         super(X, Y, 30);
+        xySync();
         this.side = S;
         this.id = Main.addElement(this);
         Main.atk[side].addShape(this);

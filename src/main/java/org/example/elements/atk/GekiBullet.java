@@ -5,12 +5,12 @@ import org.example.Round;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
 
-public class GekiBullet extends Bullet {
+public class GekiBullet extends Bullet {   //击玉火箭弹
     private float speed;
     public float cos_rot;
     public float sin_rot;
 
-    public GekiBullet(float X, float Y, int S, float cos_rot, float sin_rot) {
+    public GekiBullet(float X, float Y, int S, float cos_rot, float sin_rot) {   //初始化
         super(X, Y, S);
         this.cos_rot = cos_rot;
         this.sin_rot = sin_rot;
@@ -20,7 +20,7 @@ public class GekiBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.y < -1200 || this.x > 2560 || this.x < -640) {
             kill();
             return;
@@ -35,7 +35,6 @@ public class GekiBullet extends Bullet {
         }
         this.xs = cos_rot * this.speed;
         this.ys = sin_rot * this.speed;
-        this.x = this.x + this.xs;
-        this.y = this.y + this.ys;
+        move();
     }
 }

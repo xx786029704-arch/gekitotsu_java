@@ -2,9 +2,10 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import org.example.Shape;
+import org.example.elements.Ball;
+import org.example.elements.Wall;
 
 public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和我没关系，反正最后也不用可视化
     private final GameCanvas canvas;
@@ -31,7 +32,13 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
         canvas.repaint();
     }
 
+    public GameWindow setList(List<Shape> list){
+        GameCanvas.shapeList = list;
+        return this;
+    }
+
     private static class GameCanvas extends JPanel {
+        private static List<Shape> shapeList;
         private final int logicalWidth;
         private final int logicalHeight;
         private static final float CAMERA_OFFSET_Y = 60f;
@@ -62,9 +69,24 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             g2d.scale(scale, scale);
             g2d.scale(0.96, 0.96);
             g2d.translate(-10, 320);
-            List<Shape> values = new ArrayList<>(Main.elements.values());
-            for (Shape s : values) {
+            for (Shape s : shapeList) {
+                if (!Main.elements.containsValue(s)) {
+                    continue;
+                }
                 s.draw(g2d);
+                if (Main.SHOW_UNIT_HP && s instanceof Ball) {
+                    Ball unit = (Ball) s;
+                    Color prev = g2d.getColor();
+                    g2d.setColor(Color.GREEN);
+                    g2d.drawString(Integer.toString(unit.hp), (int) unit.x - 4, (int) unit.y + 4);
+                    g2d.setColor(prev);
+                } else if (Main.SHOW_UNIT_HP && s instanceof Wall) {
+                    Wall wall = (Wall) s;
+                    Color prev = g2d.getColor();
+                    g2d.setColor(Color.CYAN);
+                    g2d.drawString(Integer.toString(wall.hp), (int) wall.x - 4, (int) wall.y + 4);
+                    g2d.setColor(prev);
+                }
             }
         }
     }

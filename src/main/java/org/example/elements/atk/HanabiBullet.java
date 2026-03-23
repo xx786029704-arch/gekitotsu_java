@@ -2,12 +2,10 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.elements.Bullet;
-import org.example.elements.hit.HitsDrop;
-
-public class HanabiBullet extends Bullet {
+public class HanabiBullet extends Bullet {   //花玉子弹
     private int cnt = 0;
 
-    public HanabiBullet(float X, float Y, int S) {
+    public HanabiBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
         this.gei_flg = 1;
         this.gravity = 0;
@@ -15,22 +13,26 @@ public class HanabiBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         this.cnt++;
         if (this.y < -600 || this.x > 1920 || this.x < 0) {
             kill();
             return;
         }
         if (this.y > 570 || Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2 || this.cnt > 60) {
-            new HitsDrop(this.x, this.y, Main.atk[this.side]);
-            for (int i = 0; i < 20; i++) {
-                float rot = this.rot + 18F * i;
-                new HinokoBullet(this.x, this.y, this.side, rot);
-            }
-            kill();
+            hit();
             return;
         }
-        this.x = this.x + this.xs;
-        this.y = this.y + this.ys;
+        move();
+    }
+
+    //TODO: 可以算出来20个角度的正余弦值，不过花玉使用频率较低且编译器有可能提前优化，修改优先级较低
+    @Override
+    public boolean hit() {   //触发散射
+        for (int i = 0; i < 20; i++) {
+            float rot = this.rot + 18F * i;
+            new HinokoBullet(this.x, this.y, this.side, rot).setVecR(rot, 30);
+        }
+        return super.hit();
     }
 }

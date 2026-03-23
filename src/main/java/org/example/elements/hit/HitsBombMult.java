@@ -10,6 +10,7 @@ public class HitsBombMult extends Round {   //暴风（倍率）
 
     public HitsBombMult(float X, float Y, int S, float mult) {
         super(X, Y, 30 * mult);
+        xySync();
         this.side = S;
         this.mult = mult;
         this.id = Main.addElement(this);

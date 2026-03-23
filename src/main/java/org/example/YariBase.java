@@ -17,7 +17,7 @@ public class YariBase extends Shape {     //枪玉判定图形单元类
     public YariBase(float X, float Y, float RDeg, float iSX, float iX,float iY) {
         super(X, Y);
         flipped = !(RDeg < 90 || RDeg > 270);
-        rotRad = (flipped ? (RDeg + 180) % 360 : RDeg) * 0.01745329252F;
+        rotRad = (flipped ? (RDeg + 180) % 360 : RDeg) * 0.017453292519943295F;
         internalX = iX;
         internalScaleX = iSX;
         internalY = iY;
@@ -45,16 +45,15 @@ public class YariBase extends Shape {     //枪玉判定图形单元类
 
     @Override
     public void draw(Graphics2D g2d) {
-        //!!!运行太快时此处代码会报 ConcurrentModificationException错误，原因未知
         float[][] verts = {
-                {76.f,-16.f},
-                {156.f,0.f},
-                {76.f,16.f},
-                {85.f,8.f},
-                {88.f,0.f},
-                {85.f,-8.f}
+                {76.f, -16.f},
+                {156.f, 0.f},
+                {76.f, 16.f},
+                {85.f, 8.f},
+                {88.f, 0.f},
+                {85.f, -8.f}
         };
-        for (float[] point:verts) {
+        for (float[] point : verts) {
             float tempX = point[0] * internalScaleX + internalX;
             if (flipped) tempX = -tempX;
             float tempY = point[1] + internalY;
@@ -70,17 +69,17 @@ public class YariBase extends Shape {     //枪玉判定图形单元类
         path.closePath();
         g2d.draw(path);
         //!!!此处代码用于验证实际判定区域是不是和显示的一样，调试后请删掉
-        g2d.setColor(Color.CYAN);
-        for (int i=-200;i<200;i++){
-            for (int j=-200;j<200;j++){
-                int testX=(int)this.x+i;
-                int testY=(int)this.y+j;
-                if(hitTestPoint(testX,testY)){
-                    g2d.drawRect(testX,testY,1,1);
+        /* g2d.setColor(Color.CYAN);
+        for (int i = -200; i < 200; i++) {
+            for (int j = -200; j < 200; j++) {
+                int testX = (int) this.x + i;
+                int testY = (int) this.y + j;
+                if (hitTestPoint(testX, testY)) {
+                    g2d.drawRect(testX, testY, 1, 1);
                 }
             }
         }
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(Color.WHITE); */
         //!!!前述部分结束
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 public class CompositeShape extends Shape {     //复合形状类
 
+    //可能的优化：也许可以换成链表
     private final List<Shape> shapes = new ArrayList<>();   //所有包含的子形状
 
     /*
@@ -38,6 +39,14 @@ public class CompositeShape extends Shape {     //复合形状类
             s.move(X,Y);
         }
     }
+    @Override
+    public void moveTo(float X, float Y) {
+        for (Shape s : shapes) {
+            s.move(X - this.x, Y - this.y);
+        }
+        super.moveTo(X, Y);
+    }
+
     @Override
     public void moveTo(float X, float Y) {
         for (Shape s : shapes) {

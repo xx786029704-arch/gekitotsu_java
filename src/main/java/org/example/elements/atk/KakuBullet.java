@@ -6,13 +6,13 @@ import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
 import org.example.elements.hit.HitsBombMult;
 
-public class KakuBullet extends Bullet {
+public class KakuBullet extends Bullet {   //核玉核弹
     private float speed;
     private int hp = 4;
     public float cos_rot;
     public float sin_rot;
 
-    public KakuBullet(float X, float Y, int S, float cos_rot, float sin_rot) {
+    public KakuBullet(float X, float Y, int S, float cos_rot, float sin_rot) {   //初始化
         super(X, Y, S);
         this.speed = 1;
         this.cos_rot = cos_rot;
@@ -22,7 +22,7 @@ public class KakuBullet extends Bullet {
     }
 
     @Override
-    public void step() {
+    public void step() {   //每帧逻辑
         if (this.y < -1200 || this.x > 2560 || this.x < -640) {
             kill();
             return;
@@ -35,7 +35,7 @@ public class KakuBullet extends Bullet {
             kill();
             return;
         }
-        if (Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
+        if (Main.fort[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
             new HitsBombMult(this.x, this.y, this.side, 8);
             kill();
             return;
@@ -45,7 +45,6 @@ public class KakuBullet extends Bullet {
         }
         this.xs = cos_rot * this.speed;
         this.ys = sin_rot * this.speed;
-        this.x = this.x + this.xs;
-        this.y = this.y + this.ys;
+        move();
     }
 }
