@@ -15,13 +15,13 @@ public class MagicLaser extends LaserBase {     //魔玉的激光
     }
 
     @Override
-    protected float internalCos(int RDeg) {
-        return Utils.cos(RDeg);
+    protected float internalCos(float RDeg) {
+        return Utils.cos((int)RDeg);
     }
 
     @Override
-    protected float internalSin(int RDeg) {
-        return Utils.sin(RDeg);
+    protected float internalSin(float RDeg) {
+        return Utils.sin((int)RDeg);
     }
 
     @Override
