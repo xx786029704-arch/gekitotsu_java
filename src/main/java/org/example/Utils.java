@@ -1,12 +1,24 @@
 package org.example;
 
-public class Utils{     //工具类
+import java.util.function.Function;
+
+public class Utils {     //工具类
 
     public Utils() {
         return;
     }
 
-    private static final float[] trigonometricLookup={
+    private int seed=0;
+
+    public static int universalSeed=0;
+
+    public static int randFunc=1;//0～2依次为三个随机选项
+
+    public void setSeed(int S) {
+        this.seed = S;
+    }
+
+    private static final float[] trigonometricLookup = {
             0F,
             0.01745240643728351F,
             0.03489949670250097F,
@@ -474,4 +486,29 @@ public class Utils{     //工具类
         }
         return trigonometricLookup[((x % 360) + 360) % 360];
     }
+
+    public static float cosF(float RDeg) {
+        return (float) Math.cos((double) RDeg * 0.017453292519943295F);
+    }
+
+    public static float sinF(float RDeg) {
+        return (float) Math.sin((double) RDeg * 0.017453292519943295F);
+    }
+
+    public static float random(Utils src) {//备注：因为as3不会算数，所以这里的随机数没法完美还原
+        switch (randFunc) {
+            case 1: {
+                universalSeed = (universalSeed * 1103515245 + 12345) & 2147483647;
+                return (float) ((universalSeed >> 16) & 32767) / 32768;
+            }
+            case 2: {
+                src.seed = (src.seed * 1103515245 + 12345) & 2147483647;
+                return (float)((src.seed >> 16) & 32767) / 32768;
+            }
+            default: {
+                return (float)Math.random();
+            }
+        }
+    }
+
 }

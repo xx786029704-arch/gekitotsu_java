@@ -111,8 +111,8 @@ public class Ball extends Round {       //兵玉基类
     public boolean land(){      //正常
         if (jump_flg == 0 && !(side == on_side) && Main.hp0_flg[on_side] > 0) {
             jump_flg = 1;
-            xs = (float) Math.random() * 7 - 3;
-            ys = (float) Math.random() * 4 - 10;
+            xs = Utils.random(Main.seeder[this.side]) * 7 - 3;
+            ys = Utils.random(Main.seeder[this.side]) * 4 - 10;
             on_side = 1 - on_side;
         }
         cnt++;
