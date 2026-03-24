@@ -58,14 +58,15 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
 
     private float computeTargetRot() {   //计算追踪角度
         if (targetId != -1) {
-            Shape target = Main.elements.get(targetId);
-            desiredRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
-            return desiredRot;
+            if (Main.elements.containsKey(targetId)) {
+                Shape target = Main.elements.get(targetId);
+                desiredRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
+                return desiredRot;
+            }else{
+                return desiredRot;
+            }
         }
-        Core core = Main.cores[1 - this.side];
-        if (core != null) {
-            desiredRot = Math.round((float) (Math.atan2(core.y - this.y, core.x - this.x) * 180 / Math.PI));
-        }
+        desiredRot = Math.round((float) (Math.atan2(Main.core_y[1 - this.side] - this.y, Main.core_x[1 - this.side] - this.x) * 180 / Math.PI));
         return desiredRot;
     }
 

@@ -1,10 +1,8 @@
 package org.example.elements.atk;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.example.Main;
 import org.example.Shape;
-import org.example.elements.Ball;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
 
@@ -12,7 +10,7 @@ public class ConBullet extends Bullet {   //梱玉导弹
     private float speed = 1F;
     private int hp = 5;
     private int cnt = 0;
-    private int nextTargetIndex = -1;
+    private int nextStartTargetIndex = -1;
     private final int rot;
     private final float cos_rot;
     private final float sin_rot;
@@ -59,16 +57,26 @@ public class ConBullet extends Bullet {   //梱玉导弹
         new ConMissileBullet(this.x, this.y, this.side, this.rot + 90, pickTargetId());
     }
 
-    private int pickTargetId() {   //挑选目标
-        List<Shape> targets = Main.unit[1-side].getShapes();
+    private int pickTargetId() {   //挑选目标（我从简化的逻辑改成了和原版一样的逻辑，就没报错了）
+        List<Shape> targets = Main.unit[1 - side].getShapes();
         if (targets.isEmpty()) {
             return -1;
         }
-        if (nextTargetIndex < 0 || nextTargetIndex >= targets.size()) {
-            nextTargetIndex = targets.size() - 1;
+        if (nextStartTargetIndex < 0 || nextStartTargetIndex >= targets.size()) {
+            nextStartTargetIndex = targets.size() - 1;
         }
-        nextTargetIndex--;
-        return targets.get(nextTargetIndex).id;
+        int targetId = -1;
+        int targetIndex = nextStartTargetIndex;
+        while (targetIndex >= 0) {
+            Shape wrk = targets.get(targetIndex);
+            if (Main.elements.containsKey(wrk.id)) {
+                targetId = wrk.id;
+                nextStartTargetIndex = targetIndex - 1;
+                break;
+            }
+            targetIndex--;
+        }
+        return targetId;
     }
 
     private void updateVelocity() {   //更新速度向量
