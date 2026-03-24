@@ -13,13 +13,11 @@ public class SyouBall extends Ball {   //障玉
 
     @Override
     public void stepEx() {   //攻击逻辑
-        if (this.cnt == this.speed && this.jump_flg != 1) {
-        }
-        else if (this.cnt == this.speed + 7) {
+        if (this.cnt == this.speed + 7) {
             this.cnt = 0;
             float spawnX = this.x + cos_rot * 30;
             float spawnY = this.y + sin_rot * 30;
-            new SyouBullet(spawnX, spawnY, this.side, this.rot);
+            new SyouBullet(spawnX, spawnY, this.side, cos_rot, sin_rot);
         }
     }
 }

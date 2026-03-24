@@ -6,11 +6,8 @@ import org.example.elements.Bullet;
 public class ShotgunBullet extends Bullet {   //散玉霰弹
     private int cnt = 0;
 
-    public ShotgunBullet(float X, float Y, int S, int rotation) {   //初始化
+    public ShotgunBullet(float X, float Y, int S) {   //初始化
         super(X, Y, S);
-        float power = 27F + (float) (Math.random() * 7F);
-        this.xs = Utils.cos(rotation) * power;
-        this.ys = Utils.sin(rotation) * power;
     }
 
     @Override

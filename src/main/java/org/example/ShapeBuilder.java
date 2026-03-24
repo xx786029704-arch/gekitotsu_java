@@ -25,14 +25,12 @@ public class ShapeBuilder {     //复合图形建造者
     }
 
     public ShapeBuilder polygon(float x, float y, float[][] vxy){       //增加一个多边形
-        float xx = composite.x+x;
-        float yy = composite.y+y;
         composite.addShape(new Polygon(composite.x+x,composite.y+y,vxy));
         return this;
     }
 
     public ShapeBuilder rectangle(float x, float y, float w, float h){      //增加一个矩形
-        composite.addShape(new Rectangle(composite.x + x, composite.y + y, w, h));
+        composite.addShape(new Rectangle(composite.x + x, composite.y + y, 0, 0, w, h));
         return this;
     }
 

@@ -13,13 +13,9 @@ public class TuiBall extends Ball {   //坠玉
 
     @Override
     public void stepEx() {   //攻击逻辑
-        if (this.cnt == this.speed && this.jump_flg != 1) {
-        }
-        else if (this.cnt == this.speed + 3) {
-            this.cnt = 0;
-            float spawnX = this.x + cos_rot * 35;
-            float spawnY = this.y + sin_rot * 35;
-            new TuiBullet(spawnX, spawnY, this.side, this.rot);
+        if (cnt == speed + 3) {
+            cnt = 0;
+            new TuiBullet(x + cos_rot * 35, y + sin_rot * 35, side, cos_rot, sin_rot);
         }
     }
 }

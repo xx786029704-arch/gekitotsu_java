@@ -1,10 +1,9 @@
 package org.example.elements.atk;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.example.Main;
 import org.example.Shape;
-import org.example.elements.Ball;
+import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
 
@@ -14,13 +13,13 @@ public class ConBullet extends Bullet {   //梱玉导弹
     private int cnt = 0;
     private int nextTargetIndex = -1;
     private final int rot;
-    private final float cos_rot;
-    private final float sin_rot;
+    private float cos_rot;
+    private float sin_rot;
 
     public ConBullet(float X, float Y, int S, int rotation, float _cos_rot, float _sin_rot) {   //初始化
         super(X, Y, S);
-        this.rot = rotation;
-        this.r = 12.4F;
+        rot = rotation;
+        r = 12.4F;
         cos_rot = _cos_rot;
         sin_rot = _sin_rot;
         updateVelocity();
@@ -29,34 +28,34 @@ public class ConBullet extends Bullet {   //梱玉导弹
     @Override
     public void step() {   //每帧逻辑
         cnt++;
-        if (this.y < -1200 || this.x > 2560 || this.x < -640) {
+        if (y < -1200 || x > 2560 || x < -640) {
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
-            this.hp--;
+        if (Main.team[1 - side].hitTestPoint(x, y) || gei_flg == 2) {
+            hp--;
         }
         if (cnt == 150 || cnt == 152 || cnt == 154 || cnt == 156) {
             spawnMissiles();
             if (cnt == 156) {
-                this.hp = 0;
+                hp = 0;
             }
         }
-        if (this.hp <= 0 || this.y > 570) {
-            new HitsBomb(this.x, this.y, this.side);
+        if (hp <= 0 || y > 570) {
+            new HitsBomb(x, y, side);
             kill();
             return;
         }
-        if (this.speed < 5F) {
-            this.speed += 0.1F;
+        if (speed < 5F) {
+            speed += 0.1F;
         }
         updateVelocity();
         move();
     }
 
     private void spawnMissiles() {   //生成子导弹
-        new ConMissileBullet(this.x, this.y, this.side, this.rot - 90, pickTargetId());
-        new ConMissileBullet(this.x, this.y, this.side, this.rot + 90, pickTargetId());
+        new ConMissileBullet(x, y, side, rot - 90, pickTargetId());
+        new ConMissileBullet(x, y, side, rot + 90, pickTargetId());
     }
 
     private int pickTargetId() {   //挑选目标
@@ -72,7 +71,15 @@ public class ConBullet extends Bullet {   //梱玉导弹
     }
 
     private void updateVelocity() {   //更新速度向量
-        this.xs = cos_rot * this.speed;
-        this.ys = sin_rot * this.speed;
+        xs = cos_rot * speed;
+        ys = sin_rot * speed;
+    }
+
+    @Override
+    public void reflect(int from_rot){
+        betray();
+        cos_rot = Utils.cos(from_rot);
+        sin_rot = Utils.sin(from_rot);
+        updateVelocity();
     }
 }

@@ -2,7 +2,7 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.Shape;
-import org.example.elements.Ball;
+import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.Core;
 import org.example.elements.hit.HitsDrop;
@@ -10,7 +10,7 @@ import org.example.elements.hit.HitsDrop;
 public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
     private float speed = 12F;
     private int cnt = 0;
-    private final int targetId;
+    private int targetId;
     private float desiredRot;
     private float rot;
 
@@ -36,37 +36,32 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
             return;
         }
         this.rot = normalizeRotation(this.rot);
-        float targetRot = computeTargetRot();
-        if (this.rot - 180 > targetRot) {
-            targetRot += 360;
-            desiredRot = targetRot;
+        computeTargetRot();
+        if (this.rot - 180 > desiredRot) {
+            desiredRot += 360;
         }
-        if (this.rot + 180 < targetRot) {
-            targetRot -= 360;
-            desiredRot = targetRot;
+        if (this.rot + 180 < desiredRot) {
+            desiredRot -= 360;
         }
         if (this.speed < 15F) {
             this.speed += 0.3F;
         }
         if (this.speed > 14F) {
-            this.rot = this.rot + (targetRot - this.rot) / 4F;
+            this.rot = this.rot + (desiredRot - this.rot) / 4F;
             this.rot = normalizeRotation(this.rot);
         }
         updateVelocity();
         move();
     }
 
-    private float computeTargetRot() {   //计算追踪角度
+    private void computeTargetRot() {   //计算追踪角度
         if (targetId != -1) {
             Shape target = Main.elements.get(targetId);
+            if (target == null) return;
             desiredRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
-            return desiredRot;
+            return;
         }
-        Core core = Main.cores[1 - this.side];
-        if (core != null) {
-            desiredRot = Math.round((float) (Math.atan2(core.y - this.y, core.x - this.x) * 180 / Math.PI));
-        }
-        return desiredRot;
+        desiredRot = Math.round((float) (Math.atan2(Main.core_y[1-side] - this.y, Main.core_x[1-side] - this.x) * 180 / Math.PI));
     }
 
     private void updateVelocity() {   //更新速度向量
@@ -83,5 +78,13 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
             normalized += 360F;
         }
         return normalized;
+    }
+
+    @Override
+    public void reflect(int from_rot){
+        betray();
+        rot = from_rot;
+        updateVelocity();
+        targetId = -1;
     }
 }

@@ -8,16 +8,16 @@ import java.awt.geom.Path2D;
 
 public class LaserBase extends Shape {     //激光类
 
-    public int rotDeg;
+    public float rotDeg;
     private float thickness;    //激光的宽度
-    private float circleRadius; //激光末端圆圈半径
-    private float xSpeed;
-    private float ySpeed;
+    protected float circleRadius; //激光末端圆圈半径
+    protected float xSpeed;
+    protected float ySpeed;
     protected float startX;
     protected float startY;
     private float oldRotDeg;
-    private int side;
-    private int steps;
+    protected int side;
+    protected int steps;
     private int id;
 
     public LaserBase(float X, float Y, int RDeg, int S,float thi, float radi) {
@@ -41,11 +41,11 @@ public class LaserBase extends Shape {     //激光类
         Main.atk[side].removeShape(this);
     }
 
-    protected float internalCos(int RDeg){
+    protected float internalCos(float RDeg){
         return 0.F;
     }
 
-    protected float internalSin(int RDeg){
+    protected float internalSin(float RDeg){
         return 1.F;
     }
 

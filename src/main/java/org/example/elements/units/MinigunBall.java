@@ -15,7 +15,7 @@ public class MinigunBall extends Ball {   //机玉
         if (this.cnt >= this.speed && this.cnt % 4 == 0 && this.jump_flg != 1) {
             float vx = cos_rot * 22;
             float vy = sin_rot * 22;
-            new GunBullet(this.x + vx * 3, this.y + vy * 3, this.side).setVec(vx, vy);
+            new GunBullet(this.x + vx * 3, this.y + vy * 3, this.side).setVec(vx, vy).setPower(22F);
         }
         if (this.cnt >= this.speed + 200) {
             this.cnt = 0;

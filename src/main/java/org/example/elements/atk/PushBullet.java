@@ -16,11 +16,11 @@ public class PushBullet extends Bullet {   //押玉叭↑叭↓
 
     @Override
     public void step() {   //每帧逻辑
-        if (this.y > 570 || this.y < -600 || this.x > 1920 || this.x < 0) {
+        if (y > 570 || y < -600 || x > 1920 || x < 0) {
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
+        if (Main.team[1 - side].hitTestPoint(x, y) || gei_flg == 2) {
             hit();
             return;
         }
@@ -29,34 +29,23 @@ public class PushBullet extends Bullet {   //押玉叭↑叭↓
 
     @Override
     public boolean hit() {   //触发击退
-        new HitsDrop(this.x, this.y, Main.atk[this.side]);
-        List<Shape> targets = new ArrayList<>(Main.unit[1 - this.side].getShapes());
-        for (Shape shape : targets) {
-            if (shape instanceof Ball target) {
-                float dx = this.x - target.x;
-                float dy = this.y - target.y;
-                if (dx * dx + dy * dy <= 900F) {
-                    target.y = target.y + this.ys * 2;
-                    target.x = target.x + this.xs * 2;
-                    target.xySync();
-                    if (target.y >= 566) {
-                        target.y = 566;
-                    }
-                    if (target.x < 0 || target.x > 1920) {
-                        target.kill();
-                        kill();
-                        return false;
-                    }
+        new HitsDrop(x, y, Main.atk[side]);
+        List<Shape> targets = new ArrayList<>(Main.unit[1 - side].getShapes());
+        for (Shape target : targets) {
+            float dx = x - target.x;
+            float dy = y - target.y;
+            if (dx * dx + dy * dy <= 900F) {
+                target.y = target.y + ys * 2;
+                target.x = target.x + xs * 2;
+                target.xySync();
+                if (target.y >= 566) {
+                    target.y = 566;
                 }
-            } else if (shape instanceof SyouBullet target) {
-                float dx = this.x - target.x;
-                float dy = this.y - target.y;
-                if (dx * dx + dy * dy <= 900F) {
-                    boolean removed = target.pushBy(this.xs * 2, this.ys * 2);
-                    if (removed) {
-                        kill();
-                        return false;
-                    }
+                if (target.x < 0 || target.x > 1920) {
+                    Main.elements.remove(target.id);
+                    Main.unit[1-side].removeShape(target);
+                    kill();
+                    return false;
                 }
             }
         }

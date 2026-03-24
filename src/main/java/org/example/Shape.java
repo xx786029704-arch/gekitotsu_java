@@ -8,8 +8,8 @@ public abstract class Shape {   //最基本的抽象形状类
     public int id;
 
     public Shape(float X, float Y) {
-        this.x = X;
-        this.y = Y;
+        x = X;
+        y = Y;
     }
 
     /*

@@ -2,6 +2,7 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.Round;
+import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
 
@@ -36,5 +37,14 @@ public class GekiBullet extends Bullet {   //击玉火箭弹
         this.xs = cos_rot * this.speed;
         this.ys = sin_rot * this.speed;
         move();
+    }
+
+    @Override
+    public void reflect(int from_rot){
+        betray();
+        cos_rot = Utils.cos(from_rot);
+        sin_rot = Utils.sin(from_rot);
+        this.xs = cos_rot * this.speed;
+        this.ys = sin_rot * this.speed;
     }
 }

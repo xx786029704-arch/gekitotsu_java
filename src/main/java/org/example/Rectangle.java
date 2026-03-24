@@ -3,30 +3,28 @@ package org.example;
 import java.awt.*;
 
 public class Rectangle extends Shape {   //矩形类
-    public float width;
-    public float height;
+    private final float width;
+    private final float height;
+    private final float start_x;
+    private final float start_y;
 
-    public Rectangle(float X, float Y, float W, float H) {   //左上角与宽高
+    public Rectangle(float X, float Y, float startX, float startY, float W, float H) {   //左上角与宽高
         super(X, Y);
-        this.width = W;
-        this.height = H;
+        width = W;
+        height = H;
+        start_x = startX;
+        start_y = startY;
     }
 
     @Override
     public boolean hitTestPoint(float X, float Y) {   //点碰撞
-        float minX = Math.min(this.x, this.x + this.width);
-        float maxX = Math.max(this.x, this.x + this.width);
-        float minY = Math.min(this.y, this.y + this.height);
-        float maxY = Math.max(this.y, this.y + this.height);
-        return X >= minX && X <= maxX && Y >= minY && Y <= maxY;
+        X -= start_x;
+        Y -= start_y;
+        return X >= x && X <= x + width && Y >= y && Y <= y + height;
     }
 
     @Override
     public void draw(Graphics2D g2d) {   //绘制
-        float minX = Math.min(this.x, this.x + this.width);
-        float maxX = Math.max(this.x, this.x + this.width);
-        float minY = Math.min(this.y, this.y + this.height);
-        float maxY = Math.max(this.y, this.y + this.height);
-        g2d.drawRect((int) minX, (int) minY, (int) (maxX - minX), (int) (maxY - minY));
+        g2d.drawRect((int) (x + start_x), (int) (y + start_y), (int) width, (int) height);
     }
 }

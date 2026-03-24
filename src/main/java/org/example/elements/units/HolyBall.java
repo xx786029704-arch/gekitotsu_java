@@ -14,7 +14,6 @@ public class HolyBall extends Ball {
     public void stepEx() {   //攻击逻辑
         if (cnt > speed + 5 && Main.dead_last[side] != 0 && jump_flg != 1) {
             cnt = 0;
-            System.out.println("holy bullet");
             new HolyBullet(x + cos_rot * 38, y + sin_rot * 38, Main.dead_last[side], rot, side, on_side, jump_flg);
             Main.dead_last[side] = 0;
         }

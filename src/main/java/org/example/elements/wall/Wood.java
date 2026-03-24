@@ -6,4 +6,6 @@ public class Wood extends Wall {
     public Wood(float X, float Y, int S, int TYPE) {
         super(X, Y, S, TYPE);
     }
+
+
 }

@@ -39,6 +39,7 @@ public class HolyBullet extends Shape {
         }
         cnt++;
         if (cnt == 20) {
+            //TODO:需要处理复活玉的随机数问题
             Main.unit_make(x, y, t_rot, t_type, t_side);
             ((Ball) Main.elements.get(Main.ID - 1)).on_side = t_on_side;
         } else if(cnt >= 30){

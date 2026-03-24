@@ -31,6 +31,7 @@ public class Jet extends Wall {
             hp--;
             if (this.hp <= 0) {
                 kill();
+                return;
             }
         }
         if (hp < max_hp && Main.repair[side].hitTestPoint(this.x, this.y)) {

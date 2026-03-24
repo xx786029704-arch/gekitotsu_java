@@ -1,94 +1,79 @@
 package org.example.elements.atk;
 
-import org.example.CompositeShape;
-import org.example.Main;
-import org.example.ShapeBuilder;
-import org.example.Utils;
+import org.example.*;
+import org.example.Rectangle;
 import org.example.elements.hit.HitsDrop;
 
-public class SyouBullet extends CompositeShape {   //障玉障壁
+import java.awt.*;
+
+public class SyouBullet extends Rectangle {   //障玉障壁
     private final int side;
     private final int id;
     private int hp = 10;
-    private int cnt = 0;
+    private int cnt = -7;
     private float power = 20F;
     private final float cosRot;
     private final float sinRot;
     private boolean active = false;
-    private int gei_flg = 1;
 
-    public SyouBullet(float X, float Y, int S, int rotation) {   //初始化
-        super(X, Y);
-        ShapeBuilder.into(this)
-                .rectangle(-14F, -14F, 28F, 28F);
-        this.side = S;
-        this.cosRot = Utils.cos(rotation);
-        this.sinRot = Utils.sin(rotation);
-        this.id = Main.addElement(this);
-        moveToQuantized(X, Y);
+    public SyouBullet(float X, float Y, int S, float cos_rot, float sin_rot) {   //初始化
+        super(X, Y, -14, -14, 28, 28);
+        side = S;
+        cosRot = cos_rot;
+        sinRot = sin_rot;
+        id = Main.addElement(this);
     }
 
     @Override
     public void step() {   //每帧逻辑
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
-            this.hp--;
-            if (Main.fort[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y)) {
-                this.hp = 0;
+        if (Main.team[1 - side].hitTestPoint(x, y)) {
+            hp--;
+            if (Main.fort[1 - side].hitTestPoint(x, y) || Main.shield[1 - side].hitTestPoint(x, y)) {
+                hp = 0;
             }
         }
-        if (this.y > 570 || this.y < -600 || this.x > 1920 || this.x < 0 || this.hp <= 0 || this.cnt >= 160) {
-            if (this.active) {
-                new HitsDrop(this.x, this.y, Main.atk[this.side]);
+        if (y > 570 || y < -600 || x > 1920 || x < 0 || hp <= 0 || cnt >= 159) {
+            if (active) {
+                new HitsDrop(x, y, Main.atk[side]);
             }
             kill();
             return;
         }
-        boolean wasActive = this.active;
-        if (this.power > 0) {
-            this.power--;
-            float newX = this.x + this.cosRot * this.power;
-            float newY = this.y + this.sinRot * this.power;
-            moveToQuantized(newX, newY);
-            if (this.power == 0) {
+        if (power > 0) {
+            power--;
+            x += cosRot * power;
+            y += sinRot * power;
+            xySync();
+        } else {
+            cnt++;
+            if (cnt == 0){
                 activate();
             }
-        }
-        if (wasActive) {
-            this.cnt++;
         }
     }
 
     private void activate() {
-        if (!this.active) {
-            this.active = true;
-            Main.unit[this.side].addShape(this);
+        if (!active) {
+            active = true;
+            Main.unit[side].addShape(this);
         }
     }
 
     private void kill() {
         Main.elements.remove(id);
-        if (this.active) {
-            Main.unit[this.side].removeShape(this);
+        if (active) {
+            Main.unit[side].removeShape(this);
         }
     }
 
-    public boolean pushBy(float dx, float dy) {
-        float newX = this.x + dx;
-        float newY = this.y + dy;
-        moveToQuantized(newX, newY);
-        if (this.y >= 566) {
-            moveToQuantized(this.x, 566);
+    @Override
+    public void draw(Graphics2D g2d) {   //绘制
+        if (!active){
+            g2d.setColor(Color.DARK_GRAY);
+            super.draw(g2d);
+            g2d.setColor(Color.WHITE);
+            return;
         }
-        if (this.x < 0 || this.x > 1920) {
-            kill();
-            return true;
-        }
-        return false;
-    }
-
-    private void moveToQuantized(float newX, float newY) {
-        float qx = (int) (20 * newX) * 0.05F;
-        float qy = (int) (20 * newY) * 0.05F;
-        moveTo(qx, qy);
+        super.draw(g2d);
     }
 }
