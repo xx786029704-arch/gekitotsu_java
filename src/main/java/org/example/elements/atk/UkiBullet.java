@@ -7,7 +7,6 @@ import org.example.elements.hit.HitsBombMult;
 
 public class UkiBullet extends Round {   //浮玉子弹
     private final int side;
-    private final int id;
     private int hp = 1;
     private float xs = 0;
     private float ys = 0;
