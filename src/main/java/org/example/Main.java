@@ -3,6 +3,8 @@ package org.example;
 import org.example.elements.Ball;
 import org.example.elements.Base;
 import org.example.elements.Core;
+import org.example.elements.BossCore;
+import org.example.elements.BossCore2;
 import org.example.elements.hit.KekkaiField;
 import org.example.elements.units.*;
 import org.example.elements.wall.*;
@@ -14,7 +16,6 @@ public class Main {
     public static final boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
     public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
     public static boolean hitTestMode = false;       //碰撞测试模式，开启后可在下面的代码中测试你想测试碰撞箱的图形
-
     private static boolean end = false;
     public static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
     private static int j;   //怒土遍历用的变量
@@ -34,6 +35,7 @@ public class Main {
     public static float[] core_x = new float[]{0, 0};
     public static float[] core_y = new float[]{0, 0};
     public static int time = 0;     //计时器
+    public static Utils[] seeder={new Utils(),new Utils()};
     public static Base[] bases;     //双方车板
     public static Core[] cores = new Core[]{null, null};    //双方老家
     //TODO：Gemini 说这里可以自己写可以以int为键的哈希表类，不用Integer包装类，至于提升大不大我不知道。
@@ -53,7 +55,7 @@ public class Main {
     public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
     public static LinkedList<Integer>[] kekkaiIds = new LinkedList[]{new LinkedList<Integer>(), new LinkedList<Integer>()};
     public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
-    static String default_code = "000P6RAnPDL9 vs 000P6R";    //默认对战代码，为空时在运行时手动输入
+    static String default_code = "200P6R vs 000P6RjoQn5Vj0ISNSnkEEBInnkFrunp00Q4s01swSs01pPvs01kYRs01iPks01f4gs01704s00VM3s00L2ls00BCu";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
         for (int i = 0; i <= 1; i++){
@@ -123,22 +125,33 @@ public class Main {
 
     private static void main_setup(String[] code){      //初始布局
         i = 0;
+        Utils.universalSeed=1;
         while (i <= 1) {
             code[i] = code[i].replaceAll("[^a-zA-Z0-9]", "");
-            if (code[i].length() % 6 != 0){
+            if (code[i].length() % 6 != 0) {
                 return;
             }
-            int[] xyr = to_xyr(code[i].substring(1,6));
+            int[] xyr = to_xyr(code[i].substring(1, 6));
+            Utils.universalSeed = Utils.universalSeed * (xyr[0] % 168 + 48) * (xyr[1] % 168 + 48);
+            int baseSeed = (xyr[0] % 168 + 48) * (xyr[1] % 168 + 48);
+            seeder[i].setSeed(baseSeed);
             xyr[0] -= 190;
             xyr[1] -= 400;
-            if (code[i].startsWith("0")){
+            if (code[i].startsWith("1")) {
+                cores[i] = new BossCore(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
+            } else if (code[i].startsWith("2")) {
+                cores[i] = new BossCore2(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
+            } else {
                 cores[i] = new Core(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
             }
             core_x[i] = cores[i].x;
             core_y[i] = cores[i].y;
+            int wrkSeed;
             j = 6;
+            int wrkType;
             while (j < code[i].length()) {
-                xyr = to_xyr(code[i].substring(j+1, j+6));
+                xyr = to_xyr(code[i].substring(j + 1, j + 6));
+                wrkSeed = baseSeed * (xyr[0] % 185 + 30) * (xyr[1] % 185 + 30);
                 if (i == 1) {
                     xyr[0] = (380 - xyr[0]) + 1490;
                     xyr[2] = 180 - xyr[2];
@@ -147,7 +160,15 @@ public class Main {
                 }
                 xyr[2] = (xyr[2] % 360 + 360) % 360;
                 xyr[1] += 132;
-                unit_make(xyr[0], xyr[1], xyr[2], pskey.indexOf(code[i].charAt(j)), i);
+                wrkType = pskey.indexOf(code[i].charAt(j));
+                unit_make(xyr[0], xyr[1], xyr[2], wrkType, i);
+                if (wrkType == 13) {
+                    ShotgunBall unit = (ShotgunBall) elements.get(ID - 1);
+                    unit.setSeed(wrkSeed);
+                } else if (wrkType == 23) {
+                    HenBall unit = (HenBall) elements.get(ID - 1);
+                    unit.setSeed(wrkSeed);
+                }
                 j += 6;
             }
             kekkaiFields[i] = new KekkaiField(i);   //界玉初始化
@@ -298,6 +319,7 @@ public class Main {
             case 20: new TobiBall(X, Y, R, S, TYPE);break;
             case 21: new SenBall(X, Y, R, S, TYPE);break;
             case 22: new MinigunBall(X, Y, R, S, TYPE);break;
+            case 23: new HenBall(X, Y, R, S, TYPE);break;
             case 24: new KekkaiBall(X, Y, R, S, TYPE);break;
             case 25: new Wood(X, Y, S, TYPE); wrk = 1; break;
             case 26: new Stone(X, Y, S, TYPE); wrk = 1; break;
@@ -349,6 +371,7 @@ public class Main {
             default: break;
         }
     }
+
 
     /**
      * @param s 图形
