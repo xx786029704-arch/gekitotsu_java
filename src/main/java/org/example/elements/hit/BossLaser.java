@@ -25,9 +25,9 @@ public class BossLaser extends LaserBase {     //魔玉的激光
             kill();
             return;
         }
-        this.rotDeg -= this.side==0?.1F:-.1F;
-        this.rotDeg=((this.rotDeg%360)+360)%360;
-        this.startX = Main.core_x[this.side] + 38.f * internalCos(this.rotDeg);
-        this.startY = Main.core_y[this.side] + 38.f * internalSin(this.rotDeg);
+        this.rotDeg -= this.side == 0 ? .1F : -.1F;
+        this.rotDeg = ((this.rotDeg % 360) + 360) % 360;
+        this.startX = Main.cores[this.side].x + 38.f * internalCos(this.rotDeg);
+        this.startY = Main.cores[this.side].y + 38.f * internalSin(this.rotDeg);
     }
 }
