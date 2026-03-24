@@ -30,21 +30,21 @@ public class MissileBullet extends Bullet {   //导玉导弹
             kill();
             return;
         }
-        if (Main.cores[1 - this.side] != null) {
-            float targetRot = Math.round((float) Math.toDegrees(Math.atan2(Main.cores[1 - this.side].y - this.y, Main.cores[1 - this.side].x - this.x)));
-            if (this.rot - 180 > targetRot) {
-                targetRot += 360;
-            }
-            if (this.rot + 180 < targetRot) {
-                targetRot -= 360;
-            }
-            if (this.speed < 15F) {
-                this.speed += 0.3F;
-            }
-            if (this.speed > 14F) {
-                this.rot = this.rot + (targetRot - this.rot) / 8F;
-            }
+
+        float targetRot = Math.round((float) Math.toDegrees(Math.atan2(Main.core_y[1 - this.side] - this.y, Main.core_x[1 - this.side] - this.x)));
+        if (this.rot - 180 > targetRot) {
+            targetRot += 360;
         }
+        if (this.rot + 180 < targetRot) {
+            targetRot -= 360;
+        }
+        if (this.speed < 15F) {
+            this.speed += 0.3F;
+        }
+        if (this.speed > 14F) {
+            this.rot = this.rot + (targetRot - this.rot) / 8F;
+        }
+
         updateVelocity();
         move();
     }
