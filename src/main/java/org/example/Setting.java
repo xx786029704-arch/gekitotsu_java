@@ -15,11 +15,14 @@ public class Setting {
 
     public static boolean setting(Scanner scanner){
         while (true){
+            System.out.println("-====操作菜单====-");
             System.out.println("请选择操作：");
             System.out.println("0.开始对战");
             System.out.println(Main.ENABLE_VISUALIZATION ? "1.关闭可视化" : "1.开启可视化");
             System.out.println(Main.SHOW_UNIT_HP ? "2.关闭单位血量显示" : "2.开启单位血量显示");
-            System.out.println("3.设置帧率限制");
+            System.out.println("3.设置帧率限制（目前为" + (Main.LOGIC_TPS == 0 ? "INF" : Main.LOGIC_TPS) + "）");
+            System.out.println("4.设置对局帧数上限（目前为" + Main.MAX_FRAME_LIMIT + "）");
+            System.out.println(Main.SHOW_REMAIN_HP ? "5.关闭输出血量积分" : "5.开启输出血量积分");
             System.out.println("9.退出程序");
             System.out.println("输入对应数字以选择...");
             switch (scanner.nextLine()){
@@ -48,11 +51,27 @@ public class Setting {
                     saveConfig();
                     break;
                 }
+                case "4":{
+                    System.out.print("设置对局帧数上限: ");
+                    Main.MAX_FRAME_LIMIT = Integer.parseInt(scanner.nextLine());
+                    if (Main.MAX_FRAME_LIMIT < 0){
+                        Main.MAX_FRAME_LIMIT = 0;
+                    }
+                    System.out.println("对局帧数上限已经设置为" + Main.MAX_FRAME_LIMIT);
+                    saveConfig();
+                    break;
+                }
+                case "5":{
+                    Main.SHOW_REMAIN_HP = !Main.SHOW_REMAIN_HP;
+                    System.out.println(Main.SHOW_REMAIN_HP ? "将在simple_result.txt中记录血量积分" : "已关闭血量积分记录");
+                    saveConfig();
+                    break;
+                }
                 case "9":{
                     return false;
                 }
                 default:{
-                    System.out.println("操作不正确");
+                    System.out.println("未知操作");
                     break;
                 }
             }
@@ -69,6 +88,9 @@ public class Setting {
         Main.ENABLE_VISUALIZATION = Boolean.parseBoolean(prop.getProperty("ENABLE_VISUALIZATION", "true"));
         Main.SHOW_UNIT_HP = Boolean.parseBoolean(prop.getProperty("SHOW_UNIT_HP", "true"));
         Main.LOGIC_TPS = Integer.parseInt(prop.getProperty("LOGIC_TPS", "90"));
+        Main.MAX_FRAME_LIMIT = Integer.parseInt(prop.getProperty("MAX_FRAME_LIMIT", "65536"));
+        Main.SHOW_REMAIN_HP = Boolean.parseBoolean(prop.getProperty("SHOW_REMAIN_HP", "false"));
+        Main.AUTO_PLAY = Boolean.parseBoolean(prop.getProperty("AUTO_PLAY", "false"));
     }
 
     public static void saveConfig() {
@@ -76,6 +98,9 @@ public class Setting {
         prop.setProperty("ENABLE_VISUALIZATION", String.valueOf(Main.ENABLE_VISUALIZATION));
         prop.setProperty("SHOW_UNIT_HP", String.valueOf(Main.SHOW_UNIT_HP));
         prop.setProperty("LOGIC_TPS", String.valueOf(Main.LOGIC_TPS));
+        prop.setProperty("MAX_FRAME_LIMIT", String.valueOf(Main.MAX_FRAME_LIMIT));
+        prop.setProperty("SHOW_REMAIN_HP", String.valueOf(Main.SHOW_REMAIN_HP));
+        prop.setProperty("AUTO_PLAY", String.valueOf(Main.AUTO_PLAY));
 
         try (FileOutputStream fos = new FileOutputStream(Main.CONFIG_FILE)) {
             prop.store(fos, "Game Config");

@@ -5,13 +5,15 @@ import org.example.elements.hit.KekkaiField;
 import org.example.elements.units.*;
 import org.example.elements.wall.*;
 
-import java.io.FileWriter;
 import java.util.*;
 
 public class Main {
     public static boolean ENABLE_VISUALIZATION = false;    //是否开启可视化
     public static boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
     public static int LOGIC_TPS = 30;      //帧率限制，0代表无限制
+    public static int MAX_FRAME_LIMIT = 65536;    //最大运行帧数
+    public static boolean SHOW_REMAIN_HP = false;
+    public static boolean AUTO_PLAY = false;
     public static final String CONFIG_FILE = "config.ini";
 
     private static boolean end = false;
@@ -22,7 +24,6 @@ public class Main {
     private static GameWindow window;
     public static int ID = 0;   //待分配的ID，只会一直增长
     private static float wrk;   //怒土の神秘小变量
-    static int max_run_time = 65536;    //最大运行帧数
     private static final Scanner scanner = new Scanner(System.in);
     public static int[] hp = {100, 100};    //要塞血量
     public static int[] hp0_flg = {0, 0};   //要塞爆炸标记
@@ -54,23 +55,25 @@ public class Main {
     public static LinkedList<Integer>[] kekkaiIds = new LinkedList[]{new LinkedList<Integer>(), new LinkedList<Integer>()};
     public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
 
-    private static final String fort1 = "000P6RaoQcVI";
-    private static final String fort2 = "000gd5604OTg";
+    private static final String fort1 = "";
+    private static final String fort2 = "";
 
     public static void main(String[] args) {
         Setting.loadConfig();
-        if (!Setting.setting(scanner)) return;
-        if (ENABLE_VISUALIZATION) {
-            java.awt.EventQueue.invokeLater(() -> {
-                window = new GameWindow(1920, 960, 60).setList(new ArrayList<>(elements.values()));
-                window.setVisible(true);
-            });
-        }
-        System.out.println("对局正在进行...");
-        if (fort1.isEmpty() || fort2.isEmpty()){
-            runBatchBattle();
-        } else {
-            runSingleBattle(new Fort("", fort1), new Fort("", fort2));
+        while(AUTO_PLAY || Setting.setting(scanner)){
+            if (ENABLE_VISUALIZATION && window == null) {
+                java.awt.EventQueue.invokeLater(() -> {
+                    window = new GameWindow(1920, 960, 60).setList(new ArrayList<>(elements.values()));
+                    window.setVisible(true);
+                });
+            }
+            System.out.println("对局正在进行...");
+            if (fort1.isEmpty() || fort2.isEmpty()){
+                runBatchBattle();
+            } else {
+                runSingleBattle(new Fort("", fort1), new Fort("", fort2));
+            }
+            if (AUTO_PLAY) break;
         }
     }
 
@@ -126,7 +129,7 @@ public class Main {
         long timePerTick = LOGIC_TPS > 0 ? 1000000000L / LOGIC_TPS : 0;
         long lastTime = System.nanoTime();
         long startTime = System.nanoTime();
-        while (time < max_run_time && !end) {
+        while (time < MAX_FRAME_LIMIT && !end) {
             long now = System.nanoTime();
             if (timePerTick == 0 || now - lastTime >= timePerTick) {
                 lastTime = now;
@@ -460,11 +463,11 @@ public class Main {
     private static String getSimpleResult(){
         if (hp0_flg[0] > 0 || hp0_flg[1] > 0){
             if(hp0_flg[0] == 0){
-                return "1,";
+                return SHOW_REMAIN_HP ? (hp[0] + ",") : "1,";
             }else if(hp0_flg[1] == 0) {
-                return "2,";
+                return SHOW_REMAIN_HP ? (-hp[1] + ",") : "2,";
             }else {
-                return "d,";
+                return SHOW_REMAIN_HP ? "0," : "d,";
             }
         }else {
             return "?,";

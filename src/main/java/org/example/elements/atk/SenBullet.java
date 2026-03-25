@@ -46,7 +46,7 @@ public class SenBullet extends Bullet {   //战玉坦克
         }
         if (drop_flg && cnt == 40) {
             cnt = 0;
-            float cos = side == 1 ? 0.7071067811865475F : -0.7071067811865475F;
+            float cos = side == 1 ? -0.7071067811865475F : 0.7071067811865475F;
             new SenTamaBullet(x, y, side).setVecMult(cos, -0.7071067811865475F, 20).move();
         }
     }
