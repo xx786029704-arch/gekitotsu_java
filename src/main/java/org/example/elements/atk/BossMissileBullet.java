@@ -45,7 +45,6 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
             if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2) {
                 new HitsBomb(this.x, this.y, this.side);
                 kill();
-                return;
             }
         } else {
             setGravity(0.F);
@@ -63,8 +62,9 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
                     Shape target = Main.elements.get(targetId);
                     targetRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
                 }
+            } else {
+                targetRot = Math.round((float) (Math.atan2(Main.core_y[1 - this.side] - this.y, Main.core_x[1 - this.side] - this.x) * 180 / Math.PI));
             }
-            targetRot = Math.round((float) (Math.atan2(Main.core_y[1 - this.side] - this.y, Main.core_x[1 - this.side] - this.x) * 180 / Math.PI));
             if (this.rot - 180 > this.targetRot) {
                 this.targetRot = this.targetRot + 360;
             }
