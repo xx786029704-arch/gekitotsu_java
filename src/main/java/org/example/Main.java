@@ -4,15 +4,12 @@ import org.example.elements.*;
 import org.example.elements.hit.KekkaiField;
 import org.example.elements.units.*;
 import org.example.elements.wall.*;
-
-import java.io.FileWriter;
 import java.util.*;
 
 public class Main {
-    public static boolean ENABLE_VISUALIZATION = false;    //是否开启可视化
-    public static boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
-    public static int LOGIC_TPS = 30;      //帧率限制，0代表无限制
-    public static final String CONFIG_FILE = "config.ini";
+    public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
+    public static final boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
+    public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
 
     private static boolean end = false;
     public static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
@@ -53,119 +50,58 @@ public class Main {
     public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
     public static LinkedList<Integer>[] kekkaiIds = new LinkedList[]{new LinkedList<Integer>(), new LinkedList<Integer>()};
     public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
-
-    private static final String fort1 = "000P6RaoQcVI";
-    private static final String fort2 = "000gd5604OTg";
+    static String default_code = "000P6RAnPDL9 vs 000P6R";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
-        Setting.loadConfig();
-        if (!Setting.setting(scanner)) return;
+        for (int i = 0; i <= 1; i++){
+            fort[i].addShape(wall[i]);
+            fort[i].addShape(unit[i]);
+        }
+        for (int i = 0; i <= 1; i++){
+            team[i].addShape(wall[i]);
+            team[i].addShape(unit[i]);
+            team[i].addShape(shield[i]);
+            team[i].addShape(atk[i]);
+        }
+
+        bases = new Base[]{new Base(240, 532, 0), new Base(1680, 532, 1)};
+
+        if (default_code.isEmpty()) {   //处理代码导入
+            System.out.println("请输入对战代码：(输入格式: 1P代码 vs 2P代码)");
+            String[] input = scanner.nextLine().split(" vs ");
+            main_setup(input);
+        } else {
+            main_setup(default_code.split(" vs "));
+        }
         if (ENABLE_VISUALIZATION) {
             java.awt.EventQueue.invokeLater(() -> {
                 window = new GameWindow(1920, 960, 60).setList(new ArrayList<>(elements.values()));
                 window.setVisible(true);
             });
         }
-        System.out.println("对局正在进行...");
-        if (fort1.isEmpty() || fort2.isEmpty()){
-            runBatchBattle();
-        } else {
-            runSingleBattle(new Fort("", fort1), new Fort("", fort2));
-        }
-    }
-
-    private static void runBatchBattle() {
-        List<Fort> p1List = Setting.loadForts("1P.txt");
-        List<Fort> p2List = Setting.loadForts("2P.txt");
-
-        if (p1List.isEmpty() || p2List.isEmpty()) {
-            System.out.println("阵容为空，无法对战");
-            return;
-        }
-
-        long totalStart = System.nanoTime();
-        boolean p1Single = p1List.size() == 1;
-        boolean p2Single = p2List.size() == 1;
-
-        int rounds = p1Single ? p2List.size()
-                : p2Single ? p1List.size()
-                : Math.min(p1List.size(), p2List.size());
-
-        StringBuilder resultLog = new StringBuilder();
-        StringBuilder simple_result = new StringBuilder();
-        for (int i = 0; i < rounds; i++) {
-            Fort f1 = p1Single ? p1List.getFirst() : p1List.get(i);
-            Fort f2 = p2Single ? p2List.getFirst() : p2List.get(i);
-
-            System.out.println("\n=== 对局 " + (i+1) + " ===");
-            System.out.println("1P: " + f1.name);
-            System.out.println("2P: " + f2.name);
-            String result = runSingleBattle(f1, f2);
-            resultLog.append("Round ").append(i+1).append("\n");
-            resultLog.append("1P[").append(f1.name).append("] vs 2P[")
-                    .append(f2.name).append("]\n");
-            resultLog.append(result).append("\n");
-            simple_result.append(getSimpleResult());
-        }
-        long totalEnd = System.nanoTime();
-        double totalMs = (totalEnd - totalStart) / 1000000.0;
-        System.out.printf("总用时: %.3f 毫秒%n", totalMs);
-        resultLog.append("=== SUMMARY ===\n");
-        resultLog.append("总时间: ")
-                .append(String.format("%.3f 毫秒", totalMs))
-                .append("\n");
-        Setting.writeResult("simple_result.txt", simple_result.toString());
-        Setting.writeResult("result.txt", resultLog.toString());
-    }
-
-    private static String runSingleBattle(Fort f1, Fort f2) {
-        resetGame();
-
-        main_setup(new String[]{f1.code, f2.code});
-
         long timePerTick = LOGIC_TPS > 0 ? 1000000000L / LOGIC_TPS : 0;
         long lastTime = System.nanoTime();
-        long startTime = System.nanoTime();
-        while (time < max_run_time && !end) {
+
+        while (time < max_run_time && !end){    /*主循环*/
             long now = System.nanoTime();
             if (timePerTick == 0 || now - lastTime >= timePerTick) {
                 lastTime = now;
                 time++;
-                base_move();
-                judge();
-                update();
+                base_move();    //要塞车移动
+                judge();    //判断对局是否应该结束
+                update();   //调用所有元素step()方法
                 if (ENABLE_VISUALIZATION && window != null) {
                     window.setList(new ArrayList<>(elements.values()));
                     window.requestRender();
                 }
             }
         }
-        double elapsedMs = (System.nanoTime() - startTime) / 1000000.0;
-        return buildResultString(elapsedMs);
-    }
-
-    private static String buildResultString(double elapsedMs) {
-        String result;
-        if (hp0_flg[0] > 0 || hp0_flg[1] > 0){
-            if(hp0_flg[0] == 0){
-                result = "1P 获胜";
-            }else if(hp0_flg[1] == 0) {
-                result = "2P 获胜";
-            }else {
-                result = "平局";
-            }
-        }else {
-            result = "未定";
-        }
-        return "总帧数 " + time +
-                ", 1P 剩余血量: " + hp[0] +
-                ", 2P 剩余血量: " + hp[1] +
-                ", 结果: " + result + ", 用时: " + String.format("%.3f 毫秒", elapsedMs);
     }
 
     private static void main_setup(String[] code){      //初始布局
         i = 0;
         while (i <= 1) {
+            code[i] = code[i].replaceAll("[^a-zA-Z0-9]", "");
             if (code[i].length() % 6 != 0) {
                 return;
             }

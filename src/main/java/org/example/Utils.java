@@ -496,11 +496,11 @@ public class Utils{     //工具类
     public static float random(Utils src) {//备注：因为as3不会算数，所以这里的随机数没法完美还原
         switch (randFunc) {
             case 1: {
-                universalSeed = (universalSeed * 1103515245 + 12345) & 2147483647;
+                universalSeed = (int) ((long)(universalSeed * 1103515245D + 12345) & 2147483647);
                 return (float) ((universalSeed >> 16) & 32767) / 32768;
             }
             case 2: {
-                src.seed = (src.seed * 1103515245 + 12345) & 2147483647;
+                src.seed = (int) ((long)(src.seed * 1103515245D + 12345) & 2147483647);
                 return (float)((src.seed >> 16) & 32767) / 32768;
             }
             default: {
