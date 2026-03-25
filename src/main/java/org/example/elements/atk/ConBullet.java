@@ -66,8 +66,7 @@ public class ConBullet extends Bullet {   //梱玉导弹
         if (nextTargetIndex < 0 || nextTargetIndex >= targets.size()) {
             nextTargetIndex = targets.size() - 1;
         }
-        nextTargetIndex--;
-        return targets.get(nextTargetIndex).id;
+        return targets.get(nextTargetIndex--).id;
     }
 
     private void updateVelocity() {   //更新速度向量

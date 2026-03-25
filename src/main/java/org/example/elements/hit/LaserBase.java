@@ -70,7 +70,7 @@ public class LaserBase extends Shape {     //激光类
             this.y = this.y + this.ySpeed;
             xySync();
             if (this.y > 570 || this.y < -600 || this.x > 1920 || this.x < 0) break;
-            else if (Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y))
+            else if (Main.shield[1 - this.side].hitTestPoint(this.x, this.y) || Main.fort[1 - this.side].hitTestPoint(this.x, this.y))
                 break;
             this.steps++;
         }

@@ -33,7 +33,7 @@ public class HolyBullet extends Shape {
 
     @Override
     public void step(){
-        if (t_jump_flg == 0) {
+        if (t_jump_flg == 0 && Main.bases[t_on_side] != null) {
             x = x + Main.bases[t_on_side].base_move_x;
             y = y + Main.bases[t_on_side].base_move_y;
         }

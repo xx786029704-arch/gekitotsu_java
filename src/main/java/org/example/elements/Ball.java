@@ -116,7 +116,9 @@ public class Ball extends Round {       //兵玉基类
             on_side = 1 - on_side;
         }
         cnt++;
-        move(Main.bases[on_side].base_move_x, Main.bases[on_side].base_move_y);
+        if (Main.bases[on_side] != null) {
+            move(Main.bases[on_side].base_move_x, Main.bases[on_side].base_move_y);
+        }
         ys = ys + 1;
         drop_y = y + ys;
         if (drop_y >= 566) {
