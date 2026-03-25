@@ -20,7 +20,6 @@ public class DrillCreature extends Round {   //尖生物
         this.yuv = Utils.sin(R);
         this.id = Main.addElement(this);
         Main.unit[side].addShape(this);
-        Main.atk[side].addShape(this);
     }
 
     @Override
@@ -30,7 +29,7 @@ public class DrillCreature extends Round {   //尖生物
             this.hp--;
             new HitsDrop(this.x, this.y, Main.atk[side]);
         }
-        if (this.speed<25.F) {
+        if (this.speed < 25.F) {
             this.speed += 1.F;
         }
         this.x = this.x + this.xuv*this.speed;
@@ -49,7 +48,6 @@ public class DrillCreature extends Round {   //尖生物
     public void kill() {
         Main.elements.remove(id);
         Main.unit[this.side].removeShape(this);
-        Main.atk[this.side].removeShape(this);
     }
 
 }

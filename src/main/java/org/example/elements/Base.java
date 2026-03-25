@@ -6,6 +6,8 @@ import org.example.Shape;
 import org.example.ShapeBuilder;
 import org.example.elements.units.NieBall;
 
+import java.awt.*;
+
 public class Base extends CompositeShape {  //车板类
     public int axl;
     public int side;
@@ -93,5 +95,39 @@ public class Base extends CompositeShape {  //车板类
                 Main.cores[side].dmg_flg = true;
             }
         }
+    }
+
+    @Override   //神之一手来了
+    public boolean hitTestPoint(float X, float Y){
+        float dx = X - x;
+        float dy = Y - y;
+        if (dx < -191.5F || dx > 191.5F || dy < -15.5F || dy > 51.5F){
+            return false;
+        }
+        if (dy > -4F){
+            if (dy > 17F){
+                if (dy > 27.5F) {
+                    dx = Math.abs(dx) - 108.7F;
+                    dy -= 20;
+                    return dx * dx + dy * dy <= 992.25F;
+                }
+                dy -= 17F;
+                dy *= 1.095238095238F;
+            } else {
+                return true;
+            }
+        } else {
+            dy += 4F;
+        }
+        if (dx > -180F){
+            if (dx > 180F){
+                dx -= 180F;
+            } else {
+                return true;
+            }
+        } else {
+            dx += 180F;
+        }
+        return dx * dx + dy * dy <= 132.25F;
     }
 }

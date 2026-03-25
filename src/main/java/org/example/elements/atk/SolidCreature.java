@@ -21,7 +21,6 @@ public class SolidCreature extends Round {   //固生物
         this.ys = Utils.sin(R) * 2.F;
         this.id = Main.addElement(this);
         Main.unit[side].addShape(this);
-        Main.atk[side].addShape(this);
     }
 
     @Override
@@ -53,6 +52,5 @@ public class SolidCreature extends Round {   //固生物
     public void kill() {
         Main.elements.remove(id);
         Main.unit[this.side].removeShape(this);
-        Main.atk[this.side].removeShape(this);
     }
 }

@@ -26,7 +26,6 @@ public class ShockCreature extends Round {   //痹生物
         this.ys = Utils.sin(R) * 2.F;
         this.id = Main.addElement(this);
         Main.unit[side].addShape(this);
-        Main.atk[side].addShape(this);
         this.cnt = 0;
     }
 
@@ -71,7 +70,6 @@ public class ShockCreature extends Round {   //痹生物
     public void kill() {
         Main.elements.remove(id);
         Main.unit[this.side].removeShape(this);
-        Main.atk[this.side].removeShape(this);
     }
 
     private void updateFloatOffset() {
