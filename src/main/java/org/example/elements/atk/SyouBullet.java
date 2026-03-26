@@ -15,26 +15,28 @@ public class SyouBullet extends Rectangle {   //障玉障壁
     private final float cosRot;
     private final float sinRot;
     private boolean active = false;
+    protected final Game game;
 
-    public SyouBullet(float X, float Y, int S, float cos_rot, float sin_rot) {   //初始化
+    public SyouBullet(Game game, float X, float Y, int S, float cos_rot, float sin_rot) {   //初始化
         super(X, Y, -14, -14, 28, 28);
+        this.game = game;
         side = S;
         cosRot = cos_rot;
         sinRot = sin_rot;
-        id = Main.addElement(this);
+        id = this.game.addElement(this);
     }
 
     @Override
     public void step() {   //每帧逻辑
-        if (Main.team[1 - side].hitTestPoint(x, y)) {
+        if (this.game.team[1 - side].hitTestPoint(x, y)) {
             hp--;
-            if (Main.fort[1 - side].hitTestPoint(x, y) || Main.shield[1 - side].hitTestPoint(x, y)) {
+            if (this.game.fort[1 - side].hitTestPoint(x, y) || this.game.shield[1 - side].hitTestPoint(x, y)) {
                 hp = 0;
             }
         }
         if (y > 570 || y < -600 || x > 1920 || x < 0 || hp <= 0 || cnt >= 159) {
             if (active) {
-                new HitsDrop(x, y, Main.atk[side]);
+                new HitsDrop(this.game, x, y, this.game.atk[side]);
             }
             kill();
             return;
@@ -55,14 +57,14 @@ public class SyouBullet extends Rectangle {   //障玉障壁
     private void activate() {
         if (!active) {
             active = true;
-            Main.unit[side].addShape(this);
+            this.game.unit[side].addShape(this);
         }
     }
 
     private void kill() {
-        Main.elements.remove(id);
+        this.game.elements.remove(id);
         if (active) {
-            Main.unit[side].removeShape(this);
+            this.game.unit[side].removeShape(this);
         }
     }
 

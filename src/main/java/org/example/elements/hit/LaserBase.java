@@ -1,6 +1,6 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 
 import java.awt.*;
@@ -19,8 +19,9 @@ public class LaserBase extends Shape {     //激光类
     protected int side;
     protected int steps;
     private int id;
+    protected final Game game;
 
-    public LaserBase(float X, float Y, int RDeg, int S,float thi, float radi) {
+    public LaserBase(Game game,float X, float Y, int RDeg, int S,float thi, float radi) {
         super(X, Y);
         rotDeg = RDeg;
         thickness = thi;
@@ -32,13 +33,14 @@ public class LaserBase extends Shape {     //激光类
         oldRotDeg = 90.F;
         side = S;
         steps = 0;
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        this.game = game;
+        id = this.game.addElement(this);
+        this.game.atk[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        this.game.elements.remove(id);
+        this.game.atk[side].removeShape(this);
     }
 
     protected float internalCos(float RDeg){
@@ -70,7 +72,7 @@ public class LaserBase extends Shape {     //激光类
             this.y = this.y + this.ySpeed;
             xySync();
             if (this.y > 570 || this.y < -600 || this.x > 1920 || this.x < 0) break;
-            else if (Main.shield[1 - this.side].hitTestPoint(this.x, this.y) || Main.fort[1 - this.side].hitTestPoint(this.x, this.y))
+            else if (this.game.shield[1 - this.side].hitTestPoint(this.x, this.y) || this.game.fort[1 - this.side].hitTestPoint(this.x, this.y))
                 break;
             this.steps++;
         }

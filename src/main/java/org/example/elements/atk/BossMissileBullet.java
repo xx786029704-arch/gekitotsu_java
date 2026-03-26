@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
@@ -13,8 +13,8 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
     private float rot;
     private float targetRotDelta;
 
-    public BossMissileBullet(float X, float Y, int S, int target, float rng1, float rng2, float rng3, float rng4, float rng5) {   //初始化
-        super(X, Y, S);
+    public BossMissileBullet(Game game, float X, float Y, int S, int target, float rng1, float rng2, float rng3, float rng4, float rng5) {   //初始化
+        super(game, X, Y, S);
         this.r = 9.3F;
         this.targetRot = Math.round(rng1 * 360);
         this.rot = this.targetRot;
@@ -42,8 +42,8 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
                 kill();
                 return;
             }
-            if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2) {
-                new HitsBomb(this.x, this.y, this.side);
+            if (this.game.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2) {
+                new HitsBomb(this.game, this.x, this.y, this.side);
                 kill();
             }
         } else {
@@ -52,18 +52,18 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
                 kill();
                 return;
             }
-            if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2 || cnt > 260) {
-                new HitsBomb(this.x, this.y, this.side);
+            if (this.game.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2 || cnt > 260) {
+                new HitsBomb(this.game, this.x, this.y, this.side);
                 kill();
                 return;
             }
             if (targetId != -1) {
-                if (Main.elements.containsKey(targetId)) {
-                    Shape target = Main.elements.get(targetId);
+                if (this.game.elements.containsKey(targetId)) {
+                    Shape target = this.game.elements.get(targetId);
                     targetRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
                 }
             } else {
-                targetRot = Math.round((float) (Math.atan2(Main.core_y[1 - this.side] - this.y, Main.core_x[1 - this.side] - this.x) * 180 / Math.PI));
+                targetRot = Math.round((float) (Math.atan2(this.game.core_y[1 - this.side] - this.y, this.game.core_x[1 - this.side] - this.x) * 180 / Math.PI));
             }
             if (this.rot - 180 > this.targetRot) {
                 this.targetRot = this.targetRot + 360;

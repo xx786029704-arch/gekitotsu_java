@@ -1,6 +1,6 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.Utils;
 import org.example.elements.units.StarBall;
@@ -21,9 +21,11 @@ public class StarPrepareLaser extends Shape {     //星玉视觉激光类
     private int cnt;
     private static boolean visible=true;//是否开启显示
     private int user;
+    protected final Game game;
 
-    public StarPrepareLaser(float X, float Y, int RDeg, int S,int U) {
+    public StarPrepareLaser(Game game, float X, float Y, int RDeg, int S,int U) {
         super(X, Y);
+        this.game = game;
         rotDeg = RDeg;
         xSpeed = 0.F;
         ySpeed = 10.F;
@@ -34,11 +36,11 @@ public class StarPrepareLaser extends Shape {     //星玉视觉激光类
         steps = -1;
         user = U;
         cnt = 0;
-        id = Main.addElement(this);
+        id = this.game.addElement(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
+        this.game.elements.remove(id);
     }
 
     protected float internalCos(int RDeg) {
@@ -53,9 +55,9 @@ public class StarPrepareLaser extends Shape {     //星玉视觉激光类
     public void step() {
         this.cnt++;
         if (!visible && this.cnt < 30) return;
-        if (Main.elements.containsKey(user)) {
+        if (this.game.elements.containsKey(user)) {
             //此处代码缺乏安全性，但一般应该能保证user一定是StarBall
-            StarBall wrk = (StarBall) (Main.elements.get(user));
+            StarBall wrk = (StarBall) (this.game.elements.get(user));
             this.rotDeg = wrk.rot;
             this.startX = wrk.x + 28.f * Utils.cos(this.rotDeg);
             this.startY = wrk.y + 28.f * Utils.sin(this.rotDeg);
@@ -75,12 +77,12 @@ public class StarPrepareLaser extends Shape {     //星玉视觉激光类
                 if (this.y < -600 || this.x > 1920 || this.x < 0) {
                     this.steps = -1;
                     break;
-                } else if (this.y > 570 || Main.wall[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y))
+                } else if (this.y > 570 || this.game.wall[1 - this.side].hitTestPoint(this.x, this.y) || this.game.shield[1 - this.side].hitTestPoint(this.x, this.y))
                     break;
                 this.steps++;
             }
             if (this.cnt == 30 && this.steps >= 0) {
-                new StarLaser(this.x, this.side);
+                new StarLaser(this.game, this.x, this.side);
             }
             if (!wrk.shooting) {
                 kill();

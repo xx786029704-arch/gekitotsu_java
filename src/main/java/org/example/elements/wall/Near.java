@@ -1,17 +1,17 @@
 package org.example.elements.wall;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.elements.Wall;
 import org.example.elements.hit.HitsJump;
 
 public class Near extends Wall {
-    public Near(float X, float Y, int S, int TYPE) {
-        super(X, Y, S, TYPE);
+    public Near(Game game, float X, float Y, int S, int TYPE) {
+        super(game, X, Y, S, TYPE);
     }
 
     public void stepEx(){
-        if (Main.norikomi_flg) {
-            new HitsJump(x, y - 35, Main.jump_u[side]);
+        if (this.game.norikomi_flg) {
+            new HitsJump(this.game, x, y - 35, this.game.jump_u[side]);
         }
     }
 }

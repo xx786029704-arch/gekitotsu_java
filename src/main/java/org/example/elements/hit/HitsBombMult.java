@@ -1,20 +1,22 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Round;
 
 public class HitsBombMult extends Round {   //暴风（倍率）
     private int frame;
     private final int side;
     private final float mult;
+    protected final Game game;
 
-    public HitsBombMult(float X, float Y, int S, float mult) {
+    public HitsBombMult(Game game, float X, float Y, int S, float mult) {
         super(X, Y, 30 * mult);
+        this.game = game;
         xySync();
         this.side = S;
         this.mult = mult;
-        this.id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        this.id = this.game.addElement(this);
+        this.game.atk[side].addShape(this);
     }
 
     @Override
@@ -24,8 +26,8 @@ public class HitsBombMult extends Round {   //暴风（倍率）
             this.r *= mult;
             frame++;
         }else {
-            Main.elements.remove(id);
-            Main.atk[side].removeShape(this);
+            this.game.elements.remove(id);
+            this.game.atk[side].removeShape(this);
         }
     }
 }

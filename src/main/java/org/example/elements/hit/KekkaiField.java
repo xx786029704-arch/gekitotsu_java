@@ -1,6 +1,6 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.elements.units.KekkaiBall;
 
@@ -25,13 +25,15 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
     // 3. 渲染对象缓存
     private final Stroke cachedStroke = new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     private final Color cachedColor;
+    protected final Game game;
 
-    public KekkaiField(int side) {
+    public KekkaiField(Game game, int side) {
         super(0, 0);
+        this.game = game;
         this.side = side;
-        this.id = Main.addElement(this);
+        this.id = this.game.addElement(this);
         this.cachedColor = (side == 0) ? new Color(0, 255, 255, 120) : new Color(255, 128, 0, 120);
-        Main.shield[side].addShape(this);
+        this.game.shield[side].addShape(this);
     }
 
     @Override
@@ -40,7 +42,7 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
     }
 
     private void rebuildSegments() {
-        List<Integer> ids = Main.kekkaiIds[side];
+        List<Integer> ids = this.game.kekkaiIds[side];
         int size = ids.size();
 
         // 确保数组容量充足，避免越界
@@ -55,7 +57,7 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
 
         for (int i = 0; i < size; i++) {
             // 4. 优化 Map 查找：一次 get 搞定，干掉 containsKey
-            Shape s = Main.elements.get(ids.get(i));
+            Shape s = this.game.elements.get(ids.get(i));
             if (s instanceof KekkaiBall ball) {
                 if (ball.jump_flg == 0 && ball.side == ball.on_side && ball.hurt_time <= 0) {
                     float px = ball.x + ball.cos_rot * 33F;

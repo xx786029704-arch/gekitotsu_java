@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Round;
 import org.example.Shape;
 import org.example.elements.Bullet;
@@ -14,29 +14,31 @@ public class SearchBullet extends Round {       //查玉子弹（Gemini狂猛优
     private float ys = 0;
     private float dirX;
     private float dirY;
+    protected final Game game;
 
     // 预计算常量
     private static final float DEG_TO_RAD = 0.017453292519943295F;
 
-    public SearchBullet(float X, float Y, int S, float _cos_rot, float _sin_rot) {
+    public SearchBullet(Game game, float X, float Y, int S, float _cos_rot, float _sin_rot) {
         super(X, Y, 15.5F);
+        this.game = game;
         xySync();
         side = S;
         dirX = _cos_rot;
         dirY = _sin_rot;
         xs = dirX * 15F;
         ys = dirY * 15F;
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        id = this.game.addElement(this);
+        this.game.atk[side].addShape(this);
     }
 
     @Override
     public void step() {
         // 1. 消除数组重复寻址 (Cache array accesses)
         int oppSide = 1 - side;
-        var oppAtk = Main.atk[oppSide];
-        var oppFort = Main.fort[oppSide];
-        var oppShield = Main.shield[oppSide];
+        var oppAtk = this.game.atk[oppSide];
+        var oppFort = this.game.fort[oppSide];
+        var oppShield = this.game.shield[oppSide];
 
         // 2. 避免 Iterator 的 GC 碎片化分配
         // 假设 getShapes() 返回的是 ArrayList，使用索引遍历能带来质的飞跃
@@ -114,7 +116,7 @@ public class SearchBullet extends Round {       //查玉子弹（Gemini狂猛优
             }
 
             if (oppFort.hitTestPoint(x, y) || oppShield.hitTestPoint(x, y)) {
-                new HitsDropFrames(x, y, Main.atk[side], 3, 1);
+                new HitsDropFrames(this.game, x, y, this.game.atk[side], 3, 1);
                 kill();
                 return;
             }
@@ -123,7 +125,7 @@ public class SearchBullet extends Round {       //查玉子弹（Gemini狂猛优
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        this.game.elements.remove(id);
+        this.game.atk[side].removeShape(this);
     }
 }

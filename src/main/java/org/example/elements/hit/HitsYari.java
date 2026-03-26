@@ -1,7 +1,7 @@
 package org.example.elements.hit;
 
 import org.example.CompositeShape;
-import org.example.Main;
+import org.example.Game;
 import org.example.ShapeBuilder;
 import org.example.YariBase;
 
@@ -10,28 +10,30 @@ public class HitsYari extends CompositeShape {   //剑玉剑气
     int frame;
     private final int user;
     private final int rot;
+    protected final Game game;
 
-    public HitsYari(float X, float Y, int R, int S, int USER) {
+    public HitsYari(Game game, float X, float Y, int R, int S, int USER) {
         super(X, Y);
+        this.game = game;
         xySync();
         frame = 0;
         rot = (R % 360 + 360) % 360;
         user = USER;
         side = S;
         ShapeBuilder.into(this).shape(new YariBase(X, Y, R, .5f, -29.5f, 3.4f));
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        id = this.game.addElement(this);
+        this.game.atk[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        this.game.elements.remove(id);
+        this.game.atk[side].removeShape(this);
     }
 
     @Override
     public void step(){
-        if (Main.elements.containsKey(user)) {
-            moveTo(Main.elements.get(user).x, Main.elements.get(user).y);
+        if (this.game.elements.containsKey(user)) {
+            moveTo(this.game.elements.get(user).x, this.game.elements.get(user).y);
         }
 
         switch (frame){

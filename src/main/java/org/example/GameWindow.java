@@ -9,8 +9,10 @@ import org.example.elements.Wall;
 
 public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和我没关系，反正最后也不用可视化
     private final GameCanvas canvas;
+    protected final Game game;
 
-    public GameWindow(int width, int height, int targetFPS) {
+    public GameWindow(Game game, int width, int height, int targetFPS) {
+        this.game = game;
         setTitle("Game Render Window");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int maxWidth = Math.max(200, screenSize.width - 80);
@@ -23,7 +25,7 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
         setLocationRelativeTo(null); // 居中显示
         setResizable(false);
 
-        canvas = new GameCanvas(width, height);
+        canvas = new GameCanvas(game, width, height);
         add(canvas);
 
     }
@@ -42,9 +44,11 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
         private final int logicalWidth;
         private final int logicalHeight;
         private static final float CAMERA_OFFSET_Y = 60f;
+        protected final Game game;
 
-        public GameCanvas(int logicalWidth, int logicalHeight) {
+        public GameCanvas(Game game, int logicalWidth, int logicalHeight) {
             setBackground(Color.BLACK);
+            this.game = game;
             this.logicalWidth = logicalWidth;
             this.logicalHeight = logicalHeight;
         }
@@ -62,9 +66,9 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             float offsetX = (w - drawW) / 2f;
             float offsetY = (h - drawH) / 2f + CAMERA_OFFSET_Y;
             g2d.setColor(Color.WHITE);
-            g2d.drawString("frame: " + Main.time, 12, 18);
-            g2d.drawString(Integer.toString(Main.hp[0]), 12, 32);
-            g2d.drawString(Integer.toString(Main.hp[1]), 1200, 32);
+            g2d.drawString("frame: " + this.game.time, 12, 18);
+            g2d.drawString(Integer.toString(this.game.hp[0]), 12, 32);
+            g2d.drawString(Integer.toString(this.game.hp[1]), 1200, 32);
             g2d.translate(offsetX, offsetY);
             g2d.scale(scale, scale);
             g2d.scale(0.96, 0.96);
@@ -75,17 +79,17 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             g2d.drawLine(0,582,1920,582);
             g2d.setColor(Color.WHITE);
             for (Shape s : shapeList) {
-                if (!Main.elements.containsValue(s)) {
+                if (!this.game.elements.containsValue(s)) {
                     continue;
                 }
                 s.draw(g2d);
-                if (Main.SHOW_UNIT_HP && s instanceof Ball) {
+                if (Settings.SHOW_UNIT_HP && s instanceof Ball) {
                     Ball unit = (Ball) s;
                     Color prev = g2d.getColor();
                     g2d.setColor(Color.GREEN);
                     g2d.drawString(Integer.toString(unit.hp), (int) unit.x - 4, (int) unit.y + 4);
                     g2d.setColor(prev);
-                } else if (Main.SHOW_UNIT_HP && s instanceof Wall) {
+                } else if (Settings.SHOW_UNIT_HP && s instanceof Wall) {
                     Wall wall = (Wall) s;
                     Color prev = g2d.getColor();
                     g2d.setColor(Color.CYAN);

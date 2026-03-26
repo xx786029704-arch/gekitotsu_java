@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Round;
 import org.example.elements.hit.HitsDropFrames;
 
@@ -9,20 +9,22 @@ public class ShaBullet extends Round {   //射玉瞄准射线
     private final int id;
     private final float xs;
     private final float ys;
+    protected final Game game;
 
-    public ShaBullet(float X, float Y, int S, float _xs, float _ys) {   //初始化
+    public ShaBullet(Game game, float X, float Y, int S, float _xs, float _ys) {   //初始化
         super(X, Y, 15.5F);
+        this.game=game;
         this.side = S;
         this.xs = _xs;
         this.ys = _ys;
         this.x = X;
         this.y = Y;
-        this.id = Main.addElement(this);
+        this.id = this.game.addElement(this);
         xySync();
     }
 
     public void kill() {   //销毁
-        Main.elements.remove(id);
+        this.game.elements.remove(id);
     }
 
     @Override
@@ -34,7 +36,7 @@ public class ShaBullet extends Round {   //射玉瞄准射线
             if (this.y < -600 || this.x > 1920 || this.x < 0) {
                 break;
             }
-            if (Main.fort[1 - this.side].hitTestPoint(this.x, this.y) || Main.shield[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570) {
+            if (this.game.fort[1 - this.side].hitTestPoint(this.x, this.y) || this.game.shield[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570) {
                 hit = true;
                 break;
             }
@@ -46,6 +48,6 @@ public class ShaBullet extends Round {   //射玉瞄准射线
     }
 
     public void hit(){
-        new HitsDropFrames(this.x, this.y, Main.atk[side], 6, 1.3F);
+        new HitsDropFrames(this.game, this.x, this.y, this.game.atk[side], 6, 1.3F);
     }
 }

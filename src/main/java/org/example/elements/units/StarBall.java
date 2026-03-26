@@ -1,13 +1,14 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.Utils;
 import org.example.elements.Ball;
 import org.example.elements.hit.StarPrepareLaser;
 
 public class StarBall extends Ball {   //星玉
     public boolean shooting;
-    public StarBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public StarBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         shooting = false;
         speed = 250;
         hp = 10;
@@ -21,7 +22,7 @@ public class StarBall extends Ball {   //星玉
         } else {
             if (this.cnt == this.speed + 1) {
                 this.shooting = true;
-                new StarPrepareLaser(this.x + 28.F * Utils.cos((int) this.rot), this.y + 28.F * Utils.sin((int) this.rot), this.rot, this.side, this.id);
+                new StarPrepareLaser(this.game, this.x + 28.F * Utils.cos((int) this.rot), this.y + 28.F * Utils.sin((int) this.rot), this.rot, this.side, this.id);
             }
             if (this.cnt >= this.speed + 31) {
                 this.cnt = 0;

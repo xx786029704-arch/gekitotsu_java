@@ -1,11 +1,12 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.elements.Ball;
 import org.example.elements.atk.TuiBullet;
 
 public class TuiBall extends Ball {   //坠玉
-    public TuiBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public TuiBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         hp = 10;
         max_hp = 10;
         speed = 300;
@@ -15,7 +16,7 @@ public class TuiBall extends Ball {   //坠玉
     public void stepEx() {   //攻击逻辑
         if (cnt == speed + 3) {
             cnt = 0;
-            new TuiBullet(x + cos_rot * 35, y + sin_rot * 35, side, cos_rot, sin_rot);
+            new TuiBullet(this.game, x + cos_rot * 35, y + sin_rot * 35, side, cos_rot, sin_rot);
         }
     }
 }

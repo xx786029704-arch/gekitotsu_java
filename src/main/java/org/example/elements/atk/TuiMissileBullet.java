@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBombMult;
@@ -10,8 +10,8 @@ public class TuiMissileBullet extends Bullet {   //坠玉导弹
     private float cos_rot;
     private float sin_rot;
 
-    public TuiMissileBullet(float X, float Y, int S) {   //初始化
-        super(X, Y, S);
+    public TuiMissileBullet(Game game, float X, float Y, int S) {   //初始化
+        super(game, X, Y, S);
         cos_rot = side == 1 ? -.5F : .5F;
         sin_rot = -0.8660254037844386F;
         xs = cos_rot * 15;
@@ -24,8 +24,8 @@ public class TuiMissileBullet extends Bullet {   //坠玉导弹
             kill();
             return;
         }
-        if (Main.team[1 - side].hitTestPoint(x, y) || y > 570 || gei_flg == 2) {
-            new HitsBombMult(x, y, side, 0.5F);
+        if (this.game.team[1 - side].hitTestPoint(x, y) || y > 570 || gei_flg == 2) {
+            new HitsBombMult(this.game, x, y, side, 0.5F);
             kill();
             return;
         }

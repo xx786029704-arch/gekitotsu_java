@@ -1,18 +1,20 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Round;
 
 public class HitsBomb extends Round {   //暴风（无倍率）
     private int frame;
     private final int side;
+    protected final Game game;
 
-    public HitsBomb(float X, float Y, int S) {
+    public HitsBomb(Game game,float X, float Y, int S) {
         super(X, Y, 30);
+        this.game = game;
         xySync();
         this.side = S;
-        this.id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        this.id = this.game.addElement(this);
+        this.game.atk[side].addShape(this);
     }
 
     @Override
@@ -21,8 +23,8 @@ public class HitsBomb extends Round {   //暴风（无倍率）
             this.r = frame == 0 ? 60 : (frame == 1 ? 39 : 12);  //硬编码省去new float[]开销
             frame++;
         }else {
-            Main.elements.remove(id);
-            Main.atk[side].removeShape(this);
+            this.game.elements.remove(id);
+            this.game.atk[side].removeShape(this);
         }
     }
 }

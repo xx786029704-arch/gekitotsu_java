@@ -1,7 +1,7 @@
 package org.example.elements;
 
 import org.example.CompositeShape;
-import org.example.Main;
+import org.example.Game;
 import org.example.ShapeBuilder;
 
 import java.awt.*;
@@ -11,9 +11,11 @@ public class Core extends CompositeShape {      //核心类
     public float unit_x;
     public float unit_y;
     public boolean dmg_flg;
+    protected final Game game;
 
-    public Core(float X, float Y, int S) {
+    public Core(Game game, float X, float Y, int S) {
         super(X, Y);
+        this.game=game;
         this.side = S;
         unit_x = X;
         unit_y = Y;
@@ -28,37 +30,37 @@ public class Core extends CompositeShape {      //核心类
                 .circle(0,-0,33.5F)
                 .polygon(0,0,vxy1)
                 .polygon(0,0,vxy2);
-        id = Main.addElement(this);
-        Main.wall[side].addShape(this);
+        id = this.game.addElement(this);
+        this.game.wall[side].addShape(this);
     }
 
     public void kill() {
-        Main.cores[side] = null;
-        Main.elements.remove(id);
-        Main.wall[side].removeShape(this);
+        this.game.cores[side] = null;
+        this.game.elements.remove(id);
+        this.game.wall[side].removeShape(this);
     }
 
     @Override
     public void step(){     //照搬原版逻辑
-        this.move(Main.bases[side].x + this.unit_x - x,Main.bases[side].y + this.unit_y - y);
-        if (Main.atk[1-side].hitTestPoint(this.x - 40, this.y - 40) ||
-            Main.atk[1-side].hitTestPoint(this.x + 40, this.y - 40) ||
-            Main.atk[1-side].hitTestPoint(this.x - 40, this.y + 40) ||
-            Main.atk[1-side].hitTestPoint(this.x + 40, this.y + 40) ||
-            Main.atk[1-side].hitTestPoint(this.x - 20, this.y - 20) ||
-            Main.atk[1-side].hitTestPoint(this.x, this.y - 20) ||
-            Main.atk[1-side].hitTestPoint(this.x + 20, this.y - 20) ||
-            Main.atk[1-side].hitTestPoint(this.x - 20, this.y + 20) ||
-            Main.atk[1-side].hitTestPoint(this.x, this.y + 20) ||
-            Main.atk[1-side].hitTestPoint(this.x + 20, this.y + 20) ||
-            Main.atk[1-side].hitTestPoint(this.x - 20, this.y) ||
-            Main.atk[1-side].hitTestPoint(this.x + 20, this.y) ||
-            Main.atk[1-side].hitTestPoint(this.x, this.y)) {
+        this.move(this.game.bases[side].x + this.unit_x - x,this.game.bases[side].y + this.unit_y - y);
+        if (this.game.atk[1-side].hitTestPoint(this.x - 40, this.y - 40) ||
+            this.game.atk[1-side].hitTestPoint(this.x + 40, this.y - 40) ||
+            this.game.atk[1-side].hitTestPoint(this.x - 40, this.y + 40) ||
+            this.game.atk[1-side].hitTestPoint(this.x + 40, this.y + 40) ||
+            this.game.atk[1-side].hitTestPoint(this.x - 20, this.y - 20) ||
+            this.game.atk[1-side].hitTestPoint(this.x, this.y - 20) ||
+            this.game.atk[1-side].hitTestPoint(this.x + 20, this.y - 20) ||
+            this.game.atk[1-side].hitTestPoint(this.x - 20, this.y + 20) ||
+            this.game.atk[1-side].hitTestPoint(this.x, this.y + 20) ||
+            this.game.atk[1-side].hitTestPoint(this.x + 20, this.y + 20) ||
+            this.game.atk[1-side].hitTestPoint(this.x - 20, this.y) ||
+            this.game.atk[1-side].hitTestPoint(this.x + 20, this.y) ||
+            this.game.atk[1-side].hitTestPoint(this.x, this.y)) {
             this.dmg_flg = true;
-            Main.hp[side]--;
+            this.game.hp[side]--;
             }
-        if (Main.hp[side] < 100 && Main.repair[side].hitTestPoint(this.x, this.y)) {
-            Main.hp[side]++;
+        if (this.game.hp[side] < 100 && this.game.repair[side].hitTestPoint(this.x, this.y)) {
+            this.game.hp[side]++;
         }
         dmg_flg = false;
     }

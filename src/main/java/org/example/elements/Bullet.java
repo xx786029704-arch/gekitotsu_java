@@ -1,6 +1,6 @@
 package org.example.elements;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Round;
 import org.example.Utils;
 import org.example.elements.hit.HitsDrop;
@@ -13,18 +13,20 @@ public class Bullet extends Round {     //子弹基类
     public float ys = 0;
     public float gravity = 0;
     public float power = 0;
+    protected final Game game;
 
-    public Bullet(float X, float Y, int S) {
+    public Bullet(Game game, float X, float Y, int S) {
         super(X, Y, 15.5F);
+        this.game = game;
         xySync();
         side = S;
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        id = this.game.addElement(this);
+        this.game.atk[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        this.game.elements.remove(id);
+        this.game.atk[side].removeShape(this);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class Bullet extends Round {     //子弹基类
         if (y > 570) {
             if (!hit_ground()) return;
         }
-        if (Main.team[1-side].hitTestPoint(x, y) || gei_flg == 2) {
+        if (this.game.team[1-side].hitTestPoint(x, y) || gei_flg == 2) {
             if (!hit()) return;
         }
         move();
@@ -52,7 +54,7 @@ public class Bullet extends Round {     //子弹基类
     }
 
     public boolean hit(){   //被摧毁
-        new HitsDrop(x, y, Main.atk[side]);
+        new HitsDrop(this.game, x, y, this.game.atk[side]);
         kill();
         return false;
     }
@@ -93,8 +95,8 @@ public class Bullet extends Round {     //子弹基类
     }
 
     public void betray(){
-        Main.atk[side].removeShape(this);
+        this.game.atk[side].removeShape(this);
         side = 1 - side;
-        Main.atk[side].addShape(this);
+        this.game.atk[side].addShape(this);
     }
 }

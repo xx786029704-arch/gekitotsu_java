@@ -1,13 +1,13 @@
 package org.example.elements.units;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.elements.Ball;
 import org.example.elements.atk.TonBullet;
 
 public class TonBall extends Ball {   //弹玉
 
-    public TonBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public TonBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         speed = 70;
     }
 
@@ -17,7 +17,7 @@ public class TonBall extends Ball {   //弹玉
             this.cnt = 0;
             float spawnX = this.x + cos_rot * 38;
             float spawnY = this.y + sin_rot * 38;
-            new TonBullet(spawnX, spawnY, this.side).setGravity(0).setVecMult(cos_rot, sin_rot, 10).setGravity(0.32F);
+            new TonBullet(this.game, spawnX, spawnY, this.side).setGravity(0).setVecMult(cos_rot, sin_rot, 10).setGravity(0.32F);
         }
     }
 }

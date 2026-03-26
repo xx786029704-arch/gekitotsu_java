@@ -1,13 +1,13 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.elements.Bullet;
 public class HanabiBullet extends Bullet {   //花玉子弹
     private int cnt = 0;
     private final int rot;
 
-    public HanabiBullet(float X, float Y, int S, int R) {   //初始化
-        super(X, Y, S);
+    public HanabiBullet(Game game, float X, float Y, int S, int R) {   //初始化
+        super(game, X, Y, S);
         this.rot = R;
         this.r = this.r * 0.8F;
     }
@@ -19,7 +19,7 @@ public class HanabiBullet extends Bullet {   //花玉子弹
             kill();
             return;
         }
-        if (this.y > 570 || Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2 || this.cnt > 60) {
+        if (this.y > 570 || this.game.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2 || this.cnt > 60) {
             hit();
             return;
         }
@@ -30,7 +30,7 @@ public class HanabiBullet extends Bullet {   //花玉子弹
     public boolean hit() {   //触发散射
         for (int i = 0; i < 20; i++) {
             int rot = this.rot + 18 * i;
-            new HinokoBullet(this.x, this.y, this.side, rot).setVecR(rot, 30);
+            new HinokoBullet(this.game, this.x, this.y, this.side, rot).setVecR(rot, 30);
         }
         return super.hit();
     }

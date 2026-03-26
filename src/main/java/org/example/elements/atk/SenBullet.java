@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
@@ -10,8 +10,8 @@ public class SenBullet extends Bullet {   //战玉坦克
     private int cnt = 0;
     private boolean drop_flg = false;
 
-    public SenBullet(float X, float Y, int S, int rotation) {   //初始化
-        super(X, Y, S);
+    public SenBullet(Game game, float X, float Y, int S, int rotation) {   //初始化
+        super(game, X, Y, S);
         gei_flg = 0;
         xs = Utils.cos(rotation) * 6F;
         ys = Utils.sin(rotation) * 6F;
@@ -23,11 +23,11 @@ public class SenBullet extends Bullet {   //战玉坦克
             kill();
             return;
         }
-        if (Main.team[1 - side].hitTestPoint(x, y)) {
+        if (this.game.team[1 - side].hitTestPoint(x, y)) {
             hp--;
         }
         if (hp <= 0) {
-            new HitsBomb(x, y, side);
+            new HitsBomb(this.game, x, y, side);
             kill();
             return;
         }
@@ -47,7 +47,7 @@ public class SenBullet extends Bullet {   //战玉坦克
         if (drop_flg && cnt == 40) {
             cnt = 0;
             float cos = side == 1 ? 0.7071067811865475F : -0.7071067811865475F;
-            new SenTamaBullet(x, y, side).setVecMult(cos, -0.7071067811865475F, 20).move();
+            new SenTamaBullet(this.game, x, y, side).setVecMult(cos, -0.7071067811865475F, 20).move();
         }
     }
 }

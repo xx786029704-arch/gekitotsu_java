@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
@@ -15,33 +15,35 @@ public class HolyBullet extends Shape {
     private final int t_side;
     private final int t_on_side;
     private final int t_jump_flg;
+    protected final Game game;
 
 
-    public HolyBullet(float X, float Y, int TYPE, int ROT, int SIDE, int ON_SIDE, int JUMP_FLG) {
+    public HolyBullet(Game game, float X, float Y, int TYPE, int ROT, int SIDE, int ON_SIDE, int JUMP_FLG) {
         super(X, Y);
+        this.game=game;
         t_type = TYPE;
         t_rot = ROT;
         t_on_side = ON_SIDE;
         t_side = SIDE;
         t_jump_flg = JUMP_FLG;
-        id = Main.addElement(this);
+        id = this.game.addElement(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
+        this.game.elements.remove(id);
     }
 
     @Override
     public void step(){
-        if (t_jump_flg == 0 && Main.bases[t_on_side] != null) {
-            x = x + Main.bases[t_on_side].base_move_x;
-            y = y + Main.bases[t_on_side].base_move_y;
+        if (t_jump_flg == 0 && this.game.bases[t_on_side] != null) {
+            x = x + this.game.bases[t_on_side].base_move_x;
+            y = y + this.game.bases[t_on_side].base_move_y;
         }
         cnt++;
         if (cnt == 20) {
             //TODO:需要处理复活玉的随机数问题
-            Main.unit_make(x, y, t_rot, t_type, t_side);
-            ((Ball) Main.elements.get(Main.ID - 1)).on_side = t_on_side;
+            this.game.unit_make(x, y, t_rot, t_type, t_side);
+            ((Ball) this.game.elements.get(this.game.ID - 1)).on_side = t_on_side;
         } else if(cnt >= 30){
             kill();
         }

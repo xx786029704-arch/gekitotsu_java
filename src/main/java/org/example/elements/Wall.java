@@ -1,7 +1,7 @@
 package org.example.elements;
 
 import org.example.CompositeShape;
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.ShapeBuilder;
 import org.example.elements.hit.HitsKen;
@@ -12,47 +12,49 @@ public class Wall extends CompositeShape {  //要塞壁类
     public int hp = 35;
     public int max_hp = 35;
     public int breaking = 0;
+    protected final Game game;
 
-    public Wall(float X, float Y, int S, int TYPE) {
+    public Wall(Game game, float X, float Y, int S, int TYPE) {
         super(X, Y);
+        this.game = game;
         this.side = S;
         this.type = TYPE;
         ShapeBuilder.into(this)     //一个圆角矩形
-                .roundedRectangle(-16.85F,-17.5F,34.35F,35F,4F);
-        id = Main.addElement(this);
-        Main.wall[side].addShape(this);
+                .roundedRectangle(-16.85F, -17.5F, 34.35F, 35F, 4F);
+        id = this.game.addElement(this);
+        this.game.wall[side].addShape(this);
     }
 
     public void kill() {
-        Main.wall[side].removeShape(this);
-        Main.elements.remove(id);
+        this.game.wall[side].removeShape(this);
+        this.game.elements.remove(id);
     }
 
     @Override
     public void step(){
-        if (Main.bases[side] == null){
+        if (this.game.bases[side] == null){
             kill();
             return;
         }
-        this.move(Main.bases[side].base_move_x,Main.bases[side].base_move_y);
+        this.move(this.game.bases[side].base_move_x,this.game.bases[side].base_move_y);
         stepEx();
-        if (breaking > 0 || Main.hp0_flg[this.side] > 0) {
+        if (breaking > 0 || this.game.hp0_flg[this.side] > 0) {
             breaking++;
-            if (breaking > 4 || Main.hp0_flg[this.side] > 0) {
+            if (breaking > 4 || this.game.hp0_flg[this.side] > 0) {
                 kill();
                 return;
             }
         }
-        else if (Main.atk[1-side].hitTestPoint(this.x - 6, this.y - 6) ||
-                Main.atk[1-side].hitTestPoint(this.x + 6, this.y - 6) ||
-                Main.atk[1-side].hitTestPoint(this.x - 6, this.y + 6) ||
-                Main.atk[1-side].hitTestPoint(this.x + 6, this.y + 6)) {
+        else if (this.game.atk[1-side].hitTestPoint(this.x - 6, this.y - 6) ||
+                this.game.atk[1-side].hitTestPoint(this.x + 6, this.y - 6) ||
+                this.game.atk[1-side].hitTestPoint(this.x - 6, this.y + 6) ||
+                this.game.atk[1-side].hitTestPoint(this.x + 6, this.y + 6)) {
             hp--;
             if (this.hp <= 0) {
                 breaking++;
             }
         }
-        if (hp < max_hp && Main.repair[side].hitTestPoint(this.x, this.y)) {
+        if (hp < max_hp && this.game.repair[side].hitTestPoint(this.x, this.y)) {
             hp ++;
         }
     }

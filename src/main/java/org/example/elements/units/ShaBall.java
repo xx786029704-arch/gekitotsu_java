@@ -1,11 +1,12 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.elements.Ball;
 import org.example.elements.atk.ShaBullet;
 
 public class ShaBall extends Ball {   //射玉
-    public ShaBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public ShaBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         speed = 70;
     }
 
@@ -15,7 +16,7 @@ public class ShaBall extends Ball {   //射玉
             this.cnt = 0;
             float spawnX = this.x + cos_rot * 70;
             float spawnY = this.y + sin_rot * 70;
-            new ShaBullet(spawnX, spawnY, this.side, cos_rot * 10F, sin_rot * 10F);
+            new ShaBullet(this.game, spawnX, spawnY, this.side, cos_rot * 10F, sin_rot * 10F);
         }
     }
 }

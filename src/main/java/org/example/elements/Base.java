@@ -1,7 +1,7 @@
 package org.example.elements;
 
 import org.example.CompositeShape;
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.ShapeBuilder;
 import org.example.elements.units.NieBall;
@@ -19,10 +19,12 @@ public class Base extends CompositeShape {  //车板类
     float old_y;
     public float base_move_x = 0;
     public float base_move_y = 0;
+    public Game game;
 
     //TODO：车板可以像要塞壁一样优化碰撞，同时也不再需要子图形（最终版本）
-    public Base(float X, float Y, int S) {
+    public Base(Game game, float X, float Y, int S) {
         super(X, Y);
+        this.game=game;
         this.side = S;
         this.axl = 1;
         this.xx = x;
@@ -33,19 +35,19 @@ public class Base extends CompositeShape {  //车板类
                 .roundedRectangle(-191.5F,-15.5F,383,43,11.5F)
                 .circle(-108.7F,20,31.5F)
                 .circle(108.7F,20,31.5F);
-        id = Main.addElement(this);
-        Main.wall[side].addShape(this);
+        id = this.game.addElement(this);
+        this.game.wall[side].addShape(this);
     }
 
     public void kill() {
-        Main.bases[side] = null;
-        Main.elements.remove(id);
+        this.game.bases[side] = null;
+        this.game.elements.remove(id);
     }
 
     @Override
     public void step(){     //照搬原版逻辑
         this.xs = this.xs + (float) this.axl / 1000;
-        if (Main.hp0_flg[this.side] >= 3) {
+        if (this.game.hp0_flg[this.side] >= 3) {
             this.xs = 0;
         }
         this.ys += 0.05F;
@@ -73,10 +75,10 @@ public class Base extends CompositeShape {  //车板类
             this.xs = (-this.xs) / 2;
             this.tobasare_flg = true;
         }
-        if (this.tobasare_flg && Main.hp0_flg[this.side] == 0) {
+        if (this.tobasare_flg && this.game.hp0_flg[this.side] == 0) {
             System.out.println("hit wall");
             boolean nie_flg = false;
-            for (Shape s : Main.unit[side].getShapes()) {
+            for (Shape s : this.game.unit[side].getShapes()) {
                 if (s instanceof NieBall nie) {
                     nie.alarm = 6;
                     nie_flg = true;
@@ -84,13 +86,13 @@ public class Base extends CompositeShape {  //车板类
                 }
             }
             if (!nie_flg){
-                Main.dokkan_flg[this.side] = true;
+                this.game.dokkan_flg[this.side] = true;
                 wrk = Math.round(wrk);
                 if (this.wrk < 0) {
                     this.wrk = 0;
                 }
-                Main.hp[this.side] -= (int) this.wrk;
-                Main.cores[side].dmg_flg = true;
+                this.game.hp[this.side] -= (int) this.wrk;
+                this.game.cores[side].dmg_flg = true;
             }
         }
     }

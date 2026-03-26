@@ -1,7 +1,7 @@
 package org.example.elements.hit;
 
 import org.example.Polygon;
-import org.example.Main;
+import org.example.Game;
 import org.example.Utils;
 import org.example.elements.units.KabeBall;
 import java.awt.*;
@@ -16,6 +16,7 @@ public class HitsKabe extends Polygon {
     private float sin_rot;
     @Deprecated
     private float rot_radius;
+    protected final Game game;
     private static final float[][] baseVerts={
             {62.8f,-.05f},
             {125.6f,72.5f},
@@ -40,30 +41,31 @@ public class HitsKabe extends Polygon {
             0.863095238095238F,
             0.833333333333333F
     };
-    public HitsKabe(float X, float Y, float R, int S, int USER) {
+    public HitsKabe(Game game, float X, float Y, float R, int S, int USER) {
         super(X, Y,baseVerts);
+        this.game = game;
         xySync();
         frame = 0;
         user = USER;
-        KabeBall wrk = (KabeBall) (Main.elements.get(user));
+        KabeBall wrk = (KabeBall) (this.game.elements.get(user));
         cos_rot = wrk.cos_rot;
         sin_rot = wrk.sin_rot;
         rot_radius = R * 0.017453292519943295F;
         side = S;
-        id = Main.addElement(this);
-        Main.shield[side].addShape(this);
+        id = this.game.addElement(this);
+        this.game.shield[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.shield[side].removeShape(this);
+        this.game.elements.remove(id);
+        this.game.shield[side].removeShape(this);
     }
 
     @Override
     public void step(){
-        if (Main.elements.containsKey(user)) {
+        if (this.game.elements.containsKey(user)) {
             //此处代码缺乏安全性，但一般应该能保证user一定是KabeBall
-            KabeBall wrk = (KabeBall) (Main.elements.get(user));
+            KabeBall wrk = (KabeBall) (this.game.elements.get(user));
             x = wrk.x + 20 * wrk.cos_rot;
             y = wrk.y + 20 * wrk.sin_rot;
             cos_rot = wrk.cos_rot;

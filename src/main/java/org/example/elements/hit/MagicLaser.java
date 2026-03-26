@@ -1,6 +1,6 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.elements.hit.LaserBase;
 import org.example.Utils;
 import org.example.elements.units.MagicBall;
@@ -9,8 +9,8 @@ public class MagicLaser extends LaserBase {     //魔玉的激光
 
     private final int user;
 
-    public MagicLaser(float X, float Y, int RDeg, int S,int U) {
-        super(X, Y, RDeg, S, 20.F, 15.5F);
+    public MagicLaser(Game game, float X, float Y, int RDeg, int S,int U) {
+        super(game, X, Y, RDeg, S, 20.F, 15.5F);
         user = U;
     }
 
@@ -26,9 +26,9 @@ public class MagicLaser extends LaserBase {     //魔玉的激光
 
     @Override
     protected void follow(){
-        if (Main.elements.containsKey(user)) {
+        if (this.game.elements.containsKey(user)) {
             //此处代码缺乏安全性，但一般应该能保证user一定是MagicBall
-            MagicBall wrk = (MagicBall) (Main.elements.get(user));
+            MagicBall wrk = (MagicBall) (this.game.elements.get(user));
             if (!wrk.shooting) {
                 kill();
                 return;

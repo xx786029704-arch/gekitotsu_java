@@ -1,5 +1,6 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
 
@@ -13,8 +14,8 @@ public class TateBall extends Ball {     //盾玉
     @Deprecated
     private float rot_radius;
 
-    public TateBall(float X, float Y, int R, int S, int TYPE) {
-        super(X, Y, R, S, TYPE);
+    public TateBall(Game game, float X, float Y, int R, int S, int TYPE) {
+        super(game, X, Y, R, S, TYPE);
         hp = 30;
         max_hp = 30;
         rot_radius = (float) Math.toRadians(R);

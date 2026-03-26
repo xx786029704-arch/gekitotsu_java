@@ -1,5 +1,6 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.elements.Ball;
 import org.example.elements.hit.HitsKabe;
 import org.example.elements.hit.MagicLaser;
@@ -7,8 +8,8 @@ import org.example.Utils;
 
 public class MagicBall extends Ball {   //魔玉
     public boolean shooting;
-    public MagicBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public MagicBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         shooting = false;
         speed = 150;
         hp = 10;
@@ -22,7 +23,7 @@ public class MagicBall extends Ball {   //魔玉
         } else {
             if (this.cnt == this.speed + 1) {
                 this.shooting = true;
-                new MagicLaser(this.x + 38.F * Utils.cos((int) this.rot), this.y + 38.F * Utils.sin((int) this.rot), this.rot, this.side, this.id);
+                new MagicLaser(this.game, this.x + 38.F * Utils.cos((int) this.rot), this.y + 38.F * Utils.sin((int) this.rot), this.rot, this.side, this.id);
             }
             if (this.cnt >= this.speed + 38) {
                 this.cnt = 0;

@@ -1,7 +1,7 @@
 package org.example.elements.hit;
 
 import org.example.EllipticalSector;
-import org.example.Main;
+import org.example.Game;
 
 import java.awt.*;
 
@@ -14,9 +14,11 @@ public class HitsKnight extends EllipticalSector {   //骑玉剑气
     private final float sin_rot;
     @Deprecated
     private final float rot_radius; //仅渲染使用，后期可删除
+    protected final Game game;
 
-    public HitsKnight(float X, float Y, int R, int S, int USER, float _cos_rot, float _sin_rot) {
+    public HitsKnight(Game game, float X, float Y, int R, int S, int USER, float _cos_rot, float _sin_rot) {
         super(X, Y, 77, 74, 273, 1.132F, 0.052335956243F, -0.998629534754F, 0.79863551F);
+        this.game = game;
         xySync();
         frame = 0;
         user = USER;
@@ -25,13 +27,13 @@ public class HitsKnight extends EllipticalSector {   //骑玉剑气
         sin_rot = _sin_rot;
         rot_radius = R * 0.017453292519943295F;
         flipped = R >= 90 + side && R <= 270 + side;
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        id = this.game.addElement(this);
+        this.game.atk[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        this.game.elements.remove(id);
+        this.game.atk[side].removeShape(this);
     }
 
     /*
@@ -40,9 +42,9 @@ public class HitsKnight extends EllipticalSector {   //骑玉剑气
 
     @Override
     public void step(){
-        if (Main.elements.containsKey(user)){
-            this.x = Main.elements.get(user).x;
-            this.y = Main.elements.get(user).y;
+        if (this.game.elements.containsKey(user)){
+            this.x = this.game.elements.get(user).x;
+            this.y = this.game.elements.get(user).y;
         }
         switch (frame){
             case 0:{

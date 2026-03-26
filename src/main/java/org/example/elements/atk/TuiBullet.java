@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
@@ -10,8 +10,8 @@ public class TuiBullet extends Bullet {   //坠玉主弹
     private int cnt = 0;
     private boolean drop_flg = false;
 
-    public TuiBullet(float X, float Y, int S, float cos_rot, float sin_rot) {   //初始化
-        super(X, Y, S);
+    public TuiBullet(Game game, float X, float Y, int S, float cos_rot, float sin_rot) {   //初始化
+        super(game, X, Y, S);
         gei_flg = 0;
         xs = cos_rot * 6F;
         ys = sin_rot * 6F;
@@ -23,11 +23,11 @@ public class TuiBullet extends Bullet {   //坠玉主弹
             kill();
             return;
         }
-        if (Main.team[1 - side].hitTestPoint(x, y)) {
+        if (this.game.team[1 - side].hitTestPoint(x, y)) {
             hp--;
         }
         if (hp <= 0) {
-            new HitsBomb(x, y, side);
+            new HitsBomb(this.game, x, y, side);
             kill();
             return;
         }
@@ -48,7 +48,7 @@ public class TuiBullet extends Bullet {   //坠玉主弹
             if (cnt == 84) {
                 cnt = 0;
             }
-            new TuiMissileBullet(x, y - 20F, side);
+            new TuiMissileBullet(this.game, x, y - 20F, side);
         }
     }
 }

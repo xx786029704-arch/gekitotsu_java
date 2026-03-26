@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
@@ -11,26 +11,28 @@ import java.awt.*;
 public class GeiBullet extends Shape {
     private final int user_id;
     private final int target_id;
+    protected final Game game;
 
-    public GeiBullet(int USER, int TARGET) {
+    public GeiBullet(Game game, int USER, int TARGET) {
         super(0, 0);
+        this.game = game;
         user_id = USER;
         target_id = TARGET;
-        id = Main.addElement(this);
+        id = this.game.addElement(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
+        this.game.elements.remove(id);
     }
 
     @Override
     public void step(){
-        Shape user = Main.elements.getOrDefault(user_id, null);
+        Shape user = this.game.elements.getOrDefault(user_id, null);
         if (user == null){
             kill();
             return;
         }
-        Shape target = Main.elements.getOrDefault(target_id, null);
+        Shape target = this.game.elements.getOrDefault(target_id, null);
         if (target == null) {
             ((GeiBall) user).cnt = 0;
             ((GeiBall) user).t_id = -1;

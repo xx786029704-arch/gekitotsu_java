@@ -1,5 +1,6 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.Utils;
 import org.example.elements.Ball;
 import org.example.elements.atk.ShotgunBullet;
@@ -7,8 +8,8 @@ import org.example.elements.atk.ShotgunBullet;
 public class ShotgunBall extends Ball {   //散玉
     private Utils seeder;
 
-    public ShotgunBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public ShotgunBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         seeder = new Utils();
         speed = 50;
     }
@@ -21,7 +22,7 @@ public class ShotgunBall extends Ball {   //散玉
             float spawnY = this.y + sin_rot * 40;
             for (int i = 0; i < 9; i++) {
                 int atkRot = this.rot - 40 + 10 * i;
-                new ShotgunBullet(spawnX, spawnY, this.side).setVecR(atkRot, 27F + Utils.random(this.seeder) * 7F);
+                new ShotgunBullet(this.game, spawnX, spawnY, this.side).setVecR(atkRot, 27F + Utils.random(this.seeder) * 7F);
             }
         }
     }

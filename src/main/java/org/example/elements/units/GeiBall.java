@@ -1,6 +1,6 @@
 package org.example.elements.units;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Shape;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
@@ -10,8 +10,8 @@ import org.example.elements.atk.GekiBullet;
 public class GeiBall extends Ball {   //迎玉
     public int t_id = -1;
 
-    public GeiBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public GeiBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         hp = 15;
         max_hp = 15;
         speed = 40;
@@ -25,7 +25,7 @@ public class GeiBall extends Ball {   //迎玉
             float dx;
             float dy;
             float dot;
-            for (Shape s : Main.atk[1-side].getShapes()) {
+            for (Shape s : this.game.atk[1-side].getShapes()) {
                 if (s instanceof Bullet bullet && bullet.gei_flg == 1) {
                     dx = bullet.x - x;
                     dy = bullet.y - y;
@@ -44,8 +44,8 @@ public class GeiBall extends Ball {   //迎玉
                 }
             }
             if (t_id > -1) {
-                ((Bullet) Main.elements.get(t_id)).gei_flg = 3;
-                new GeiBullet(id, t_id);
+                ((Bullet) this.game.elements.get(t_id)).gei_flg = 3;
+                new GeiBullet(this.game, id, t_id);
             }
         }
     }

@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Round;
 import org.example.Utils;
 import org.example.elements.Bullet;
@@ -12,8 +12,8 @@ public class MissileBullet extends Bullet {   //导玉导弹
     private float speed = 4F;
     private float rot;
 
-    public MissileBullet(float X, float Y, int S, int rotation) {   //初始化
-        super(X, Y, S);
+    public MissileBullet(Game game, float X, float Y, int S, int rotation) {   //初始化
+        super(game, X, Y, S);
         this.rot = rotation;
         this.gei_flg = 1;
         updateVelocity();
@@ -26,12 +26,12 @@ public class MissileBullet extends Bullet {   //导玉导弹
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2 || cnt > 200) {
-            new HitsBomb(this.x, this.y, this.side);
+        if (this.game.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2 || cnt > 200) {
+            new HitsBomb(this.game, this.x, this.y, this.side);
             kill();
             return;
         }
-        float targetRot = Math.round((float) Math.toDegrees(Math.atan2(Main.core_y[1-side] - this.y, Main.core_x[1-side] - this.x)));
+        float targetRot = Math.round((float) Math.toDegrees(Math.atan2(this.game.core_y[1-side] - this.y, this.game.core_x[1-side] - this.x)));
         if (this.rot - 180 > targetRot) {
             targetRot += 360;
         }

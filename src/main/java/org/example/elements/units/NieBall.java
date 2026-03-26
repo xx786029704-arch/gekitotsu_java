@@ -1,12 +1,13 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.elements.Ball;
 
 public class NieBall extends Ball {     //贽玉
     public int alarm = -1;
 
-    public NieBall(float X, float Y, int R, int S, int TYPE) {
-        super(X, Y, R, S, TYPE);
+    public NieBall(Game game, float X, float Y, int R, int S, int TYPE) {
+        super(game, X, Y, R, S, TYPE);
         hp = 30;
         max_hp = 30;
     }

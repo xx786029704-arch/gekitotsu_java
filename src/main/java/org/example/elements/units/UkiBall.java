@@ -1,11 +1,12 @@
 package org.example.elements.units;
 
+import org.example.Game;
 import org.example.elements.Ball;
 import org.example.elements.atk.UkiBullet;
 
 public class UkiBall extends Ball {   //浮玉
-    public UkiBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
+    public UkiBall(Game game, float X, float Y, int R, int S, int TYPE) {   //初始化
+        super(game, X, Y, R, S, TYPE);
         speed = 150;
     }
 
@@ -15,7 +16,7 @@ public class UkiBall extends Ball {   //浮玉
             this.cnt = 0;
             float spawnX = this.x + cos_rot * 50;
             float spawnY = this.y + sin_rot * 50;
-            new UkiBullet(spawnX, spawnY, this.side, cos_rot * 3, sin_rot * 3);
+            new UkiBullet(this.game, spawnX, spawnY, this.side, cos_rot * 3, sin_rot * 3);
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.Game;
 import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
@@ -13,8 +13,8 @@ public class TobiBullet extends Bullet {   //飞玉主弹
     private int xl1 = 0;
     private int xl2 = 1920;
 
-    public TobiBullet(float X, float Y, int S, int rotation) {   //初始化
-        super(X, Y, S);
+    public TobiBullet(Game game, float X, float Y, int S, int rotation) {   //初始化
+        super(game, X, Y, S);
         rot = rotation;
         gei_flg = 0;
         if (side != 0) {
@@ -33,11 +33,11 @@ public class TobiBullet extends Bullet {   //飞玉主弹
             kill();
             return;
         }
-        if (Main.team[1 - side].hitTestPoint(x, y)) {
+        if (this.game.team[1 - side].hitTestPoint(x, y)) {
             hp--;
         }
         if (hp <= 0 || y > 570) {
-            new HitsBomb(x, y, side);
+            new HitsBomb(this.game, x, y, side);
             kill();
             return;
         }
@@ -61,7 +61,7 @@ public class TobiBullet extends Bullet {   //飞玉主弹
         cnt++;
         if (cnt == 20) {
             cnt = 0;
-            new TobiBombBullet(x, y + 10, side);
+            new TobiBombBullet(this.game, x, y + 10, side);
         }
     }
 }
