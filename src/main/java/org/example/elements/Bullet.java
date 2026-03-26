@@ -1,6 +1,7 @@
 package org.example.elements;
 
 import org.example.Main;
+import org.example.Pool;
 import org.example.Round;
 import org.example.Utils;
 import org.example.elements.hit.HitsDrop;
@@ -52,7 +53,7 @@ public class Bullet extends Round {     //子弹基类
     }
 
     public boolean hit(){   //被摧毁
-        new HitsDrop(x, y, Main.atk[side]);
+        Pool.createHitsDrop(x, y, Main.atk[side]);
         kill();
         return false;
     }
@@ -88,8 +89,8 @@ public class Bullet extends Round {     //子弹基类
 
     public void reflect(int from_rot){
         betray();
-        xs = Utils.cos(from_rot) * 10F;
-        ys = Utils.sin(from_rot) * 10F;
+        xs = Utils.cos(from_rot) * power;
+        ys = Utils.sin(from_rot) * power;
     }
 
     public void betray(){

@@ -2,7 +2,7 @@ package org.example.elements.hit;
 
 import org.example.Polygon;
 import org.example.Main;
-import org.example.Utils;
+import org.example.Shape;
 import org.example.elements.units.KabeBall;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -61,9 +61,8 @@ public class HitsKabe extends Polygon {
 
     @Override
     public void step(){
-        if (Main.elements.containsKey(user)) {
-            //此处代码缺乏安全性，但一般应该能保证user一定是KabeBall
-            KabeBall wrk = (KabeBall) (Main.elements.get(user));
+        Shape s = Main.elements.get(user);
+        if (s instanceof KabeBall wrk) {
             x = wrk.x + 20 * wrk.cos_rot;
             y = wrk.y + 20 * wrk.sin_rot;
             cos_rot = wrk.cos_rot;

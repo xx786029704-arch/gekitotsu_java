@@ -2,6 +2,7 @@ package org.example.elements.hit;
 
 import org.example.EllipticalSector;
 import org.example.Main;
+import org.example.Shape;
 
 import java.awt.*;
 
@@ -40,9 +41,10 @@ public class HitsKnight extends EllipticalSector {   //骑玉剑气
 
     @Override
     public void step(){
-        if (Main.elements.containsKey(user)){
-            this.x = Main.elements.get(user).x;
-            this.y = Main.elements.get(user).y;
+        Shape shape = Main.elements.get(user);
+        if (shape != null){
+            this.x = shape.x;
+            this.y = shape.y;
         }
         switch (frame){
             case 0:{

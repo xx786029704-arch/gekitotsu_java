@@ -1,6 +1,8 @@
 package org.example.elements.hit;
 
 import org.example.*;
+import org.example.Shape;
+
 import java.awt.*;
 import java.awt.geom.Path2D;
 
@@ -39,9 +41,10 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
 
     @Override
     public void step(){
-        if (Main.elements.containsKey(user)){
-            this.x = Main.elements.get(user).x;
-            this.y = Main.elements.get(user).y;
+        Shape shape = Main.elements.get(user);
+        if (shape != null){
+            this.x = shape.x;
+            this.y = shape.y;
         }
         switch (frame){
             case 0:{

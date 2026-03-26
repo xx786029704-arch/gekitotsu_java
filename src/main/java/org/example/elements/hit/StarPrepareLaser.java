@@ -3,6 +3,7 @@ package org.example.elements.hit;
 import org.example.Main;
 import org.example.Shape;
 import org.example.Utils;
+import org.example.elements.units.MagicBall;
 import org.example.elements.units.StarBall;
 
 import java.awt.*;
@@ -53,9 +54,8 @@ public class StarPrepareLaser extends Shape {     //星玉视觉激光类
     public void step() {
         this.cnt++;
         if (!visible && this.cnt < 30) return;
-        if (Main.elements.containsKey(user)) {
-            //此处代码缺乏安全性，但一般应该能保证user一定是StarBall
-            StarBall wrk = (StarBall) (Main.elements.get(user));
+        Shape s = Main.elements.get(user);
+        if (s instanceof StarBall wrk) {
             this.rotDeg = wrk.rot;
             this.startX = wrk.x + 28.f * Utils.cos(this.rotDeg);
             this.startY = wrk.y + 28.f * Utils.sin(this.rotDeg);

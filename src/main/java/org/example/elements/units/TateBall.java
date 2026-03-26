@@ -1,5 +1,6 @@
 package org.example.elements.units;
 
+import org.example.Main;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
 
@@ -128,6 +129,11 @@ public class TateBall extends Ball {     //盾玉
                 g2d.scale(1, -1);
                 g2d.translate(0, -y);
             }
+        }
+        if (Main.SHOW_UNIT_HP){
+            g2d.setColor(Color.GREEN);
+            g2d.drawString(Integer.toString(hp), (int) x - 4, (int) y + 4);
+            g2d.setColor(Color.WHITE);
         }
     }
 }

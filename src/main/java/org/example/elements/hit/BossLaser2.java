@@ -40,8 +40,7 @@ public class BossLaser2 extends LaserBase {     //魔玉的激光
         if (wrk >= 0.f && wrk <= steps * 100.f) {
             float distx10 = Math.abs(dy * this.xSpeed - dx * this.ySpeed);
             if (distx10 <= 175.f) {
-                if (distx10 > 29.f && distx10 < 58.5f || distx10 > 116.5f && distx10 < 146.f) return false;
-                else return true;
+                return (!(distx10 > 29.f) || !(distx10 < 58.5f)) && (!(distx10 > 116.5f) || !(distx10 < 146.f));
             }
         }
         dx = X - this.x;

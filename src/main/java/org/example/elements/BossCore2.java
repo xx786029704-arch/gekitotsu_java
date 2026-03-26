@@ -49,7 +49,7 @@ public class BossCore2 extends Core {      //BOSS核心类
         int targetIndex = nextStartTargetIndex;
         while (targetIndex >= 0) {
             Shape wrk = targets.get(targetIndex);
-            if (Main.elements.containsKey(wrk.id)) {
+            if (Main.elements.get(wrk.id) != null) {
                 targetId = wrk.id;
                 nextStartTargetIndex = targetIndex - 1;
                 break;

@@ -1,6 +1,7 @@
 package org.example.elements.hit;
 
 import org.example.Main;
+import org.example.Shape;
 import org.example.elements.hit.LaserBase;
 import org.example.Utils;
 import org.example.elements.units.MagicBall;
@@ -26,9 +27,8 @@ public class MagicLaser extends LaserBase {     //魔玉的激光
 
     @Override
     protected void follow(){
-        if (Main.elements.containsKey(user)) {
-            //此处代码缺乏安全性，但一般应该能保证user一定是MagicBall
-            MagicBall wrk = (MagicBall) (Main.elements.get(user));
+        Shape s = Main.elements.get(user);
+        if (s instanceof MagicBall wrk) {
             if (!wrk.shooting) {
                 kill();
                 return;
@@ -39,8 +39,6 @@ public class MagicLaser extends LaserBase {     //魔玉的激光
         }
         else{
             kill();
-            return;
         }
     }
-
 }

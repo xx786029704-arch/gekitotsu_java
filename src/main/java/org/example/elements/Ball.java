@@ -1,9 +1,12 @@
 package org.example.elements;
 
 import org.example.Main;
+import org.example.Pool;
 import org.example.Round;
 import org.example.Utils;
 import org.example.elements.hit.HitsDrop;
+
+import java.awt.*;
 
 public class Ball extends Round {       //兵玉基类
     public int side;
@@ -91,7 +94,7 @@ public class Ball extends Round {       //兵玉基类
             hp--;
         }
         if (hp <= 0 || Main.hp0_flg[on_side] > 0 && jump_flg == 0) {
-            new HitsDrop(this.x, this.y, Main.unit[side]);
+            Pool.createHitsDrop(this.x, this.y, Main.unit[side]);
             Main.dead_last[side] = type;
             kill();
             return;
@@ -204,6 +207,16 @@ public class Ball extends Round {       //兵玉基类
         }
         else if (rot < 0) {
             rot = rot + 360;
+        }
+    }
+
+    @Override
+    public void draw(Graphics2D g2d) {
+        super.draw(g2d);
+        if (Main.SHOW_UNIT_HP){
+            g2d.setColor(Color.GREEN);
+            g2d.drawString(Integer.toString(hp), (int) x - 4, (int) y + 4);
+            g2d.setColor(Color.WHITE);
         }
     }
 }

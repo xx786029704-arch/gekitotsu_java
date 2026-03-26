@@ -1,9 +1,6 @@
 package org.example.elements.hit;
 
-import org.example.CompositeShape;
-import org.example.Main;
-import org.example.ShapeBuilder;
-import org.example.YariBase;
+import org.example.*;
 
 public class HitsYari extends CompositeShape {   //剑玉剑气
     private final int side;
@@ -30,10 +27,10 @@ public class HitsYari extends CompositeShape {   //剑玉剑气
 
     @Override
     public void step(){
-        if (Main.elements.containsKey(user)) {
-            moveTo(Main.elements.get(user).x, Main.elements.get(user).y);
+        Shape shape = Main.elements.get(user);
+        if (shape != null){
+            moveTo(shape.x, shape.y);
         }
-
         switch (frame){
             case 0:{
                 ShapeBuilder.into(this).shape(new YariBase(this.x,this.y,this.rot,.625f,-33.f,3.4f))

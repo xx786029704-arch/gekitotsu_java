@@ -32,13 +32,7 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
         canvas.repaint();
     }
 
-    public GameWindow setList(List<Shape> list){
-        GameCanvas.shapeList = list;
-        return this;
-    }
-
     private static class GameCanvas extends JPanel {
-        private static List<Shape> shapeList;
         private final int logicalWidth;
         private final int logicalHeight;
         private static final float CAMERA_OFFSET_Y = 60f;
@@ -74,23 +68,10 @@ public class GameWindow extends JFrame {    //渲染窗口，全是AI写的和�
             g2d.drawLine(1920,-600,1920,582);
             g2d.drawLine(0,582,1920,582);
             g2d.setColor(Color.WHITE);
-            for (Shape s : shapeList) {
-                if (!Main.elements.containsValue(s)) {
-                    continue;
-                }
-                s.draw(g2d);
-                if (Main.SHOW_UNIT_HP && s instanceof Ball) {
-                    Ball unit = (Ball) s;
-                    Color prev = g2d.getColor();
-                    g2d.setColor(Color.GREEN);
-                    g2d.drawString(Integer.toString(unit.hp), (int) unit.x - 4, (int) unit.y + 4);
-                    g2d.setColor(prev);
-                } else if (Main.SHOW_UNIT_HP && s instanceof Wall) {
-                    Wall wall = (Wall) s;
-                    Color prev = g2d.getColor();
-                    g2d.setColor(Color.CYAN);
-                    g2d.drawString(Integer.toString(wall.hp), (int) wall.x - 4, (int) wall.y + 4);
-                    g2d.setColor(prev);
+            int toSize = Main.elements.size;
+            for (int i = 0; i < toSize; i++) {
+                if (Main.elements.items[i] != null) {
+                    Main.elements.items[i].draw(g2d);
                 }
             }
         }

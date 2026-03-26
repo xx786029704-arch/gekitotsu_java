@@ -6,6 +6,8 @@ import org.example.Shape;
 import org.example.ShapeBuilder;
 import org.example.elements.hit.HitsKen;
 
+import java.awt.*;
+
 public class Wall extends CompositeShape {  //要塞壁类
     public int side;
     public int type;
@@ -86,5 +88,15 @@ public class Wall extends CompositeShape {  //要塞壁类
             dy += 13.5F;
         }
         return dx * dx + dy * dy <= 16F;     //此值<=12.27时，四段突可以生效
+    }
+
+    @Override
+    public void draw(Graphics2D g2d) {
+        super.draw(g2d);
+        if (Main.SHOW_UNIT_HP){
+            g2d.setColor(Color.CYAN);
+            g2d.drawString(Integer.toString(hp), (int) x - 4, (int) y + 4);
+            g2d.setColor(Color.WHITE);
+        }
     }
 }

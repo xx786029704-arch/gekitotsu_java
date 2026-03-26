@@ -37,8 +37,7 @@ public class Main {
     public static Utils[] seeder={new Utils(),new Utils()};
     public static Base[] bases;     //双方车板
     public static Core[] cores = new Core[]{null, null};    //双方老家
-    //TODO：Gemini 说这里可以自己写可以以int为键的哈希表类，不用Integer包装类，至于提升大不大我不知道。
-    public static LinkedHashMap<Integer, Shape> elements = new LinkedHashMap<>();   //所有需要参与循环的部件
+    public static IntShapeMap elements = new IntShapeMap(1024);   //所有需要参与循环的部件
     public static CompositeShape[] wall = {new CompositeShape(0,0), new CompositeShape(0,0)};   //墙体
     public static CompositeShape[] unit = {new CompositeShape(0,0), new CompositeShape(0,0)};   //单位
     public static CompositeShape[] shield = {new CompositeShape(0,0), new CompositeShape(0,0)}; //屏障
@@ -63,7 +62,7 @@ public class Main {
         while(AUTO_PLAY || Setting.setting(scanner)){
             if (ENABLE_VISUALIZATION && window == null) {
                 java.awt.EventQueue.invokeLater(() -> {
-                    window = new GameWindow(1920, 960, 60).setList(new ArrayList<>(elements.values()));
+                    window = new GameWindow(1920, 960, 60);
                     window.setVisible(true);
                 });
             }
@@ -138,8 +137,10 @@ public class Main {
                 judge();
                 update();
                 if (ENABLE_VISUALIZATION && window != null) {
-                    window.setList(new ArrayList<>(elements.values()));
                     window.requestRender();
+                }
+                if (elements.deadCount > elements.size >> 1) {
+                    elements.compact();
                 }
             }
         }
@@ -303,13 +304,11 @@ public class Main {
     }
 
     private static void update() {  //单位更新
-        List<Integer> keys = new ArrayList<>(elements.keySet());
-
-        for (Integer key : keys) {
-            if (!elements.containsKey(key)) {
-                continue;
+        int toSize = elements.size;
+        for (int i = 0; i < toSize; i++) {
+            if (elements.items[i] != null) {
+                elements.items[i].step();
             }
-            elements.get(key).step();
         }
     }
 
@@ -422,7 +421,7 @@ public class Main {
         time = 0;
         ID = 0;
 
-        elements.clear();
+        elements = new IntShapeMap(1024);
 
         hp = new int[]{100, 100};
         hp0_flg = new int[]{0, 0};
