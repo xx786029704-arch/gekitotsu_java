@@ -58,8 +58,8 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
                 return;
             }
             if (targetId != -1) {
-                if (Main.elements.containsKey(targetId)) {
-                    Shape target = Main.elements.get(targetId);
+                Shape target = Main.elements.get(targetId);
+                if (target != null) {
                     targetRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
                 }
             } else {

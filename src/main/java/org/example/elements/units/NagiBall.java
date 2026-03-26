@@ -3,8 +3,6 @@ package org.example.elements.units;
 import org.example.elements.Ball;
 import org.example.elements.hit.HitsNagi;
 
-import java.awt.*;
-
 public class NagiBall extends Ball {
     public NagiBall(float X, float Y, int R, int S, int TYPE) {
         super(X, Y, R, S, TYPE);

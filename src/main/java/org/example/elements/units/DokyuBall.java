@@ -13,7 +13,7 @@ public class DokyuBall extends Ball {   //弩玉
     public void stepEx() {   //攻击逻辑
         if (this.cnt == this.speed + 6) {
             this.cnt = 0;
-            new Bullet(this.x, this.y, this.side).setVecMult(cos_rot, sin_rot, 25).setGravity(0.32F);
+            new Bullet(x, y, side).setVecMult(cos_rot, sin_rot, 25).setGravity(0.32F);
         }
     }
 }

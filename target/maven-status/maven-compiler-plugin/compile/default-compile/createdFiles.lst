@@ -5,6 +5,7 @@ org\example\elements\atk\MissileBullet.class
 org\example\elements\wall\Wood.class
 org\example\elements\atk\ShotgunBullet.class
 org\example\GameWindow.class
+org\example\UnitHitSystem.class
 org\example\elements\units\RetsuBall.class
 org\example\elements\units\GuideBall.class
 org\example\elements\units\DokyuBall.class
@@ -27,6 +28,7 @@ org\example\elements\units\ShotgunBall.class
 org\example\Main.class
 org\example\elements\units\TonBall.class
 org\example\elements\units\GekiBall.class
+org\example\AtkHitSystem.class
 org\example\elements\Bullet.class
 org\example\elements\units\HanaBall.class
 org\example\Polygon.class
@@ -43,5 +45,6 @@ org\example\elements\units\BowBall.class
 org\example\elements\hit\HitsBombMult.class
 org\example\elements\units\CannonBall.class
 org\example\elements\Core.class
+org\example\HitSystem.class
 org\example\elements\hit\HitsKen.class
 org\example\ShapeBuilder.class

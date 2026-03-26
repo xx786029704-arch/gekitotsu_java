@@ -2,7 +2,6 @@ package org.example.elements.atk;
 
 import org.example.Main;
 import org.example.Shape;
-import org.example.elements.Ball;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsDrop;
 

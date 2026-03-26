@@ -3,7 +3,6 @@ package org.example.elements.atk;
 import org.example.Main;
 import org.example.Round;
 import org.example.Utils;
-import org.example.elements.hit.HitsBombMult;
 import org.example.elements.hit.HitsDrop;
 
 public class ShockCreature extends Round {   //痹生物

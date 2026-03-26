@@ -1,7 +1,6 @@
 package org.example.elements;
 
 import org.example.Main;
-import org.example.Pool;
 import org.example.Round;
 import org.example.Utils;
 import org.example.elements.hit.HitsDrop;
@@ -94,7 +93,7 @@ public class Ball extends Round {       //兵玉基类
             hp--;
         }
         if (hp <= 0 || Main.hp0_flg[on_side] > 0 && jump_flg == 0) {
-            Pool.createHitsDrop(this.x, this.y, Main.unit[side]);
+            new HitsDrop(this.x, this.y, Main.unit[side]);
             Main.dead_last[side] = type;
             kill();
             return;

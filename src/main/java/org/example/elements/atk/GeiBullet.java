@@ -25,12 +25,12 @@ public class GeiBullet extends Shape {
 
     @Override
     public void step(){
-        Shape user = Main.elements.getOrDefault(user_id, null);
+        Shape user = Main.elements.get(user_id);
         if (user == null){
             kill();
             return;
         }
-        Shape target = Main.elements.getOrDefault(target_id, null);
+        Shape target = Main.elements.get(target_id);
         if (target == null) {
             ((GeiBall) user).cnt = 0;
             ((GeiBall) user).t_id = -1;

@@ -42,7 +42,13 @@ public class HitsNagi extends Sector {
             this.x = shape.x;
             this.y = shape.y;
         }
-        switch (frame){
+        if (!Main.ENABLE_VISUALIZATION) {
+            if (frame++ == 9){
+                kill();
+            }
+            return;
+        }
+        switch (frame++){
             case 0, 1:{
                 a += 45 * 0.017453292519943295F;
                 dir += 22.5F * 0.017453292519943295F;
@@ -76,26 +82,56 @@ public class HitsNagi extends Sector {
                 break;
             }
         }
-        frame++;
     }
 
     @Override
     public boolean hitTestPoint(float X, float Y){
+        if (X - x > 81.4F || Y - y > 81.4F || X - x < -81.4F || Y - y < -81.4F){
+            return false;
+        }
         float dx = ((X - x) * cos_rot + (Y - y) * sin_rot);
         float dy = ((Y - y) * cos_rot - (X - x) * sin_rot);
-        if (flipped){
+        if (!flipped){
             dy = -dy;
         }
         dx -= 18.4F;
-        if (dx > r || dy > r || dx < -r || dy < -r){
-            return false;
+
+        switch (frame){
+            case 0:{
+                if (dx * dy < dx * dx) return false;
+                break;
+            }
+            case 1:{
+                if (dx * dy < 0F) return false;
+                break;
+            }
+            case 2, 6:{
+                if (dx * dy < -dx * dx) return false;
+                break;
+            }
+            case 3, 7:{
+                if (dx * dy > dx * dx) return false;
+                break;
+            }
+            case 4:{
+                if (dx * dy > dy * dy) return false;
+                break;
+            }
+            case 5:{
+                if (dx * dy < -dy * dy) return false;
+                break;
+            }
+            case 8:{
+                if (dx * dy > 0F) return false;
+                break;
+            }
+            case 9:{
+                if (dx * dy > -dx * dx) return false;
+                break;
+            }
+
         }
-        float dist2 = dx * dx + dy * dy;
-        if (dist2 > r * r)
-            return false;
-        float dot = dx * dirX + dy * dirY;
-        float cos2 = cosHalfAngle * cosHalfAngle;
-        return dot * dot >= dist2 * cos2;
+        return dx * dx + dy * dy <= 3969F;
     }
 
     @Override
@@ -123,6 +159,5 @@ public class HitsNagi extends Sector {
             g2d.scale(1, -1);
             g2d.translate(0, -y);
         }
-
     }
 }

@@ -39,9 +39,9 @@ public class Main {
     public static Core[] cores = new Core[]{null, null};    //双方老家
     public static IntShapeMap elements = new IntShapeMap(1024);   //所有需要参与循环的部件
     public static CompositeShape[] wall = {new CompositeShape(0,0), new CompositeShape(0,0)};   //墙体
-    public static CompositeShape[] unit = {new CompositeShape(0,0), new CompositeShape(0,0)};   //单位
+    public static UnitHitSystem[] unit = {new UnitHitSystem(0,0), new UnitHitSystem(0,0)};   //单位
     public static CompositeShape[] shield = {new CompositeShape(0,0), new CompositeShape(0,0)}; //屏障
-    public static CompositeShape[] atk = {new CompositeShape(0,0), new CompositeShape(0,0)};    //攻击
+    public static AtkHitSystem[] atk = {new AtkHitSystem(0,0), new AtkHitSystem(0,0)};    //攻击
     public static CompositeShape[] fort = {new CompositeShape(0,0), new CompositeShape(0,0)};   //要塞主体
     public static CompositeShape[] team = {new CompositeShape(0,0), new CompositeShape(0,0)};   //队伍
     public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
@@ -51,7 +51,7 @@ public class Main {
     public static CompositeShape[] snipe = {new CompositeShape(0,0), new CompositeShape(0,0)}; //狙击
     public static CompositeShape[] turn_ccw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //顺时针
     public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
-    public static LinkedList<Integer>[] kekkaiIds = new LinkedList[]{new LinkedList<Integer>(), new LinkedList<Integer>()};
+    public static ArrayList<Integer>[] kekkaiIds = new ArrayList[]{new ArrayList<Integer>(), new ArrayList<Integer>()};
     public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
 
     private static final String fort1 = "";
@@ -304,6 +304,13 @@ public class Main {
     }
 
     private static void update() {  //单位更新
+        if (hp0_flg[0] == 0 && hp0_flg[1] == 0){
+            HitSystem.mid = (int) ((bases[0].x + bases[1].x) * 0.5F);
+        }
+        for (int i = 0; i <= 1; i++){
+            unit[i].resign();
+            atk[i].resign();
+        }
         int toSize = elements.size;
         for (int i = 0; i < toSize; i++) {
             if (elements.items[i] != null) {
@@ -429,9 +436,9 @@ public class Main {
 
         for (int i = 0; i < 2; i++) {
             wall[i] = new CompositeShape(0,0);
-            unit[i] = new CompositeShape(0,0);
+            unit[i] = new UnitHitSystem(0,0);
             shield[i] = new CompositeShape(0,0);
-            atk[i] = new CompositeShape(0,0);
+            atk[i] = new AtkHitSystem(0,0);
             fort[i] = new CompositeShape(0,0);
             team[i] = new CompositeShape(0,0);
             heal[i] = new CompositeShape(0,0);
@@ -441,7 +448,7 @@ public class Main {
             snipe[i] = new CompositeShape(0,0);
             turn_ccw[i] = new CompositeShape(0,0);
             turn_cw[i] = new CompositeShape(0,0);
-            kekkaiIds = new LinkedList[]{new LinkedList<Integer>(), new LinkedList<Integer>()};
+            kekkaiIds = new ArrayList[]{new ArrayList<Integer>(), new ArrayList<Integer>()};
             kekkaiFields = new KekkaiField[]{null, null};
         }
 

@@ -5,7 +5,7 @@ import org.example.Main;
 import org.example.Round;
 
 public class HitsDrop extends Round {   //基础攻击判定（黑线）
-    private final CompositeShape parent;
+    public CompositeShape parent;
 
     public HitsDrop(float X, float Y, CompositeShape S) {
         super(X, Y, 15.5F);

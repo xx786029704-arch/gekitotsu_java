@@ -1,3 +1,4 @@
+C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\AtkHitSystem.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\CompositeShape.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\elements\atk\BombBullet.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\elements\atk\BossMissileBullet.java
@@ -125,6 +126,8 @@ C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\elements\
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\EllipticalSector.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Fort.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\GameWindow.java
+C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\HitSystem.java
+C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\IntShapeMap.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Main.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Polygon.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Rectangle.java
@@ -133,5 +136,6 @@ C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Sector.ja
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Setting.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Shape.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\ShapeBuilder.java
+C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\UnitHitSystem.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\Utils.java
 C:\Users\cain\Desktop\program\gekitotsu_java\src\main\java\org\example\YariBase.java
