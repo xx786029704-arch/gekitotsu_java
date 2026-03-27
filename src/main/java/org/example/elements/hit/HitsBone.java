@@ -1,6 +1,7 @@
 package org.example.elements.hit;
 
 import org.example.EllipticalSector;
+import org.example.GameTask;
 import org.example.Main;
 import org.example.Shape;
 
@@ -13,26 +14,25 @@ public class HitsBone extends EllipticalSector {   //骨玉剑气
     private final boolean flipped;
     private final float cos_rot;
     private final float sin_rot;
-    @Deprecated
-    private final float rot_radius; //仅渲染使用，后期可删除
+    private final GameTask game;
 
-    public HitsBone(float X, float Y, int R, int S, int USER, float _cos_rot, float _sin_rot) {
+    public HitsBone(GameTask GAME, float X, float Y, int R, int S, int USER, float _cos_rot, float _sin_rot) {
         super(X, Y, 36, 93, 273, 1.1612903F);
         xySync();
+        game = GAME;
         frame = 0;
         user = USER;
         side = S;
         cos_rot = _cos_rot;
         sin_rot = _sin_rot;
-        rot_radius = R * 0.017453292519943295F;
         flipped = R >= 90 + side && R <= 270 + side;
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        id = game.addElement(this);
+        game.atk[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        game.elements.remove(id);
+        game.atk[side].removeShape(this);
     }
 
     /*
@@ -41,7 +41,7 @@ public class HitsBone extends EllipticalSector {   //骨玉剑气
 
     @Override
     public void step(){
-        Shape shape = Main.elements.get(user);
+        Shape shape = game.elements.get(user);
         if (shape != null){
             this.x = shape.x;
             this.y = shape.y;
@@ -97,24 +97,5 @@ public class HitsBone extends EllipticalSector {   //骨玉剑气
         float dot = dx * dirX + dy * dirY;
         float cos2 = cosHalfAngle * cosHalfAngle;
         return dot > 0 && dot * dot >= dist2 * cos2;
-    }
-
-    @Override
-    public void draw(Graphics2D g2d){
-        if (flipped) {
-            g2d.translate(0, y);
-            g2d.scale(1, -1);
-            g2d.translate(0, -y);
-        }
-        g2d.rotate(flipped ? -rot_radius : rot_radius, (int) x, (int) y);
-        x -= 4;
-        super.draw(g2d);
-        x += 4;
-        g2d.rotate(flipped ? rot_radius : -rot_radius, (int) x, (int) y);
-        if (flipped) {
-            g2d.translate(0, y);
-            g2d.scale(1, -1);
-            g2d.translate(0, -y);
-        }
     }
 }

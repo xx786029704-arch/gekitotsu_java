@@ -1,5 +1,6 @@
 package org.example.elements.units;
 
+import org.example.GameTask;
 import org.example.Main;
 import org.example.elements.Ball;
 import org.example.elements.Bullet;
@@ -11,14 +12,11 @@ import java.awt.geom.Path2D;
 public class TateBall extends Ball {     //盾玉
     private final boolean flipped;
     public int hurt_time = 0;
-    @Deprecated
-    private float rot_radius;
 
-    public TateBall(float X, float Y, int R, int S, int TYPE) {
-        super(X, Y, R, S, TYPE);
+    public TateBall(GameTask GAME, float X, float Y, int R, int S, int TYPE) {
+        super(GAME, X, Y, R, S, TYPE);
         hp = 30;
         max_hp = 30;
-        rot_radius = (float) Math.toRadians(R);
         flipped = rot >= 90 + side && rot <= 270 + side;
     }
 
@@ -84,56 +82,6 @@ public class TateBall extends Ball {     //盾玉
             else {
                 return dx * dx + dy * dy <= r * r;
             }
-        }
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        if (hurt_time > 0){
-            g2d.drawOval((int)(x - 25.45F), (int)(y - 25.45F) , 50, 50);
-            if (flipped) {
-                g2d.translate(0, y);
-                g2d.scale(1, -1);
-                g2d.translate(0, -y);
-            }
-            g2d.rotate(flipped ? -rot_radius : rot_radius, (int) x, (int) y);
-            float[][] verts = {{x - 31.25F, y - 43.45F}, {x - 8.7F, y - 42.55F}, {x - 32.75F, y - 0.9F}, {x - 45.1F, y - 19.25F}};
-            Path2D.Float path = new Path2D.Float();
-            path.moveTo(verts[0][0], verts[0][1]);
-            for (int i = 1; i < verts.length; i++) {
-                path.lineTo(verts[i][0], verts[i][1]);
-            }
-            path.closePath();
-            g2d.draw(path);
-            g2d.drawOval((int)(x - 27F), (int)(y - 29F), 13, 13);
-            g2d.drawOval((int)(x + 13.5F), (int)(y - 29F), 13, 13);
-            g2d.rotate(flipped ? rot_radius : -rot_radius, (int) x, (int) y);
-            if (flipped) {
-                g2d.translate(0, y);
-                g2d.scale(1, -1);
-                g2d.translate(0, -y);
-            }
-        }else {
-            g2d.drawOval((int)(x - r), (int)(y - r), (int)(r * 2), (int)(r * 2));
-            if (flipped){
-                g2d.translate(0, y);
-                g2d.scale(1, -1);
-                g2d.translate(0, -y);
-            }
-            g2d.rotate(flipped ? -rot_radius : rot_radius, (int) x, (int) y);
-            g2d.drawArc((int)(x - 22.85F), (int)(y - 23.8F), 78, 49, -90, 180);
-            g2d.drawLine((int) (x + 16.15F), (int)(y - 23.8F), (int) (x + 16.15F), (int)(y + 25.2F));
-            g2d.rotate(flipped ? rot_radius : -rot_radius, (int) x, (int) y);
-            if (flipped){
-                g2d.translate(0, y);
-                g2d.scale(1, -1);
-                g2d.translate(0, -y);
-            }
-        }
-        if (Main.SHOW_UNIT_HP){
-            g2d.setColor(Color.GREEN);
-            g2d.drawString(Integer.toString(hp), (int) x - 4, (int) y + 4);
-            g2d.setColor(Color.WHITE);
         }
     }
 }

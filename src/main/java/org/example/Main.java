@@ -1,482 +1,143 @@
 package org.example;
 
-import org.example.elements.*;
-import org.example.elements.hit.KekkaiField;
-import org.example.elements.units.*;
-import org.example.elements.wall.*;
-
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Main {
-    public static boolean ENABLE_VISUALIZATION = false;    //是否开启可视化
-    public static boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
-    public static int LOGIC_TPS = 30;      //帧率限制，0代表无限制
     public static int MAX_FRAME_LIMIT = 65536;    //最大运行帧数
     public static boolean SHOW_REMAIN_HP = false;
     public static boolean AUTO_PLAY = false;
     public static final String CONFIG_FILE = "config.ini";
 
-    private static boolean end = false;
-    public static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
-    private static int j;   //怒土遍历用的变量
-    private static int i;   //怒土遍历用的变量
     public static String pskey = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";      //密码表
-    private static GameWindow window;
-    public static int ID = 0;   //待分配的ID，只会一直增长
-    private static float wrk;   //怒土の神秘小变量
     private static final Scanner scanner = new Scanner(System.in);
-    public static int[] hp = {100, 100};    //要塞血量
-    public static int[] hp0_flg = {0, 0};   //要塞爆炸标记
-    public static boolean[] dokkan_flg = {false, false};    //受到撞击标记，有贽玉不会变成true
-    public static int[] saihai_cnt = {0, 0};        //采玉效果剩余时间
-    public static int[] saihai_rot = {0, 0};        //采玉效果角度
-    public static int[] dead_last = {0, 0};         //上一个死亡的单位种类
-    public static float[] core_x = new float[]{0, 0};
-    public static float[] core_y = new float[]{0, 0};
-    public static int time = 0;     //计时器
-    public static Utils[] seeder={new Utils(),new Utils()};
-    public static Base[] bases;     //双方车板
-    public static Core[] cores = new Core[]{null, null};    //双方老家
-    public static IntShapeMap elements = new IntShapeMap(1024);   //所有需要参与循环的部件
-    public static CompositeShape[] wall = {new CompositeShape(0,0), new CompositeShape(0,0)};   //墙体
-    public static UnitHitSystem[] unit = {new UnitHitSystem(0,0), new UnitHitSystem(0,0)};   //单位
-    public static CompositeShape[] shield = {new CompositeShape(0,0), new CompositeShape(0,0)}; //屏障
-    public static AtkHitSystem[] atk = {new AtkHitSystem(0,0), new AtkHitSystem(0,0)};    //攻击
-    public static CompositeShape[] fort = {new CompositeShape(0,0), new CompositeShape(0,0)};   //要塞主体
-    public static CompositeShape[] team = {new CompositeShape(0,0), new CompositeShape(0,0)};   //队伍
-    public static CompositeShape[] heal = {new CompositeShape(0,0), new CompositeShape(0,0)};   //治疗
-    public static CompositeShape[] repair = {new CompositeShape(0,0), new CompositeShape(0,0)}; //修复
-    public static CompositeShape[] jump_u = {new CompositeShape(0,0), new CompositeShape(0,0)}; //近突
-    public static CompositeShape[] jump_f = {new CompositeShape(0,0), new CompositeShape(0,0)}; //远突
-    public static CompositeShape[] snipe = {new CompositeShape(0,0), new CompositeShape(0,0)}; //狙击
-    public static CompositeShape[] turn_ccw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //顺时针
-    public static CompositeShape[] turn_cw = {new CompositeShape(0,0), new CompositeShape(0,0)}; //逆时针
-    public static ArrayList<Integer>[] kekkaiIds = new ArrayList[]{new ArrayList<Integer>(), new ArrayList<Integer>()};
-    public static KekkaiField[] kekkaiFields = new KekkaiField[]{null, null};
-
-    private static final String fort1 = "";
-    private static final String fort2 = "";
+    public static List<CompiledFort> p1List;
+    public static List<CompiledFort> p2List;
+    private static final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     public static void main(String[] args) {
         Setting.loadConfig();
+        System.out.println("正在导入阵容...");
+        p1List = Setting.CompileForts("1P.txt");
+        p2List = Setting.CompileForts("2P.txt");
+        System.out.println("阵容导入完成！");
         while(AUTO_PLAY || Setting.setting(scanner)){
-            if (ENABLE_VISUALIZATION && window == null) {
-                java.awt.EventQueue.invokeLater(() -> {
-                    window = new GameWindow(1920, 960, 60);
-                    window.setVisible(true);
-                });
+            long total_start = System.nanoTime();
+            boolean p1Single = p1List.size() == 1;
+            boolean p2Single = p2List.size() == 1;
+            int rounds = p1Single ? p2List.size()
+                    : p2Single ? p1List.size()
+                    : Math.min(p1List.size(), p2List.size());
+
+            List<Future<Result>> futures = new ArrayList<>();
+            List<String> meta = new ArrayList<>();
+
+            for (int i = 0; i < rounds; i++) {
+                CompiledFort f1 = p1Single ? p1List.getFirst() : p1List.get(i);
+                CompiledFort f2 = p2Single ? p2List.getFirst() : p2List.get(i);
+
+                int roundIndex = i + 1;
+
+                futures.add(pool.submit(() -> {
+                    GameTask g = new GameTask();
+                    return g.run_single(f1, f2);
+                }));
+
+                // 保存元信息（保证顺序）
+                meta.add("Round " + roundIndex +
+                        " | 1P[" + f1.name + "] vs 2P[" + f2.name + "]");
             }
-            System.out.println("对局正在进行...");
-            if (fort1.isEmpty() || fort2.isEmpty()){
-                runBatchBattle();
-            } else {
-                runSingleBattle(new Fort("", fort1), new Fort("", fort2));
+
+            StringBuilder final_result = new StringBuilder();
+            StringBuilder simple_result = new StringBuilder();
+            int done = 0;
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    Result r = futures.get(i).get();
+                    final_result.append(meta.get(i)).append("\n");
+                    String resultStr = switch (r.status) {
+                        case 1 -> "1P 获胜";
+                        case 2 -> "2P 获胜";
+                        case 0 -> "平局";
+                        case -1 -> "超时";
+                        default -> "异常";
+                    };
+                    final_result.append("结果: ").append(resultStr)
+                            .append(" | 剩余血量: ").append(r.winnerHp)
+                            .append(" | 总帧数: ").append(r.framePassed)
+                            .append(" | 用时: ").append(String.format("%.3f ms", r.timeUsed))
+                            .append("\n\n");
+                    simple_result.append(r.getSimpleResult());
+                    System.out.print("\r进度: " + ++done + "/" + meta.size());
+                } catch (Exception e) {
+                    Throwable cause = e.getCause();
+
+                    if (cause != null) {
+                        cause.printStackTrace();
+                    } else {
+                        e.printStackTrace();
+                    }
+                    final_result.append(meta.get(i))
+                            .append("\nERROR: ")
+                            .append(cause != null ? cause : e)
+                            .append("\n\n");
+                }
             }
+            Setting.writeResult("simple_result.txt", simple_result.toString());
+            float total_time = (System.nanoTime() - total_start) / 1000000.F;
+            final_result.append("====SUMMARY====\n总轮次: ").append(meta.size()).append(String.format("\n总用时: %.3f ms", total_time));
+            Setting.writeResult("result.txt", final_result.toString());
+            System.out.printf("所有对局已完成\n总用时: %.3f ms%n", total_time);
             if (AUTO_PLAY) break;
         }
+        pool.shutdown();
     }
 
-    private static void runBatchBattle() {
-        List<Fort> p1List = Setting.loadForts("1P.txt");
-        List<Fort> p2List = Setting.loadForts("2P.txt");
+    public static CompiledFort compileFort(Fort f) {
+        String code = f.code();
 
-        if (p1List.isEmpty() || p2List.isEmpty()) {
-            System.out.println("阵容为空，无法对战");
-            return;
+        int[] core = to_xyr(code.substring(1, 6));
+        int baseSeed = (core[0] % 168 + 48) * (core[1] % 168 + 48);
+        int coreX = core[0] - 190;
+        int coreY = core[1] - 400;
+        int coreType = code.charAt(0) - '0';
+        int unitCount = code.length() / 6 - 1;
+        int[] type = new int[unitCount];
+        int[] x = new int[unitCount];
+        int[] y = new int[unitCount];
+        int[] r = new int[unitCount];
+        int[] seed = new int[unitCount];
+
+        for (int i = 0, j = 6; i < unitCount; i++, j += 6) {
+            int[] u = to_xyr(code.substring(j + 1, j + 6));
+            int t = Main.pskey.indexOf(code.charAt(j));
+            type[i] = t;
+            x[i] = u[0];
+            y[i] = u[1];
+            r[i] = u[2];
+            seed[i] = baseSeed * (u[0] % 185 + 30) * (u[1] % 185 + 30);
         }
-
-        long totalStart = System.nanoTime();
-        boolean p1Single = p1List.size() == 1;
-        boolean p2Single = p2List.size() == 1;
-
-        int rounds = p1Single ? p2List.size()
-                : p2Single ? p1List.size()
-                : Math.min(p1List.size(), p2List.size());
-
-        StringBuilder resultLog = new StringBuilder();
-        StringBuilder simple_result = new StringBuilder();
-        for (int i = 0; i < rounds; i++) {
-            Fort f1 = p1Single ? p1List.getFirst() : p1List.get(i);
-            Fort f2 = p2Single ? p2List.getFirst() : p2List.get(i);
-
-            System.out.println("\n=== 对局 " + (i+1) + " ===");
-            System.out.println("1P: " + f1.name);
-            System.out.println("2P: " + f2.name);
-            String result = runSingleBattle(f1, f2);
-            resultLog.append("Round ").append(i+1).append("\n");
-            resultLog.append("1P[").append(f1.name).append("] vs 2P[")
-                    .append(f2.name).append("]\n");
-            resultLog.append(result).append("\n");
-            simple_result.append(getSimpleResult());
-        }
-        long totalEnd = System.nanoTime();
-        double totalMs = (totalEnd - totalStart) / 1000000.0;
-        System.out.printf("总用时: %.3f 毫秒%n", totalMs);
-        resultLog.append("=== SUMMARY ===\n");
-        resultLog.append("总时间: ")
-                .append(String.format("%.3f 毫秒", totalMs))
-                .append("\n");
-        Setting.writeResult("simple_result.txt", simple_result.toString());
-        Setting.writeResult("result.txt", resultLog.toString());
+        return new CompiledFort(
+                f.name(),
+                coreType, coreX, coreY,
+                baseSeed,
+                unitCount,
+                type, x, y, r, seed
+        );
     }
 
-    private static String runSingleBattle(Fort f1, Fort f2) {
-        resetGame();
-
-        main_setup(new String[]{f1.code, f2.code});
-
-        long timePerTick = LOGIC_TPS > 0 ? 1000000000L / LOGIC_TPS : 0;
-        long lastTime = System.nanoTime();
-        long startTime = System.nanoTime();
-        while (time < MAX_FRAME_LIMIT && !end) {
-            long now = System.nanoTime();
-            if (timePerTick == 0 || now - lastTime >= timePerTick) {
-                lastTime = now;
-                time++;
-                base_move();
-                judge();
-                update();
-                if (ENABLE_VISUALIZATION && window != null) {
-                    window.requestRender();
-                }
-                if (elements.deadCount > elements.size >> 1) {
-                    elements.compact();
-                }
-            }
-        }
-        double elapsedMs = (System.nanoTime() - startTime) / 1000000.0;
-        return buildResultString(elapsedMs);
-    }
-
-    private static String buildResultString(double elapsedMs) {
-        String result;
-        if (hp0_flg[0] > 0 || hp0_flg[1] > 0){
-            if(hp0_flg[0] == 0){
-                result = "1P 获胜";
-            }else if(hp0_flg[1] == 0) {
-                result = "2P 获胜";
-            }else {
-                result = "平局";
-            }
-        }else {
-            result = "未定";
-        }
-        return "总帧数 " + time +
-                ", 1P 剩余血量: " + hp[0] +
-                ", 2P 剩余血量: " + hp[1] +
-                ", 结果: " + result + ", 用时: " + String.format("%.3f 毫秒", elapsedMs);
-    }
-
-    private static void main_setup(String[] code){      //初始布局
-        i = 0;
-        while (i <= 1) {
-            if (code[i].length() % 6 != 0) {
-                return;
-            }
-            int[] xyr = to_xyr(code[i].substring(1, 6));
-            Utils.universalSeed = Utils.universalSeed * (xyr[0] % 168 + 48) * (xyr[1] % 168 + 48);
-            int baseSeed = (xyr[0] % 168 + 48) * (xyr[1] % 168 + 48);
-            seeder[i].setSeed(baseSeed);
-            xyr[0] -= 190;
-            xyr[1] -= 400;
-            if (code[i].startsWith("1")) {
-                cores[i] = new BossCore(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
-            } else if (code[i].startsWith("2")) {
-                cores[i] = new BossCore2(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
-            } else {
-                cores[i] = new Core(i == 1 ? -xyr[0] : xyr[0], xyr[1], i);
-            }
-            core_x[i] = cores[i].x;
-            core_y[i] = cores[i].y;
-            int wrkSeed;
-            j = 6;
-            int wrkType;
-            while (j < code[i].length()) {
-                xyr = to_xyr(code[i].substring(j + 1, j + 6));
-                wrkSeed = baseSeed * (xyr[0] % 185 + 30) * (xyr[1] % 185 + 30);
-                if (i == 1) {
-                    xyr[0] = (380 - xyr[0]) + 1490;
-                    xyr[2] = 180 - xyr[2];
-                } else {
-                    xyr[0] += 50;
-                }
-                xyr[2] = (xyr[2] % 360 + 360) % 360;
-                xyr[1] += 132;
-                wrkType = pskey.indexOf(code[i].charAt(j));
-                unit_make(xyr[0], xyr[1], xyr[2], wrkType, i);
-                if (wrkType == 13) {
-                    ShotgunBall unit = (ShotgunBall) elements.get(ID - 1);
-                    unit.setSeed(wrkSeed);
-                } else if (wrkType == 23) {
-                    HenBall unit = (HenBall) elements.get(ID - 1);
-                    unit.setSeed(wrkSeed);
-                }
-                j += 6;
-            }
-            kekkaiFields[i] = new KekkaiField(i);   //界玉初始化
-            i++;
-        }
-    }
-
-    private static void base_move(){    //车板移动
-        dokkan_flg[0] = false;
-        dokkan_flg[1] = false;
-        norikomi_flg = false;
-        saihai_cnt[0]--;
-        saihai_cnt[1]--;
-        j = 0;
-        while (j <= 1) {
-            if (hp0_flg[j] > 0){
-                j++;
-                continue;
-            }
-            core_x[j] = cores[j].x;
-            core_y[j] = cores[j].y;
-            for (Shape s : unit[j].getShapes()) {
-                if (s instanceof TargetBall) {
-                    core_x[j] = s.x;
-                    core_y[j] = s.y;
-                    break;
-                }
-            }
-            j++;
-        }
-        if (hp0_flg[0] == 0 && hp0_flg[1] == 0 && bases[1].x - bases[1].xs - (bases[0].x + bases[0].xs) <= 380) {
-            norikomi_flg = true;
-            System.out.println("要塞相撞，时间: " + time);
-            j = 0;
-            while (j <= 1) {
-                boolean nie_flg = false;
-                for (Shape s : unit[j].getShapes()) {
-                    if (s instanceof NieBall nie) {
-                        nie.alarm = 6;
-                        nie_flg = true;
-                        break;
-                    }
-                }
-                if (nie_flg){
-                    j++;
-                    continue;
-                }
-                wrk = (float) (Math.floor(bases[(1 - j)].xs * 5) + 1);
-                wrk = Math.round(wrk);
-                if (wrk < 0) {
-                    wrk = 0;
-                }
-                hp[j] -= (int) wrk;
-                dokkan_flg[j] = true;
-                j++;
-            }
-            wrk = bases[0].xs;
-            bases[0].xs = -bases[1].xs;
-            if (bases[0].xs > -1) { bases[0].xs = -1; }
-            bases[1].xs = -wrk;
-            if (bases[1].xs > -1) { bases[1].xs = -1; }
-            bases[0].ys = (-bases[0].xs) * 2;
-            bases[1].ys = (-bases[1].xs) * 2;
-        }
-    }
-
-    private static void judge(){    //裁决爆炸
-        i = 0;
-        while (i <= 1) {
-            if (hp0_flg[i] == 0 && hp[i] < 1) {
-                hp0_flg[i] = 1;
-                dokkan_flg[i] = true;
-            }
-            if (hp0_flg[i] > 0) {
-                hp0_flg[i]++;
-                dokkan_flg[i] = true;
-                if (hp0_flg[i] == 3) {
-                    bases[i].kill();
-                    cores[i].kill();
-                }
-                if (hp0_flg[i] > 120) {
-                    wrk = 0;
-                    hp[0] = Math.max(0, hp[0]);
-                    hp[1] = Math.max(0, hp[1]);
-                    end = true;
-                    break;
-                }
-            }
-            i++;
-        }
-    }
-
-    private static void update() {  //单位更新
-        if (hp0_flg[0] == 0 && hp0_flg[1] == 0){
-            HitSystem.mid = (int) ((bases[0].x + bases[0].xs + bases[1].x - bases[1].xs) * 0.5F);
-        }
-        for (int i = 0; i <= 1; i++){
-            unit[i].resign();
-            atk[i].resign();
-        }
-        int toSize = elements.size;
-        for (int i = 0; i < toSize; i++) {
-            if (elements.items[i] != null) {
-                elements.items[i].step();
-            }
-        }
-    }
-
-    private static int[] to_xyr(String str){    //5位61进制转x y r数组
+    public static int[] to_xyr(String str){    //5位61进制转x y r数组
         int rxy = 0;
-        rxy += pskey.indexOf(str.charAt(0)) * 13845841;
-        rxy += pskey.indexOf(str.charAt(1)) * 226981;
-        rxy += pskey.indexOf(str.charAt(2)) * 3721;
-        rxy += pskey.indexOf(str.charAt(3)) * 61;
-        rxy += pskey.indexOf(str.charAt(4));
-        String rxy_str = String.format("%09d", rxy);
-        return new int[]{Integer.parseInt(rxy_str.substring(3, 6)), Integer.parseInt(rxy_str.substring(6, 9)), Integer.parseInt(rxy_str.substring(0, 3))};
-    }
-
-    public static int addElement(Shape s){      //增加新元素，返回id值
-        elements.put(ID, s);
-        return ID++;
-    }
-
-    /**
-     * @param X x
-     * @param Y y
-     * @param R 角度
-     * @param TYPE 种类 (1-60 间整数)
-     * @param S 所属方 (0 或 1)
-     */
-    public static void unit_make(float X, float Y, int R, int TYPE, int S){   //创建单位
-        int wrk = 0;
-        switch (TYPE){
-            case 1: new BowBall(X, Y, R, S, TYPE);break;
-            case 2: new GunBall(X, Y, R, S, TYPE);break;
-            case 3: new SwordBall(X, Y, R, S, TYPE);break;
-            case 4: new TateBall(X, Y, R, S, TYPE);break;
-            case 5: new BombBall(X, Y, R, S, TYPE);break;
-            case 6: new MagicBall(X, Y, R, S, TYPE);break;
-            case 7: new DokyuBall(X, Y, R, S, TYPE);break;
-            case 8: new YariBall(X, Y, R, S, TYPE);break;
-            case 9: new CannonBall(X, Y, R, S, TYPE);break;
-            case 10: new NagiBall(X, Y, R, S, TYPE);break;
-            case 11: new HaneBall(X, Y, R, S, TYPE);break;
-            case 12: new RetsuBall(X, Y, R, S, TYPE);break;
-            case 13: new ShotgunBall(X, Y, R, S, TYPE);break;
-            case 14: new SniperBall(X, Y, R, S, TYPE);break;
-            case 15: new UkiBall(X, Y, R, S, TYPE);break;
-            case 16: new GuideBall(X, Y, R, S, TYPE);break;
-            case 17: new RepairBall(X, Y, R, S, TYPE);break;
-            case 18: new HealBall(X, Y, R, S, TYPE);break;
-            case 19: new KabeBall(X, Y, R, S, TYPE);break;
-            case 20: new TobiBall(X, Y, R, S, TYPE);break;
-            case 21: new SenBall(X, Y, R, S, TYPE);break;
-            case 22: new MinigunBall(X, Y, R, S, TYPE);break;
-            case 23: new HenBall(X, Y, R, S, TYPE);break;
-            case 24: new KekkaiBall(X, Y, R, S, TYPE);break;
-            case 25: new Wood(X, Y, S, TYPE); wrk = 1; break;
-            case 26: new Stone(X, Y, S, TYPE); wrk = 1; break;
-            case 27: new Paper(X, Y, S, TYPE); wrk = 1; break;
-            case 28: new Iron(X, Y, S, TYPE); wrk = 1; break;
-            case 29: new Jet(X, Y, S, TYPE); wrk = 1; break;
-            case 30: new Turbo(X, Y, S, TYPE); wrk = 1; break;
-            case 31: new BoneBall(X, Y, R, S, TYPE);break;
-            case 32: new GekiBall(X, Y, R, S, TYPE);break;
-            case 33: new TonBall(X, Y, R, S, TYPE);break;
-            case 34: new HolyBall(X, Y, R, S, TYPE);break;
-            case 35: new NinBall(X, Y, R, S, TYPE);break;
-            case 36: new SyouBall(X, Y, R, S, TYPE);break;
-            case 37: new HanaBall(X, Y, R, S, TYPE);break;
-            case 38: new HanBall(X, Y, R, S, TYPE);break;
-            case 39: new PushBall(X, Y, R, S, TYPE);break;
-            case 40: new GeiBall(X, Y, R, S, TYPE);break;
-            case 41: new NieBall(X, Y, R, S, TYPE);break;
-            case 42: new TargetBall(X, Y, R, S, TYPE);break;
-            case 43: new TuiBall(X, Y, R, S, TYPE);break;
-            case 44: new BoxBall(X, Y, R, S, TYPE);break;
-            case 45: new DarkBall(X, Y, R, S, TYPE);break;
-            case 46: new HeriBall(X, Y, R, S, TYPE);break;
-            case 47: new SaiBall(X, Y, R, S, TYPE);break;
-            case 48: new KnightBall(X, Y, R, S, TYPE);break;
-            case 49: new KakuBall(X, Y, R, S, TYPE);break;
-            case 50: new ShaBall(X, Y, R, S, TYPE);break;
-            case 51: new StarBall(X, Y, R, S, TYPE);break;
-            case 52: new ConBall(X, Y, R, S, TYPE);break;
-            case 53: new KanBall(X, Y, R, S, TYPE);break;
-            case 54: new SearchBall(X, Y, R, S, TYPE);break;
-            case 55: new Near(X, Y, S, TYPE); wrk = 1; break;
-            case 56: new Far(X, Y, S, TYPE); wrk = 1; break;
-            case 57: new Wide(X, Y, S, TYPE); wrk = 1; break;
-            case 58: new Narrow(X, Y, S, TYPE); wrk = 1; break;
-            case 59: new Snipe(X, Y, S, TYPE); wrk = 1; break;
-            case 60: new Elevator(X, Y, S, TYPE); wrk = 1; break;
-            default: new Ball(X, Y, R, S, TYPE);break;
-        }
-        switch (wrk){
-            case 0: {
-                Ball unit = (Ball) elements.get(ID - 1);
-                if (unit.side != 0) {
-                    unit.cnt = (int) (-(380 - (unit.x - 1490)) % unit.speed);
-                }
-                else {
-                    unit.cnt = (int) (-(unit.x - 50) % unit.speed);
-                }
-                break;
-            }
-            case 1: break;
-            default: break;
-        }
-    }
-
-    private static void resetGame() {
-        end = false;
-        time = 0;
-        ID = 0;
-
-        elements = new IntShapeMap(1024);
-
-        hp = new int[]{100, 100};
-        hp0_flg = new int[]{0, 0};
-        dead_last = new int[]{0, 0};
-
-        for (int i = 0; i < 2; i++) {
-            wall[i] = new CompositeShape(0,0);
-            unit[i] = new UnitHitSystem(0,0);
-            shield[i] = new CompositeShape(0,0);
-            atk[i] = new AtkHitSystem(0,0);
-            fort[i] = new CompositeShape(0,0);
-            team[i] = new CompositeShape(0,0);
-            heal[i] = new CompositeShape(0,0);
-            repair[i] = new CompositeShape(0,0);
-            jump_u[i] = new CompositeShape(0,0);
-            jump_f[i] = new CompositeShape(0,0);
-            snipe[i] = new CompositeShape(0,0);
-            turn_ccw[i] = new CompositeShape(0,0);
-            turn_cw[i] = new CompositeShape(0,0);
-            kekkaiIds = new ArrayList[]{new ArrayList<Integer>(), new ArrayList<Integer>()};
-            kekkaiFields = new KekkaiField[]{null, null};
-        }
-
-        for (int i = 0; i <= 1; i++){
-            fort[i].addShape(wall[i]);
-            fort[i].addShape(unit[i]);
-        }
-        for (int i = 0; i <= 1; i++){
-            team[i].addShape(wall[i]);
-            team[i].addShape(unit[i]);
-            team[i].addShape(shield[i]);
-            team[i].addShape(atk[i]);
-        }
-
-        bases = new Base[]{new Base(240, 532, 0), new Base(1680, 532, 1)};
-    }
-
-    private static String getSimpleResult(){
-        if (hp0_flg[0] > 0 || hp0_flg[1] > 0){
-            if(hp0_flg[0] == 0){
-                return SHOW_REMAIN_HP ? (hp[0] + ",") : "1,";
-            }else if(hp0_flg[1] == 0) {
-                return SHOW_REMAIN_HP ? (-hp[1] + ",") : "2,";
-            }else {
-                return SHOW_REMAIN_HP ? "0," : "d,";
-            }
-        }else {
-            return "?,";
-        }
+        rxy += Main.pskey.indexOf(str.charAt(0)) * 13845841;
+        rxy += Main.pskey.indexOf(str.charAt(1)) * 226981;
+        rxy += Main.pskey.indexOf(str.charAt(2)) * 3721;
+        rxy += Main.pskey.indexOf(str.charAt(3)) * 61;
+        rxy += Main.pskey.indexOf(str.charAt(4));
+        int r = rxy / 1_000_000;
+        int x = (rxy / 1_000) % 1_000;
+        int y = rxy % 1_000;
+        return new int[]{x, y, r};
     }
 }

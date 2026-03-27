@@ -1,10 +1,11 @@
 package org.example.elements.wall;
 
+import org.example.GameTask;
 import org.example.elements.Wall;
 
 public class Paper extends Wall {   //纸壁
-    public Paper(float X, float Y, int S, int TYPE) {
-        super(X, Y, S, TYPE);
+    public Paper(GameTask GAME, float X, float Y, int S, int TYPE) {
+        super(GAME, X, Y, S, TYPE);
         max_hp = 1;
         hp = 1;
     }

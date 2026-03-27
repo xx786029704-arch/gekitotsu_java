@@ -4,8 +4,8 @@ import org.example.elements.Ball;
 import org.example.elements.Bullet;
 
 public class UnitHitSystem extends HitSystem{
-    public UnitHitSystem(float X, float Y) {
-        super(X, Y);
+    public UnitHitSystem(GameTask GAME, float X, float Y) {
+        super(GAME, X, Y);
     }
 
     public void removeShape(Shape s) {
@@ -22,10 +22,10 @@ public class UnitHitSystem extends HitSystem{
         right.clear();
         for (Shape s : shapes){
             if (s instanceof Ball ball){
-                if (ball.x < mid + 42){
+                if (ball.x < game.mid + 42){
                     left.add(ball);
                 }
-                if (ball.x > mid - 42){
+                if (ball.x > game.mid - 42){
                     right.add(ball);
                 }
                 continue;
@@ -40,7 +40,7 @@ public class UnitHitSystem extends HitSystem{
             if (s.hitTestPoint(X, Y))
                 return true;
         }
-        if (X <= mid){
+        if (X <= game.mid){
             for (Shape s : left){
                 if (s.hitTestPoint(X, Y))
                     return true;

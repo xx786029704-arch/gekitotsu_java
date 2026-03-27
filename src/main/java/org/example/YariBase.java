@@ -41,45 +41,4 @@ public class YariBase extends Shape {     //枪玉判定图形单元类
         if (dx < 76.f || dx > 156.f || dy < 0.2f * (dx - 156.f) || dy > -.2f * (dx - 156.f)) return false;
         return dx * dx / 7744.f + dy * dy / 1004.89f > 1;
     }
-
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        float[][] verts = {
-                {76.f, -16.f},
-                {156.f, 0.f},
-                {76.f, 16.f},
-                {85.f, 8.f},
-                {88.f, 0.f},
-                {85.f, -8.f}
-        };
-        for (float[] point : verts) {
-            float tempX = point[0] * internalScaleX + internalX;
-            if (flipped) tempX = -tempX;
-            float tempY = point[1] + internalY;
-            point[0] = tempX * cosRot - tempY * sinRot + this.x;
-            point[1] = tempY * cosRot + tempX * sinRot + this.y;
-        }
-        //!!!前述部分结束
-        Path2D.Float path = new Path2D.Float();
-        path.moveTo(verts[0][0], verts[0][1]);
-        for (int i = 1; i < 6; i++) {
-            path.lineTo(verts[i][0], verts[i][1]);
-        }
-        path.closePath();
-        g2d.draw(path);
-        //!!!此处代码用于验证实际判定区域是不是和显示的一样，调试后请删掉
-        /* g2d.setColor(Color.CYAN);
-        for (int i = -200; i < 200; i++) {
-            for (int j = -200; j < 200; j++) {
-                int testX = (int) this.x + i;
-                int testY = (int) this.y + j;
-                if (hitTestPoint(testX, testY)) {
-                    g2d.drawRect(testX, testY, 1, 1);
-                }
-            }
-        }
-        g2d.setColor(Color.WHITE); */
-        //!!!前述部分结束
-    }
 }

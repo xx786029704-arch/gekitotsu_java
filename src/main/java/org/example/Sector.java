@@ -41,14 +41,4 @@ public class Sector extends Shape {     //扇形类
         dirY = (float)Math.sin(dir);
         cosHalfAngle = (float)Math.cos(a * 0.5f);
     }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        float wrk = 0.017453292519943295F;
-        int startAngle = (int) (-(dir + a / 2) / wrk);
-        int arcAngle = (int) (a / wrk);
-        g2d.drawArc((int)(x - r), (int)(y - r), (int)(r * 2), (int)(r * 2), startAngle, arcAngle);
-        g2d.drawLine((int)x, (int)y, (int)(x + r * Math.cos(dir + a/2)), (int)(y + r * Math.sin(dir + a/2)));
-        g2d.drawLine((int)x, (int)y, (int)(x + r * Math.cos(dir - a/2)), (int)(y + r * Math.sin(dir- a/2)));
-    }
 }

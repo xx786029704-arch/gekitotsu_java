@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.GameTask;
 import org.example.Utils;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsBomb;
@@ -14,8 +14,8 @@ public class HeriBullet extends Bullet {   //旋玉主弹
     private int xl2 = 1920;
     private int yrot = 0;
 
-    public HeriBullet(float X, float Y, int S, int rotation) {   //初始化
-        super(X, Y, S);
+    public HeriBullet(GameTask GAME, float X, float Y, int S, int rotation) {   //初始化
+        super(GAME, X, Y, S);
         rot = rotation;
         gei_flg = 0;
         if (side != 0) {
@@ -34,11 +34,11 @@ public class HeriBullet extends Bullet {   //旋玉主弹
             kill();
             return;
         }
-        if (Main.team[1 - side].hitTestPoint(x, y)) {
+        if (game.team[1 - side].hitTestPoint(x, y)) {
             hp--;
         }
         if (hp <= 0 || y > 570) {
-            new HitsBomb(x, y, side);
+            new HitsBomb(game, x, y, side);
             kill();
             return;
         }
@@ -73,7 +73,7 @@ public class HeriBullet extends Bullet {   //旋玉主弹
             }
             int scale = (rot < 90 || rot > 270) ? 1 : -1;
             int atkRot = Math.round(rot + 45 * scale);
-            new GunBullet(x, y, side).setVecR(atkRot, 20).move();
+            new GunBullet(game, x, y, side).setVecR(atkRot, 20).move();
         }
     }
 }

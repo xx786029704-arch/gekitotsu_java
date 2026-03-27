@@ -1,6 +1,6 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.GameTask;
 import org.example.Shape;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsDrop;
@@ -12,8 +12,8 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
     private float desiredRot;
     private float rot;
 
-    public ConMissileBullet(float X, float Y, int S, int rotation, int targetId) {   //初始化
-        super(X, Y, S);
+    public ConMissileBullet(GameTask GAME, float X, float Y, int S, int rotation, int targetId) {   //初始化
+        super(GAME, X, Y, S);
         this.rot = rotation;
         this.desiredRot = rotation;
         this.targetId = targetId;
@@ -28,8 +28,8 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2 || cnt > 200) {
-            new HitsDrop(this.x, this.y, Main.atk[this.side]);
+        if (game.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2 || cnt > 200) {
+            new HitsDrop(game, this.x, this.y, game.atk[this.side]);
             kill();
             return;
         }
@@ -54,12 +54,12 @@ public class ConMissileBullet extends Bullet {   //梱玉导弹分弹
 
     private void computeTargetRot() {   //计算追踪角度
         if (targetId != -1) {
-            Shape target = Main.elements.get(targetId);
+            Shape target = game.elements.get(targetId);
             if (target == null) return;
             desiredRot = Math.round((float) (Math.atan2(target.y - this.y, target.x - this.x) * 180 / Math.PI));
             return;
         }
-        desiredRot = Math.round((float) (Math.atan2(Main.core_y[1-side] - this.y, Main.core_x[1-side] - this.x) * 180 / Math.PI));
+        desiredRot = Math.round((float) (Math.atan2(game.core_y[1-side] - this.y, game.core_x[1-side] - this.x) * 180 / Math.PI));
     }
 
     private void updateVelocity() {   //更新速度向量

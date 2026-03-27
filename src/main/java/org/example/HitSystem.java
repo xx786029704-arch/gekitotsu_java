@@ -4,15 +4,16 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class HitSystem extends CompositeShape{
-    public static int mid = 960;
     public ArrayList<Shape> upper_left = new ArrayList<>();
     public ArrayList<Shape> upper_right = new ArrayList<>();
     public ArrayList<Shape> left = new ArrayList<>();
     public ArrayList<Shape> right = new ArrayList<>();
     public ArrayList<Shape> common = new ArrayList<>();
+    protected final GameTask game;
 
-    public HitSystem(float X, float Y) {
+    public HitSystem(GameTask GAME, float X, float Y) {
         super(X, Y);
+        game = GAME;
     }
 
     public void addShape(Shape s) {
@@ -36,7 +37,7 @@ public abstract class HitSystem extends CompositeShape{
                 return true;
         }
         if (Y < 0){
-            if (X <= mid) {
+            if (X <= game.mid) {
                 for (Shape s : upper_left) {
                     if (s.hitTestPoint(X, Y))
                         return true;
@@ -50,7 +51,7 @@ public abstract class HitSystem extends CompositeShape{
                 return false;
             }
         }
-        if (X <= mid){
+        if (X <= game.mid){
             for (Shape s : left){
                 if (s.hitTestPoint(X, Y))
                     return true;
@@ -62,10 +63,6 @@ public abstract class HitSystem extends CompositeShape{
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
     }
 
     public abstract void resign();

@@ -22,9 +22,4 @@ public class Rectangle extends Shape {   //矩形类
         Y -= start_y;
         return X >= x && X <= x + width && Y >= y && Y <= y + height;
     }
-
-    @Override
-    public void draw(Graphics2D g2d) {   //绘制
-        g2d.drawRect((int) (x + start_x), (int) (y + start_y), (int) width, (int) height);
-    }
 }

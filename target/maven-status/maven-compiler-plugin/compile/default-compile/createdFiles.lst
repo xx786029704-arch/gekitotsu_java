@@ -4,7 +4,7 @@ org\example\elements\atk\TonBullet.class
 org\example\elements\atk\MissileBullet.class
 org\example\elements\wall\Wood.class
 org\example\elements\atk\ShotgunBullet.class
-org\example\GameWindow.class
+org\example\CompiledFort.class
 org\example\UnitHitSystem.class
 org\example\elements\units\RetsuBall.class
 org\example\elements\units\GuideBall.class
@@ -18,7 +18,6 @@ org\example\elements\units\SwordBall.class
 org\example\elements\atk\RetsuBullet.class
 org\example\elements\units\GunBall.class
 org\example\elements\atk\HinokoBullet.class
-org\example\GameWindow$GameCanvas.class
 org\example\elements\units\KakuBall.class
 org\example\Sector.class
 org\example\elements\Base.class
@@ -36,7 +35,6 @@ org\example\Round.class
 org\example\elements\hit\HitsBomb.class
 org\example\elements\Wall.class
 org\example\elements\atk\HanabiBullet.class
-org\example\WallHitSystem.class
 org\example\elements\atk\GekiBullet.class
 org\example\elements\atk\BombBullet.class
 org\example\elements\hit\HitsDrop.class

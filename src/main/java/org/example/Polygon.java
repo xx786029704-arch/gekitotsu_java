@@ -57,18 +57,4 @@ public class Polygon extends Shape{     //多边形，存储各个顶点坐标�
         }
         return hit;
     }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        g2d.translate(x, y);
-        if (localVertices.length == 0) return;
-        Path2D.Float path = new Path2D.Float();
-        path.moveTo(localVertices[0][0], localVertices[0][1]);
-        for (int i = 1; i < localVertices.length; i++) {
-            path.lineTo(localVertices[i][0], localVertices[i][1]);
-        }
-        path.closePath();
-        g2d.draw(path);
-        g2d.translate(-x, -y);
-    }
 }

@@ -1,5 +1,6 @@
 package org.example.elements.atk;
 
+import org.example.GameTask;
 import org.example.Main;
 import org.example.Round;
 import org.example.Utils;
@@ -15,68 +16,70 @@ public class ShockCreature extends Round {   //痹生物
     private float ycos = 0;
     private float ysin = 0;
     private int yrot = 0;
+    private final GameTask game;
 
-    public ShockCreature(float X, float Y, int S, int R) {   //初始化
+    public ShockCreature(GameTask GAME, float X, float Y, int S, int R) {   //初始化
         super(X, Y, 15.5F);
         xySync();
-        this.side = S;
-        this.rot = R;
-        this.xs = Utils.cos(R) * 2.F;
-        this.ys = Utils.sin(R) * 2.F;
-        this.id = Main.addElement(this);
-        Main.unit[side].addShape(this);
-        this.cnt = 0;
+        game = GAME;
+        side = S;
+        rot = R;
+        xs = Utils.cos(R) * 2.F;
+        ys = Utils.sin(R) * 2.F;
+        id = game.addElement(this);
+        game.unit[side].addShape(this);
+        cnt = 0;
     }
 
     @Override
     public void step() {   //每帧逻辑
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y)) {
-            this.hp--;
-            new HitsDrop(this.x, this.y, Main.atk[side]);
-            this.x = this.x - 4 * Utils.cos((int) this.rot);
-            this.y = this.y - 4 * Utils.sin((int) this.rot);
+        if (game.team[1 - side].hitTestPoint(x, y)) {
+            hp--;
+            new HitsDrop(game, x, y, game.atk[side]);
+            x = x - 4 * Utils.cos((int) rot);
+            y = y - 4 * Utils.sin((int) rot);
             xySync();
         }
         updateFloatOffset();
-        this.x = this.x + this.xs;
-        this.y = this.y + this.ys;
+        x = x + xs;
+        y = y + ys;
         xySync();
-        this.x = this.x + this.ycos;
-        this.y = this.y + this.ysin;
+        x = x + ycos;
+        y = y + ysin;
         xySync();
 
-        if (this.y < -600 || this.x > 1920 || this.x < 0) {
+        if (y < -600 || x > 1920 || x < 0) {
             kill();
             return;
         }
-        if (this.y > 570) {
-            this.y = 570;
-            this.ys = -this.ys;
+        if (y > 570) {
+            y = 570;
+            ys = -ys;
         }
-        this.cnt++;
-        if (this.cnt == 60) {
-            this.cnt = 0;
-            int targetRot = Math.round((float) Math.toDegrees(Math.atan2(Main.core_y[1 - this.side] - this.y, Main.core_x[1 - this.side] - this.x)));
+        cnt++;
+        if (cnt == 60) {
+            cnt = 0;
+            int targetRot = Math.round((float) Math.toDegrees(Math.atan2(game.core_y[1 - side] - y, game.core_x[1 - side] - x)));
             targetRot = (targetRot % 360 + 360) % 360;
-            new GunBullet(this.x, this.y, this.side).setVecMult(Utils.cos(targetRot), Utils.sin(targetRot), 10).move();
+            new GunBullet(game, x, y, side).setVecMult(Utils.cos(targetRot), Utils.sin(targetRot), 10).move();
         }
-        if (this.hp <= 0) {
-            new HitsDrop(this.x, this.y, Main.atk[side]);
+        if (hp <= 0) {
+            new HitsDrop(game, x, y, game.atk[side]);
             kill();
         }
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.unit[this.side].removeShape(this);
+        game.elements.remove(id);
+        game.unit[side].removeShape(this);
     }
 
     private void updateFloatOffset() {
-        this.yrot = this.yrot + 10;
-        if (this.yrot > 360) {
-            this.yrot = this.yrot - 360;
+        yrot = yrot + 10;
+        if (yrot > 360) {
+            yrot = yrot - 360;
         }
-        this.ysin = Utils.sin(yrot) * 6.F;
-        this.ycos = Utils.cos(yrot) * 6.F;
+        ysin = Utils.sin(yrot) * 6.F;
+        ycos = Utils.cos(yrot) * 6.F;
     }
 }

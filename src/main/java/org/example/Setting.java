@@ -18,11 +18,9 @@ public class Setting {
             System.out.println("-====操作菜单====-");
             System.out.println("请选择操作：");
             System.out.println("0.开始对战");
-            System.out.println(Main.ENABLE_VISUALIZATION ? "1.关闭可视化" : "1.开启可视化");
-            System.out.println(Main.SHOW_UNIT_HP ? "2.关闭单位血量显示" : "2.开启单位血量显示");
-            System.out.println("3.设置帧率限制（目前为" + (Main.LOGIC_TPS == 0 ? "INF" : Main.LOGIC_TPS) + "）");
-            System.out.println("4.设置对局帧数上限（目前为" + Main.MAX_FRAME_LIMIT + "）");
-            System.out.println(Main.SHOW_REMAIN_HP ? "5.关闭输出血量积分" : "5.开启输出血量积分");
+            System.out.println("1.设置对局帧数上限（目前为" + Main.MAX_FRAME_LIMIT + "）");
+            System.out.println(Main.SHOW_REMAIN_HP ? "2.关闭输出血量积分" : "2.开启输出血量积分");
+            System.out.println("3.重新导入阵容");
             System.out.println("9.退出程序");
             System.out.println("输入对应数字以选择...");
             switch (scanner.nextLine()){
@@ -30,28 +28,6 @@ public class Setting {
                     return true;
                 }
                 case "1":{
-                    Main.ENABLE_VISUALIZATION = !Main.ENABLE_VISUALIZATION;
-                    System.out.println(Main.ENABLE_VISUALIZATION ? "可视化已开启" : "可视化已关闭");
-                    saveConfig();
-                    break;
-                }
-                case "2":{
-                    Main.SHOW_UNIT_HP = !Main.SHOW_UNIT_HP;
-                    System.out.println(Main.SHOW_UNIT_HP ? "血量显示已开启" : "血量显示已关闭");
-                    saveConfig();
-                    break;
-                }
-                case "3":{
-                    System.out.print("输入最大帧率（使用0代表无限）: ");
-                    Main.LOGIC_TPS = Integer.parseInt(scanner.nextLine());
-                    if (Main.LOGIC_TPS < 0){
-                        Main.LOGIC_TPS = 0;
-                    }
-                    System.out.println("最大帧率已经设置为" + (Main.LOGIC_TPS == 0 ? "INF" : Main.LOGIC_TPS));
-                    saveConfig();
-                    break;
-                }
-                case "4":{
                     System.out.print("设置对局帧数上限: ");
                     Main.MAX_FRAME_LIMIT = Integer.parseInt(scanner.nextLine());
                     if (Main.MAX_FRAME_LIMIT < 0){
@@ -61,10 +37,17 @@ public class Setting {
                     saveConfig();
                     break;
                 }
-                case "5":{
+                case "2":{
                     Main.SHOW_REMAIN_HP = !Main.SHOW_REMAIN_HP;
                     System.out.println(Main.SHOW_REMAIN_HP ? "将在simple_result.txt中记录血量积分" : "已关闭血量积分记录");
                     saveConfig();
+                    break;
+                }
+                case "3":{
+                    System.out.println("正在重新导入阵容...");
+                    Main.p1List = Setting.CompileForts("1P.txt");
+                    Main.p2List = Setting.CompileForts("2P.txt");
+                    System.out.println("阵容导入完成！");
                     break;
                 }
                 case "9":{
@@ -85,9 +68,6 @@ public class Setting {
         } catch (Exception e) {
             System.out.println("配置文件不存在，使用默认配置");
         }
-        Main.ENABLE_VISUALIZATION = Boolean.parseBoolean(prop.getProperty("ENABLE_VISUALIZATION", "true"));
-        Main.SHOW_UNIT_HP = Boolean.parseBoolean(prop.getProperty("SHOW_UNIT_HP", "true"));
-        Main.LOGIC_TPS = Integer.parseInt(prop.getProperty("LOGIC_TPS", "90"));
         Main.MAX_FRAME_LIMIT = Integer.parseInt(prop.getProperty("MAX_FRAME_LIMIT", "65536"));
         Main.SHOW_REMAIN_HP = Boolean.parseBoolean(prop.getProperty("SHOW_REMAIN_HP", "false"));
         Main.AUTO_PLAY = Boolean.parseBoolean(prop.getProperty("AUTO_PLAY", "false"));
@@ -95,9 +75,6 @@ public class Setting {
 
     public static void saveConfig() {
         Properties prop = new Properties();
-        prop.setProperty("ENABLE_VISUALIZATION", String.valueOf(Main.ENABLE_VISUALIZATION));
-        prop.setProperty("SHOW_UNIT_HP", String.valueOf(Main.SHOW_UNIT_HP));
-        prop.setProperty("LOGIC_TPS", String.valueOf(Main.LOGIC_TPS));
         prop.setProperty("MAX_FRAME_LIMIT", String.valueOf(Main.MAX_FRAME_LIMIT));
         prop.setProperty("SHOW_REMAIN_HP", String.valueOf(Main.SHOW_REMAIN_HP));
         prop.setProperty("AUTO_PLAY", String.valueOf(Main.AUTO_PLAY));
@@ -109,8 +86,8 @@ public class Setting {
         }
     }
 
-    public static List<Fort> loadForts(String fileName) {
-        List<Fort> list = new ArrayList<>();
+    public static List<CompiledFort> CompileForts(String fileName) {
+        List<CompiledFort> list = new ArrayList<>();
         try {
             String content = new String(java.nio.file.Files.readAllBytes(
                     java.nio.file.Paths.get(fileName))).trim();
@@ -127,7 +104,7 @@ public class Setting {
                 int idx = part.lastIndexOf("&");
 
                 if (idx == -1) {
-                    list.add(new Fort("", part));
+                    list.add(Main.compileFort(new Fort("", part)));
                 } else {
                     String name = part.substring(0, idx);
                     String code = part.substring(idx + 1);
@@ -136,7 +113,7 @@ public class Setting {
                         System.out.println("阵"+name+"代码长度错误，已跳过");
                         continue;
                     }
-                    list.add(new Fort(name, code));
+                    list.add(Main.compileFort(new Fort(name, code)));
                 }
             }
         } catch (Exception e) {

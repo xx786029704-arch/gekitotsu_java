@@ -44,6 +44,4 @@ public abstract class Shape {   //最基本的抽象形状类
 
     public void step(){     //每帧执行的代码
     }
-
-    public abstract void draw(Graphics2D g2d);
 }

@@ -57,11 +57,4 @@ public class CompositeShape extends Shape {     //复合形状类
         }
         return false;
     }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        for (Shape s : shapes) {
-            s.draw(g2d);
-        }
-    }
 }

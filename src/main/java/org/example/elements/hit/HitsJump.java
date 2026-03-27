@@ -1,24 +1,24 @@
 package org.example.elements.hit;
 
 import org.example.CompositeShape;
-import org.example.Main;
+import org.example.GameTask;
 import org.example.ShapeBuilder;
 
 public class HitsJump extends CompositeShape {
     private final CompositeShape parent;
+    private final GameTask game;
 
-    public HitsJump(float X, float Y, CompositeShape s) {
+    public HitsJump(GameTask GAME, float X, float Y, CompositeShape s) {
         super(X, Y);
-        ShapeBuilder.into(this)
-                .roundedRectangle(-17.15F,-17.5F,34.35F,35F,4F);
-        id = Main.addElement(this);
+        game = GAME;
+        id = game.addElement(this);
         parent = s;
         s.addShape(this);
     }
 
     @Override
     public void step(){
-        Main.elements.remove(id);
+        game.elements.remove(id);
         parent.removeShape(this);
     }
 

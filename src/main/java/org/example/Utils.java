@@ -6,15 +6,9 @@ public class Utils{     //工具类
         return;
     }
 
-    private int seed=0;
+    public int universalSeed=0;
 
-    public static int universalSeed=0;
-
-    public static int randFunc=1;//0～2依次为三个随机选项
-
-    public void setSeed(int S) {
-        this.seed = S;
-    }
+    public static final int randFunc=1;//0～2依次为三个随机选项
 
     private static final float[] trigonometricLookup = {
             0F,
@@ -493,19 +487,11 @@ public class Utils{     //工具类
         return (float) Math.sin((double) RDeg * 0.017453292519943295F);
     }
 
-    public static float random(Utils src) {//备注：因为as3不会算数，所以这里的随机数没法完美还原
-        switch (randFunc) {
-            case 1: {
-                universalSeed = (int) ((long)(universalSeed * 1103515245D + 12345) & 2147483647);
-                return (float) ((universalSeed >> 16) & 32767) / 32768;
-            }
-            case 2: {
-                src.seed = (int) ((long)(src.seed * 1103515245D + 12345) & 2147483647);
-                return (float)((src.seed >> 16) & 32767) / 32768;
-            }
-            default: {
-                return (float)Math.random();
-            }
+    public float random() {//备注：因为as3不会算数，所以这里的随机数没法完美还原
+        if (randFunc == 1) {
+            universalSeed = (int) ((long) (universalSeed * 1103515245D + 12345) & 2147483647);
+            return (float) ((universalSeed >> 16) & 32767) / 32768;
         }
+        return (float) Math.random();
     }
 }

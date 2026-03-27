@@ -1,9 +1,7 @@
 package org.example.elements;
 
-import org.example.CompositeShape;
-import org.example.Main;
+import org.example.*;
 import org.example.Shape;
-import org.example.ShapeBuilder;
 import org.example.elements.hit.HitsKen;
 
 import java.awt.*;
@@ -14,47 +12,47 @@ public class Wall extends CompositeShape {  //要塞壁类
     public int hp = 35;
     public int max_hp = 35;
     public int breaking = 0;
+    protected GameTask game;
 
-    public Wall(float X, float Y, int S, int TYPE) {
+    public Wall(GameTask GAME, float X, float Y, int S, int TYPE) {
         super(X, Y);
+        game = GAME;
         this.side = S;
         this.type = TYPE;
-        ShapeBuilder.into(this)     //一个圆角矩形
-                .roundedRectangle(-16.85F,-17.5F,34.35F,35F,4F);
-        id = Main.addElement(this);
-        Main.wall[side].addShape(this);
+        id = game.addElement(this);
+        game.wall[side].addShape(this);
     }
 
     public void kill() {
-        Main.wall[side].removeShape(this);
-        Main.elements.remove(id);
+        game.wall[side].removeShape(this);
+        game.elements.remove(id);
     }
 
     @Override
     public void step(){
-        if (Main.bases[side] == null){
+        if (game.bases[side] == null){
             kill();
             return;
         }
-        this.move(Main.bases[side].base_move_x,Main.bases[side].base_move_y);
+        this.move(game.bases[side].base_move_x,game.bases[side].base_move_y);
         stepEx();
-        if (breaking > 0 || Main.hp0_flg[this.side] > 0) {
+        if (breaking > 0 || game.hp0_flg[this.side] > 0) {
             breaking++;
-            if (breaking > 4 || Main.hp0_flg[this.side] > 0) {
+            if (breaking > 4 || game.hp0_flg[this.side] > 0) {
                 kill();
                 return;
             }
         }
-        else if (Main.atk[1-side].hitTestPoint(this.x - 6, this.y - 6) ||
-                Main.atk[1-side].hitTestPoint(this.x + 6, this.y - 6) ||
-                Main.atk[1-side].hitTestPoint(this.x - 6, this.y + 6) ||
-                Main.atk[1-side].hitTestPoint(this.x + 6, this.y + 6)) {
+        else if (game.atk[1-side].hitTestPoint(this.x - 6, this.y - 6) ||
+                game.atk[1-side].hitTestPoint(this.x + 6, this.y - 6) ||
+                game.atk[1-side].hitTestPoint(this.x - 6, this.y + 6) ||
+                game.atk[1-side].hitTestPoint(this.x + 6, this.y + 6)) {
             hp--;
             if (this.hp <= 0) {
                 breaking++;
             }
         }
-        if (hp < max_hp && Main.repair[side].hitTestPoint(this.x, this.y)) {
+        if (hp < max_hp && game.repair[side].hitTestPoint(this.x, this.y)) {
             hp ++;
         }
     }
@@ -88,15 +86,5 @@ public class Wall extends CompositeShape {  //要塞壁类
             dy += 13.5F;
         }
         return dx * dx + dy * dy <= 16F;     //此值<=12.27时，四段突可以生效
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        super.draw(g2d);
-        if (Main.SHOW_UNIT_HP){
-            g2d.setColor(Color.CYAN);
-            g2d.drawString(Integer.toString(hp), (int) x - 4, (int) y + 4);
-            g2d.setColor(Color.WHITE);
-        }
     }
 }

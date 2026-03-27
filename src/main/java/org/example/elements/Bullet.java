@@ -1,5 +1,6 @@
 package org.example.elements;
 
+import org.example.GameTask;
 import org.example.Main;
 import org.example.Round;
 import org.example.Utils;
@@ -13,18 +14,20 @@ public class Bullet extends Round {     //子弹基类
     public float ys = 0;
     public float gravity = 0;
     public float power = 0;
+    protected final GameTask game;
 
-    public Bullet(float X, float Y, int S) {
+    public Bullet(GameTask GAME,float X, float Y, int S) {
         super(X, Y, 15.5F);
         xySync();
+        game = GAME;
         side = S;
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        id = game.addElement(this);
+        game.atk[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        game.elements.remove(id);
+        game.atk[side].removeShape(this);
     }
 
     @Override
@@ -32,7 +35,7 @@ public class Bullet extends Round {     //子弹基类
         if (y > 570) {
             if (!hit_ground()) return;
         }
-        if (Main.team[1-side].hitTestPoint(x, y) || gei_flg == 2) {
+        if (game.team[1-side].hitTestPoint(x, y) || gei_flg == 2) {
             if (!hit()) return;
         }
         move();
@@ -52,7 +55,7 @@ public class Bullet extends Round {     //子弹基类
     }
 
     public boolean hit(){   //被摧毁
-        new HitsDrop(x, y, Main.atk[side]);
+        new HitsDrop(game, x, y, game.atk[side]);
         kill();
         return false;
     }
@@ -93,8 +96,8 @@ public class Bullet extends Round {     //子弹基类
     }
 
     public void betray(){
-        Main.atk[side].removeShape(this);
+        game.atk[side].removeShape(this);
         side = 1 - side;
-        Main.atk[side].addShape(this);
+        game.atk[side].addShape(this);
     }
 }

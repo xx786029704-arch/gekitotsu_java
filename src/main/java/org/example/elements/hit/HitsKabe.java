@@ -1,5 +1,6 @@
 package org.example.elements.hit;
 
+import org.example.GameTask;
 import org.example.Polygon;
 import org.example.Main;
 import org.example.Shape;
@@ -14,8 +15,7 @@ public class HitsKabe extends Polygon {
     private final int user;
     private float cos_rot;
     private float sin_rot;
-    @Deprecated
-    private float rot_radius;
+    private GameTask game;
     private static final float[][] baseVerts={
             {62.8f,-.05f},
             {125.6f,72.5f},
@@ -40,28 +40,28 @@ public class HitsKabe extends Polygon {
             0.863095238095238F,
             0.833333333333333F
     };
-    public HitsKabe(float X, float Y, float R, int S, int USER) {
+    public HitsKabe(GameTask GAME,  float X, float Y, float R, int S, int USER) {
         super(X, Y,baseVerts);
         xySync();
+        game = GAME;
         frame = 0;
         user = USER;
-        KabeBall wrk = (KabeBall) (Main.elements.get(user));
+        KabeBall wrk = (KabeBall) (game.elements.get(user));
         cos_rot = wrk.cos_rot;
         sin_rot = wrk.sin_rot;
-        rot_radius = R * 0.017453292519943295F;
         side = S;
-        id = Main.addElement(this);
-        Main.shield[side].addShape(this);
+        id = game.addElement(this);
+        game.shield[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.shield[side].removeShape(this);
+        game.elements.remove(id);
+        game.shield[side].removeShape(this);
     }
 
     @Override
     public void step(){
-        Shape s = Main.elements.get(user);
+        Shape s = game.elements.get(user);
         if (s instanceof KabeBall wrk) {
             x = wrk.x + 20 * wrk.cos_rot;
             y = wrk.y + 20 * wrk.sin_rot;
@@ -105,22 +105,5 @@ public class HitsKabe extends Polygon {
             j = i;
         }
         return hit;
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {//调试用 用完删掉
-        AffineTransform oldAT = g2d.getTransform();
-        g2d.translate(x, y);
-        g2d.rotate(rot_radius, 0, 0);
-        g2d.scale(1/baseScaleInverse[this.frame], 1/baseScaleInverse[this.frame]);
-        if (localVertices.length == 0) return;
-        Path2D.Float path = new Path2D.Float();
-        path.moveTo(localVertices[0][0], localVertices[0][1]);
-        for (int i = 1; i < localVertices.length; i++) {
-            path.lineTo(localVertices[i][0], localVertices[i][1]);
-        }
-        path.closePath();
-        g2d.draw(path);
-        g2d.setTransform(oldAT);
     }
 }

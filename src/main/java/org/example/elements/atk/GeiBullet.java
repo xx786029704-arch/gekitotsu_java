@@ -1,5 +1,6 @@
 package org.example.elements.atk;
 
+import org.example.GameTask;
 import org.example.Main;
 import org.example.Shape;
 import org.example.elements.Ball;
@@ -11,26 +12,28 @@ import java.awt.*;
 public class GeiBullet extends Shape {
     private final int user_id;
     private final int target_id;
+    private final GameTask game;
 
-    public GeiBullet(int USER, int TARGET) {
+    public GeiBullet(GameTask GAME, int USER, int TARGET) {
         super(0, 0);
+        game = GAME;
         user_id = USER;
         target_id = TARGET;
-        id = Main.addElement(this);
+        id = game.addElement(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
+        game.elements.remove(id);
     }
 
     @Override
     public void step(){
-        Shape user = Main.elements.get(user_id);
+        Shape user = game.elements.get(user_id);
         if (user == null){
             kill();
             return;
         }
-        Shape target = Main.elements.get(target_id);
+        Shape target = game.elements.get(target_id);
         if (target == null) {
             ((GeiBall) user).cnt = 0;
             ((GeiBall) user).t_id = -1;
@@ -47,9 +50,5 @@ public class GeiBullet extends Shape {
     @Override
     public boolean hitTestPoint(float X, float Y) {
         return false;
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
     }
 }

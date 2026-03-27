@@ -1,6 +1,6 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.GameTask;
 import org.example.Shape;
 import org.example.elements.units.KekkaiBall;
 
@@ -11,7 +11,7 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
     private static final float LINE_WIDTH = 30F;
     private static final float HALF_WIDTH = 15F;
     private static final float LIMIT_SQ = HALF_WIDTH * HALF_WIDTH;
-
+    private final GameTask game;
     private final int side;
 
     // 1. 数组扁平化：彻底消灭 ArrayList 和 float[] 对象的每帧分配 (Zero GC)
@@ -22,16 +22,12 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
     // 2. AABB 快速剔除边界
     private float minX, maxX, minY, maxY;
 
-    // 3. 渲染对象缓存
-    private final Stroke cachedStroke = new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-    private final Color cachedColor;
-
-    public KekkaiField(int side) {
+    public KekkaiField(GameTask GAME, int side) {
         super(0, 0);
+        game = GAME;
         this.side = side;
-        this.id = Main.addElement(this);
-        this.cachedColor = (side == 0) ? new Color(0, 255, 255, 120) : new Color(255, 128, 0, 120);
-        Main.shield[side].addShape(this);
+        this.id = game.addElement(this);
+        game.shield[side].addShape(this);
     }
 
     @Override
@@ -40,7 +36,7 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
     }
 
     private void rebuildSegments() {
-        List<Integer> ids = Main.kekkaiIds[side];
+        List<Integer> ids = game.kekkaiIds[side];
         int size = ids.size();
 
         // 确保数组容量充足，避免越界
@@ -55,7 +51,7 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
 
         for (int i = 0; i < size; i++) {
             // 4. 优化 Map 查找：一次 get 搞定，干掉 containsKey
-            Shape s = Main.elements.get(ids.get(i));
+            Shape s = game.elements.get(ids.get(i));
             if (s instanceof KekkaiBall ball) {
                 if (ball.jump_flg == 0 && ball.side == ball.on_side && ball.hurt_time <= 0) {
                     float px = ball.x + ball.cos_rot * 33F;
@@ -132,21 +128,5 @@ public class KekkaiField extends Shape {        //界玉结界（gemini优化版
             }
         }
         return false;
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        if (activePoints < 2) return;
-        Stroke prev = g2d.getStroke();
-        Color prevColor = g2d.getColor();
-        // 使用缓存的对象
-        g2d.setStroke(cachedStroke);
-        g2d.setColor(cachedColor);
-        for (int i = 0; i < activePoints; i++) {
-            int nextIdx = (i + 1 == activePoints) ? 0 : i + 1;
-            g2d.drawLine((int) pointsX[i], (int) pointsY[i], (int) pointsX[nextIdx], (int) pointsY[nextIdx]);
-        }
-        g2d.setStroke(prev);
-        g2d.setColor(prevColor);
     }
 }

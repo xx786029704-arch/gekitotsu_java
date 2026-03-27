@@ -1,5 +1,6 @@
 package org.example.elements.atk;
 
+import org.example.GameTask;
 import org.example.Main;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsDrop;
@@ -7,37 +8,37 @@ import org.example.elements.hit.HitsDrop;
 public class NinBullet extends Bullet {   //忍玉手里剑
     private int bounceCount = 0;
 
-    public NinBullet(float X, float Y, int S) {   //初始化
-        super(X, Y, S);
-        this.r = 12.4F;
+    public NinBullet(GameTask GAME, float X, float Y, int S) {   //初始化
+        super(GAME, X, Y, S);
+        r = 12.4F;
     }
 
     @Override
     public void step() {   //每帧逻辑
-        if (this.x > 1920) {
-            if (this.side != 1) {
-                this.bounceCount = 99;
+        if (x > 1920) {
+            if (side != 1) {
+                bounceCount = 99;
             }
             else {
-                this.x = 0;
-                this.bounceCount++;
+                x = 0;
+                bounceCount++;
             }
         }
-        else if (this.x < 0) {
-            if (this.side != 0) {
-                this.bounceCount = 99;
+        else if (x < 0) {
+            if (side != 0) {
+                bounceCount = 99;
             }
             else {
-                this.x = 1920;
-                this.bounceCount++;
+                x = 1920;
+                bounceCount++;
             }
         }
-        if (this.bounceCount > 1) {
+        if (bounceCount > 1) {
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
-            new HitsDrop(this.x, this.y, Main.atk[this.side]);
+        if (game.team[1 - side].hitTestPoint(x, y) || gei_flg == 2) {
+            new HitsDrop(game, x, y, game.atk[side]);
             kill();
             return;
         }
