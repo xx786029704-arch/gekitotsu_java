@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.elements.Bullet;
+import org.example.elements.hit.HitsNagi;
 
 public class AtkHitSystem extends HitSystem{
     public AtkHitSystem(float X, float Y) {
@@ -10,23 +11,29 @@ public class AtkHitSystem extends HitSystem{
     @Override
     public void resign(){
         common.clear();
-        upper.clear();
+        upper_left.clear();
+        upper_right.clear();
         left.clear();
         right.clear();
         for (Shape s : shapes){
-            if (s instanceof Bullet bullet){
-                if (bullet.y < -60){
-                    upper.add(bullet);
-                    continue;
-                } else if (bullet.y > 60){
-                    if (bullet.x < mid - 60){
-                        left.add(bullet);
-                        continue;
-                    } else if (bullet.x > mid + 60){
-                        right.add(bullet);
-                        continue;
+            if (s instanceof Bullet || s instanceof HitsNagi){
+                if (s.y < 84){
+                    if (s.x < mid + 84){
+                        upper_left.add(s);
+                    }
+                    if (s.x > mid - 84){
+                        upper_right.add(s);
                     }
                 }
+                if (s.y > -84){
+                    if (s.x < mid + 84){
+                        left.add(s);
+                    }
+                    if (s.x > mid - 84){
+                        right.add(s);
+                    }
+                }
+                continue;
             }
             common.add(s);
         }

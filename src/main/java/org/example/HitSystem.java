@@ -2,11 +2,11 @@ package org.example;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public abstract class HitSystem extends CompositeShape{
     public static int mid = 960;
-    public ArrayList<Shape> upper = new ArrayList<>();
+    public ArrayList<Shape> upper_left = new ArrayList<>();
+    public ArrayList<Shape> upper_right = new ArrayList<>();
     public ArrayList<Shape> left = new ArrayList<>();
     public ArrayList<Shape> right = new ArrayList<>();
     public ArrayList<Shape> common = new ArrayList<>();
@@ -22,7 +22,8 @@ public abstract class HitSystem extends CompositeShape{
 
     public void removeShape(Shape s) {
         shapes.remove(s);
-        upper.remove(s);
+        upper_left.remove(s);
+        upper_right.remove(s);
         left.remove(s);
         right.remove(s);
         common.remove(s);
@@ -35,11 +36,19 @@ public abstract class HitSystem extends CompositeShape{
                 return true;
         }
         if (Y < 0){
-            for (Shape s : upper){
-                if (s.hitTestPoint(X, Y))
-                    return true;
+            if (X <= mid) {
+                for (Shape s : upper_left) {
+                    if (s.hitTestPoint(X, Y))
+                        return true;
+                }
+                return false;
+            } else {
+                for (Shape s : upper_right) {
+                    if (s.hitTestPoint(X, Y))
+                        return true;
+                }
+                return false;
             }
-            return false;
         }
         if (X <= mid){
             for (Shape s : left){

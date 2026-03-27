@@ -36,6 +36,7 @@ org\example\Round.class
 org\example\elements\hit\HitsBomb.class
 org\example\elements\Wall.class
 org\example\elements\atk\HanabiBullet.class
+org\example\WallHitSystem.class
 org\example\elements\atk\GekiBullet.class
 org\example\elements\atk\BombBullet.class
 org\example\elements\hit\HitsDrop.class

@@ -22,13 +22,13 @@ public class UnitHitSystem extends HitSystem{
         right.clear();
         for (Shape s : shapes){
             if (s instanceof Ball ball){
-                if (ball.x < mid - 60){
+                if (ball.x < mid + 42){
                     left.add(ball);
-                    continue;
-                } else if (ball.x > mid + 60){
-                    right.add(ball);
-                    continue;
                 }
+                if (ball.x > mid - 42){
+                    right.add(ball);
+                }
+                continue;
             }
             common.add(s);
         }

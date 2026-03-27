@@ -305,7 +305,7 @@ public class Main {
 
     private static void update() {  //单位更新
         if (hp0_flg[0] == 0 && hp0_flg[1] == 0){
-            HitSystem.mid = (int) ((bases[0].x + bases[1].x) * 0.5F);
+            HitSystem.mid = (int) ((bases[0].x + bases[0].xs + bases[1].x - bases[1].xs) * 0.5F);
         }
         for (int i = 0; i <= 1; i++){
             unit[i].resign();
