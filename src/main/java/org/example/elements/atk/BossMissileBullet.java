@@ -8,7 +8,7 @@ import org.example.elements.hit.HitsBomb;
 public class BossMissileBullet extends Bullet {   //导玉导弹
     private int cnt = 0;
     private float targetRot;
-    private final int targetId;
+    private int targetId;
     private float rot;
     private float targetRotDelta;
 
@@ -80,5 +80,13 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
         float rad = (float) Math.toRadians(this.targetRot);
         this.xs = (float) Math.cos(rad) * 20F;
         this.ys = (float) Math.sin(rad) * 20F;
+    }
+
+    @Override
+    public void reflect(int from_rot){
+        betray();
+        rot = from_rot;
+        updateVelocity();
+        targetId = -1;
     }
 }

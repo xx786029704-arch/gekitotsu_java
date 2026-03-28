@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
 
 public class Setting {
     public Setting(){
@@ -21,6 +22,7 @@ public class Setting {
             System.out.println("1.设置对局帧数上限（目前为" + Main.MAX_FRAME_LIMIT + "）");
             System.out.println(Main.SHOW_REMAIN_HP ? "2.关闭输出血量积分" : "2.开启输出血量积分");
             System.out.println("3.重新导入阵容");
+            System.out.println("4.设置最大线程数（目前为" + Main.MAX_THREADS + "）");
             System.out.println("9.退出程序");
             System.out.println("输入对应数字以选择...");
             switch (scanner.nextLine()){
@@ -50,6 +52,18 @@ public class Setting {
                     System.out.println("阵容导入完成！");
                     break;
                 }
+                case "4":   // 新增处理
+                    System.out.print("设置最大线程数（0表示最大可用线程）: ");
+                    int newThreads = Integer.parseInt(scanner.nextLine());
+                    if (newThreads < 1) newThreads = Runtime.getRuntime().availableProcessors();
+                    Main.MAX_THREADS = newThreads;
+                    if (Main.pool != null && !Main.pool.isShutdown()) {
+                        Main.pool.shutdown();
+                    }
+                    Main.pool = Executors.newFixedThreadPool(Main.MAX_THREADS);
+                    System.out.println("最大线程数已设置为 " + Main.MAX_THREADS);
+                    saveConfig();
+                    break;
                 case "9":{
                     return false;
                 }
@@ -71,6 +85,12 @@ public class Setting {
         Main.MAX_FRAME_LIMIT = Integer.parseInt(prop.getProperty("MAX_FRAME_LIMIT", "65536"));
         Main.SHOW_REMAIN_HP = Boolean.parseBoolean(prop.getProperty("SHOW_REMAIN_HP", "false"));
         Main.AUTO_PLAY = Boolean.parseBoolean(prop.getProperty("AUTO_PLAY", "false"));
+        String threadsProp = prop.getProperty("MAX_THREADS");
+        if (threadsProp != null) {
+            Main.MAX_THREADS = Integer.parseInt(threadsProp);
+        } else {
+            Main.MAX_THREADS = Runtime.getRuntime().availableProcessors();
+        }
     }
 
     public static void saveConfig() {
@@ -78,6 +98,7 @@ public class Setting {
         prop.setProperty("MAX_FRAME_LIMIT", String.valueOf(Main.MAX_FRAME_LIMIT));
         prop.setProperty("SHOW_REMAIN_HP", String.valueOf(Main.SHOW_REMAIN_HP));
         prop.setProperty("AUTO_PLAY", String.valueOf(Main.AUTO_PLAY));
+        prop.setProperty("MAX_THREADS", String.valueOf(Main.MAX_THREADS));
 
         try (FileOutputStream fos = new FileOutputStream(Main.CONFIG_FILE)) {
             prop.store(fos, "Game Config");

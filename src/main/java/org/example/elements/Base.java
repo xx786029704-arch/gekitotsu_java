@@ -86,7 +86,6 @@ public class Base extends CompositeShape {  //车板类
                     this.wrk = 0;
                 }
                 game.hp[this.side] -= (int) this.wrk;
-                game.cores[side].dmg_flg = true;
             }
         }
     }

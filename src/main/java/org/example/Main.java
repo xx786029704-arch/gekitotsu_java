@@ -9,45 +9,43 @@ public class Main {
     public static int MAX_FRAME_LIMIT = 65536;    //最大运行帧数
     public static boolean SHOW_REMAIN_HP = false;
     public static boolean AUTO_PLAY = false;
+    public static int MAX_THREADS = Runtime.getRuntime().availableProcessors();
     public static final String CONFIG_FILE = "config.ini";
 
     public static String pskey = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";      //密码表
     private static final Scanner scanner = new Scanner(System.in);
     public static List<CompiledFort> p1List;
     public static List<CompiledFort> p2List;
-    private static final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    public static ExecutorService pool;
 
     public static void main(String[] args) {
         Setting.loadConfig();
+        pool = Executors.newFixedThreadPool(MAX_THREADS);
         System.out.println("正在导入阵容...");
         p1List = Setting.CompileForts("1P.txt");
         p2List = Setting.CompileForts("2P.txt");
         System.out.println("阵容导入完成！");
         while(AUTO_PLAY || Setting.setting(scanner)){
             long total_start = System.nanoTime();
-            boolean p1Single = p1List.size() == 1;
-            boolean p2Single = p2List.size() == 1;
-            int rounds = p1Single ? p2List.size()
-                    : p2Single ? p1List.size()
-                    : Math.min(p1List.size(), p2List.size());
 
             List<Future<Result>> futures = new ArrayList<>();
             List<String> meta = new ArrayList<>();
+            for (int j = 0; j < p1List.size(); j++) {
+                for (int i = 0; i < p2List.size(); i++) {
+                    CompiledFort f1 = p1List.get(j);
+                    CompiledFort f2 = p2List.get(i);
 
-            for (int i = 0; i < rounds; i++) {
-                CompiledFort f1 = p1Single ? p1List.getFirst() : p1List.get(i);
-                CompiledFort f2 = p2Single ? p2List.getFirst() : p2List.get(i);
+                    int roundIndex = j * 200 + i + 1;
 
-                int roundIndex = i + 1;
+                    futures.add(pool.submit(() -> {
+                        GameTask g = new GameTask();
+                        return g.run_single(f1, f2);
+                    }));
 
-                futures.add(pool.submit(() -> {
-                    GameTask g = new GameTask();
-                    return g.run_single(f1, f2);
-                }));
-
-                // 保存元信息（保证顺序）
-                meta.add("Round " + roundIndex +
-                        " | 1P[" + f1.name + "] vs 2P[" + f2.name + "]");
+                    // 保存元信息（保证顺序）
+                    meta.add("Round " + roundIndex +
+                            " | 1P[" + f1.name + "] vs 2P[" + f2.name + "]");
+                }
             }
 
             StringBuilder final_result = new StringBuilder();
@@ -69,16 +67,16 @@ public class Main {
                             .append(" | 总帧数: ").append(r.framePassed)
                             .append(" | 用时: ").append(String.format("%.3f ms", r.timeUsed))
                             .append("\n\n");
+                    if (i % p2List.size() == 0){
+                        if (i > 0) simple_result.append("\n");
+                        simple_result.append(p1List.get(i / p2List.size()).name).append(": \n");
+                    }
                     simple_result.append(r.getSimpleResult());
                     System.out.print("\r进度: " + ++done + "/" + meta.size());
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
 
-                    if (cause != null) {
-                        cause.printStackTrace();
-                    } else {
-                        e.printStackTrace();
-                    }
+                    Objects.requireNonNullElse(cause, e).printStackTrace();
                     final_result.append(meta.get(i))
                             .append("\nERROR: ")
                             .append(cause != null ? cause : e)

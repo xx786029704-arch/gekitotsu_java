@@ -10,7 +10,6 @@ public class Core extends CompositeShape {      //核心类
     public int side;
     public float unit_x;
     public float unit_y;
-    public boolean dmg_flg;
     protected final GameTask game;
 
     public Core(GameTask GAME, float X, float Y, int S) {
@@ -19,7 +18,6 @@ public class Core extends CompositeShape {      //核心类
         this.side = S;
         unit_x = X;
         unit_y = Y;
-        dmg_flg = false;
         id = game.addElement(this);
         game.wall[side].addShape(this);
     }
@@ -46,13 +44,11 @@ public class Core extends CompositeShape {      //核心类
             game.atk[1-side].hitTestPoint(this.x - 20, this.y) ||
             game.atk[1-side].hitTestPoint(this.x + 20, this.y) ||
             game.atk[1-side].hitTestPoint(this.x, this.y)) {
-            this.dmg_flg = true;
             game.hp[side]--;
             }
         if (game.hp[side] < 100 && game.repair[side].hitTestPoint(this.x, this.y)) {
             game.hp[side]++;
         }
-        dmg_flg = false;
     }
 
     @Override   //神之一手来了
