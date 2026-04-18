@@ -17,4 +17,8 @@ public class Result {
         if (Main.SHOW_REMAIN_HP) return status == 1 ? (winnerHp + ",") : (status == 2 ? (-winnerHp + ",") : (status == 0 ? "0," : "?,"));
         return status == 1 ? "1," : (status == 2 ? "2," : (status == 0 ? "d," : "?,"));
     }
+
+    public int getScore(){
+        return status == 1 ? winnerHp : (status == 2 ? -winnerHp : 0);
+    }
 }

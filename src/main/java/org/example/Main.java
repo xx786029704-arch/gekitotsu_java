@@ -51,6 +51,11 @@ public class Main {
             StringBuilder final_result = new StringBuilder();
             StringBuilder simple_result = new StringBuilder();
             int done = 0;
+            int score = 0;
+            int win = 0;
+            int lose = 0;
+            int draw = 0;
+            int unknown = 0;
             for (int i = 0; i < futures.size(); i++) {
                 try {
                     Result r = futures.get(i).get();
@@ -68,10 +73,32 @@ public class Main {
                             .append(" | 用时: ").append(String.format("%.3f ms", r.timeUsed))
                             .append("\n\n");
                     if (i % p2List.size() == 0){
-                        if (i > 0) simple_result.append("\n");
+                        if (i > 0) {
+                            simple_result.append("\n\n");
+                            score = 0;
+                            win = 0;
+                            lose = 0;
+                            draw = 0;
+                            unknown = 0;
+                        }
                         simple_result.append(p1List.get(i / p2List.size()).name).append(": \n");
                     }
                     simple_result.append(r.getSimpleResult());
+                    score += r.getScore();
+                    win += r.status == 1 ? 1 : 0;
+                    lose += r.status == 2 ? 1 : 0;
+                    draw += r.status == 0 ? 1 : 0;
+                    unknown += r.status < 0 ? 1 : 0;
+                    if ((i+1) % p2List.size() == 0){
+                        simple_result.append("\n")
+                                .append("总场次: %d".formatted(p2List.size()))
+                                .append(", 胜: %d".formatted(win))
+                                .append(", 负: %d".formatted(lose))
+                                .append(", 平: %d".formatted(draw))
+                                .append(", 未定: %d".formatted(unknown))
+                                .append(", 胜率: %.2f".formatted((2 * win + draw) * 50F / (win + lose + draw)))
+                                .append("%, 血量积分: ").append(score);
+                    }
                     System.out.print("\r进度: " + ++done + "/" + meta.size());
                 } catch (Exception e) {
                     Throwable cause = e.getCause();

@@ -109,7 +109,6 @@ public class GameTask {
                     }
                 }
                 if (nie_flg){
-                    i++;
                     continue;
                 }
                 wrk = (float) (Math.floor(bases[(1 - i)].xs * 5) + 1);
