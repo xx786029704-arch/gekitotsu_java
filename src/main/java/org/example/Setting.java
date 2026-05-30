@@ -1,8 +1,10 @@
 package org.example;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -84,7 +86,6 @@ public class Setting {
         }
         Main.MAX_FRAME_LIMIT = Integer.parseInt(prop.getProperty("MAX_FRAME_LIMIT", "65536"));
         Main.SHOW_REMAIN_HP = Boolean.parseBoolean(prop.getProperty("SHOW_REMAIN_HP", "false"));
-        Main.AUTO_PLAY = Boolean.parseBoolean(prop.getProperty("AUTO_PLAY", "false"));
         String threadsProp = prop.getProperty("MAX_THREADS");
         if (threadsProp != null) {
             Main.MAX_THREADS = Integer.parseInt(threadsProp);
@@ -97,7 +98,6 @@ public class Setting {
         Properties prop = new Properties();
         prop.setProperty("MAX_FRAME_LIMIT", String.valueOf(Main.MAX_FRAME_LIMIT));
         prop.setProperty("SHOW_REMAIN_HP", String.valueOf(Main.SHOW_REMAIN_HP));
-        prop.setProperty("AUTO_PLAY", String.valueOf(Main.AUTO_PLAY));
         prop.setProperty("MAX_THREADS", String.valueOf(Main.MAX_THREADS));
 
         try (FileOutputStream fos = new FileOutputStream(Main.CONFIG_FILE)) {
@@ -110,8 +110,12 @@ public class Setting {
     public static List<CompiledFort> CompileForts(String fileName) {
         List<CompiledFort> list = new ArrayList<>();
         try {
-            String content = new String(java.nio.file.Files.readAllBytes(
-                    java.nio.file.Paths.get(fileName))).trim();
+            byte[] bytes = Files.readAllBytes(Paths.get(fileName));
+            String content = decodeBytes(bytes).trim();
+            // 移除 UTF-8 BOM（Windows 记事本默认会添加）
+            if (!content.isEmpty() && content.charAt(0) == '﻿') {
+                content = content.substring(1);
+            }
 
             String[] parts = content.split("/");
 
@@ -125,6 +129,8 @@ public class Setting {
                 int idx = part.lastIndexOf("&");
 
                 if (idx == -1) {
+                    part = part.replaceAll("[^a-zA-Z0-9]", "");
+                    if (part.length() < 6) continue;
                     list.add(Main.compileFort(new Fort("", part)));
                 } else {
                     String name = part.substring(0, idx);
@@ -138,16 +144,42 @@ public class Setting {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("读取 " + fileName + " 失败");
         }
         return list;
     }
 
     public static void writeResult(String path, String content) {
-        try (FileWriter fw = new FileWriter(path)) {
-            fw.write(content);
+        try (BufferedWriter bw = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8))) {
+            bw.write(content);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    static String decodeBytes(byte[] bytes) {
+        if (bytes.length == 0) return "";
+
+        int bomOffset = 0;
+        if (bytes.length >= 3 && bytes[0] == (byte) 0xEF
+                && bytes[1] == (byte) 0xBB && bytes[2] == (byte) 0xBF) {
+            bomOffset = 3;
+        }
+
+        CharsetDecoder utf8Decoder = StandardCharsets.UTF_8.newDecoder();
+        utf8Decoder.onMalformedInput(CodingErrorAction.REPORT);
+        try {
+            return utf8Decoder.decode(ByteBuffer.wrap(bytes, bomOffset, bytes.length - bomOffset)).toString();
+        } catch (CharacterCodingException e) {
+            // UTF-8 失败，尝试 GBK
+        }
+
+        try {
+            return new String(bytes, bomOffset, bytes.length - bomOffset, Charset.forName("GBK"));
+        } catch (Exception e) {
+            return new String(bytes, bomOffset, bytes.length - bomOffset, Charset.defaultCharset());
         }
     }
 }
