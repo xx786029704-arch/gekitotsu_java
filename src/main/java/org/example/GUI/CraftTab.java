@@ -59,6 +59,19 @@ public class CraftTab extends JPanel {
         inputTextArea = createTextArea(true);
         outputTextArea = createTextArea(false);
 
+        // 点击输入/输出区域时取消节点选择
+        java.awt.event.FocusAdapter clearSelectionOnFocus = new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (selectedNodeId != null) {
+                    selectedNodeId = null;
+                    updateNodeSelections();
+                }
+            }
+        };
+        inputTextArea.addFocusListener(clearSelectionOnFocus);
+        outputTextArea.addFocusListener(clearSelectionOnFocus);
+
         inputPanel = new JScrollPane(inputTextArea);
         outputPanel = new JScrollPane(outputTextArea);
         unitInfoPanel = new JPanel(new BorderLayout());
@@ -128,6 +141,20 @@ public class CraftTab extends JPanel {
             public void mousePressed(java.awt.event.MouseEvent e) {
                 selectedNodeId = null;
                 updateNodeSelections();
+            }
+        });
+
+        // Delete 键删除选中节点
+        workflowContent.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke("DELETE"), "deleteNode");
+        workflowContent.getActionMap().put("deleteNode", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (selectedNodeId != null) {
+                    String idToRemove = selectedNodeId;
+                    selectedNodeId = null;
+                    removeNodeFromWorkflow(idToRemove);
+                }
             }
         });
 
@@ -421,6 +448,7 @@ public class CraftTab extends JPanel {
             Formation input = Formation.decode(text);
             // 执行工作流
             Formation result = workflowGraph.execute(input);
+            workflowContent.repaint();
 
             // 限制边界
             for (Unit u : result.units){
@@ -446,6 +474,7 @@ public class CraftTab extends JPanel {
             clearResults();
             fortInfoTextArea.setText("解析失败: " + e.getMessage());
             outputTextArea.setCaretPosition(0);
+            workflowContent.repaint();
         }
     }
 

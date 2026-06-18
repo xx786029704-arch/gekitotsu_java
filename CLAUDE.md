@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 构建与运行
 
-项目版本 v1.6.0，JDK 21，依赖 FlatLaf 3.5.4 + Jackson 2.18.3。Maven 不在 PATH 中，日常开发用 javac 直接编译；打包时需用 Maven 或手动构建 fat JAR（见下文）。
+项目版本 v1.7.0，JDK 21，依赖 FlatLaf 3.5.4 + Jackson 2.18.3。Maven 不在 PATH 中，日常开发用 javac 直接编译；打包时需用 Maven 或手动构建 fat JAR（见下文）。
 
 ```
 # 编译（需指定 FlatLaf + Jackson classpath，注意 GUI/effects 子包）
@@ -24,18 +24,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 # 1. 编译全部源码（同上）
 # 2. 解压依赖 JAR 到临时目录，合并 target/classes + src/main/resources
-# 3. jar cmf META-INF/MANIFEST.MF gekitotsu_java-1.6.0.jar .
+# 3. jar cmf META-INF/MANIFEST.MF gekitotsu_java-1.7.0.jar .
 # 4. jpackage 生成 EXE（复用已打包的 runtime）：
-jpackage --type app-image --name "激突Kit" --app-version 1.6.0 \
-  --input <jar-dir> --main-jar gekitotsu_java-1.6.0.jar \
+jpackage --type app-image --name "激突Kit" --app-version 1.7.0 \
+  --input <jar-dir> --main-jar gekitotsu_java-1.7.0.jar \
   --main-class org.example.Main --icon assets/icon.ico \
   --runtime-image dist/激突Kit/runtime --dest dist
 ```
 
 输出结构：
-- `dist/input/gekitotsu_java-1.6.0.jar` — fat JAR
+- `dist/input/gekitotsu_java-1.7.0.jar` — fat JAR
 - `dist/激突Kit/激突Kit.exe` — jpackage 启动器（嵌入图标）
-- `dist/激突Kit/app/gekitotsu_java-1.6.0.jar` — 运行时 JAR
+- `dist/激突Kit/app/gekitotsu_java-1.7.0.jar` — 运行时 JAR
 - `dist/激突Kit/app/激突Kit.cfg` — jpackage 配置（含版本号）
 - `dist/激突Kit/runtime/` — 捆绑的 JRE 21
 
@@ -43,7 +43,7 @@ jpackage --type app-image --name "激突Kit" --app-version 1.6.0 \
 
 ## 项目性质
 
-**激突Kit v1.6** — 激突要塞集成工具箱。在复刻 Flash 游戏「激突要塞」物理引擎的基础上，提供批量对战推演、Swing GUI 可视化管理、轨迹预测、阵型工作台、单位图鉴等功能，项目服务于高端硬核玩家群体。阵型工作台（CraftTab）已完成核心功能，单位图鉴（UnitDexTab）为最近新增标签页。
+**激突Kit v1.7** — 激突要塞集成工具箱。在复刻 Flash 游戏「激突要塞」物理引擎的基础上，提供批量对战推演、Swing GUI 可视化管理、轨迹预测、阵型工作台（含效果插件系统）、单位图鉴、友情链接等功能，项目服务于高端硬核玩家群体。
 
 - GUI 框架：Java Swing + FlatLaf 3.5.4（现代 Look & Feel，支持深色/浅色主题切换、自定义主题色）
 - 模拟引擎：零外部依赖，纯 `java.awt` 几何计算
@@ -53,10 +53,11 @@ jpackage --type app-image --name "激突Kit" --app-version 1.6.0 \
 ### GUI 层（开发重点）
 
 **主框架：**
-- **MainGUI.java** — 主窗口。菜单栏（深色主题切换 + 退出）+ 4 个标签页容器 + 主题色快捷按钮 + 生命周期管理。`updateDarkMode()` 统一传播深色模式到各子标签页
+- **MainGUI.java** — 主窗口。菜单栏（深色主题切换 + 退出）+ 5 个标签页容器 + 主题色快捷按钮 + 生命周期管理。`updateDarkMode()` 统一传播深色模式到各子标签页
 - **BattleTab.java** — 对战控制标签页。设置面板 + 阵容编辑器（自动保存）+ 结果查看 + SwingWorker 批量模拟
-- **CraftTab.java** — 阵型工作台标签页（~640 行）。三列布局 + 管线协调 + 工作流编排。已完成核心功能
+- **CraftTab.java** — 阵型工作台标签页。三列布局 + 管线协调 + 工作流编排 + 效果插件系统 + Delete 键快捷删除节点
 - **UnitDexTab.java** — 单位图鉴标签页。`null` layout 1/5-4/5 比例分割：左侧 63 个单位缩略图列表（32x32）+ 右侧详情面板。深色模式切换时重建列表条目
+- **LinkTab.java** — 友情链接标签页。分类展示原作官网/国内社区/日本社区资源链接，悬停高亮 + 点击打开浏览器
 
 **阵型工作台子系统：**
 - **CraftTab.java** — 三列 `null` layout 比例布局（左 22% / 中 55% / 右 23%），内列再用 `null` layout 细分。负责阵容解析管线（`runPipeline()`）+ 工作流生命周期 + 跨面板选择协调
@@ -70,14 +71,17 @@ jpackage --type app-image --name "激突Kit" --app-version 1.6.0 \
 - **ExprEvaluator.java** — 整数表达式求值器。支持变量 + `+`/`-`/`*`/`/` 运算
 
 **工作流子系统：**
-- **WorkflowGraph.java** — 有向图（当前线性链式，预留分支/循环结构）。Effect 节点编排 + 执行顺序管理
-- **WorkflowNode.java** — 工作流节点。持有 Effect 实例 + 运行时参数（`Map<String, Object>`）+ 启用/禁用状态
-- **NodeComponent.java** — 节点 UI 组件。悬停/选中/禁用背景色 + 双击编辑参数 + 单击效果开关（●/× 切换）+ 长按拖拽排序
+- **WorkflowGraph.java** — 有向图（当前线性链式，预留分支/循环结构）。Effect 节点编排 + 执行顺序管理。`execute()` 先调用 `validate()` 校验参数，再 try/catch 执行，出错记录到 `node.error`
+- **WorkflowNode.java** — 工作流节点。持有 Effect 实例 + 运行时参数（`Map<String, Object>`）+ 启用/禁用状态 + `error` 字段
+- **NodeComponent.java** — 节点 UI 组件。悬停/选中/禁用/错误背景色 + 错误时红色边框+⚠图标+tooltip + 双击编辑参数 + 单击效果开关（●/× 切换）+ 长按拖拽排序 + 可获取键盘焦点（支持 Delete 键删除）
 - **WorkflowDropPanel.java** — 工作流面板。`BoxLayout.Y_AXIS` + 落点指示线绘制
-- **Effect.java** / **EffectParameter.java** — Effect 接口（name/description/parameters/execute）+ 参数记录（key/label/type/defaultValue）
-- **EffectRegistry.java** — Effect 注册表单例。`Class.forName()` 自注册 + 内置效果硬编码加载
+- **EffectRegistry.java** — Effect 注册表。内置效果硬编码加载 + `PluginLoader` 扫描 `effects/*.jar` 通过 `ServiceLoader` 自注册
 - **EffectLibraryPanel.java** — 效果库面板。搜索框 + 双击添加 + 拖拽添加，通过 `Consumer<Effect>` 回调通信
-- **effects/** — 内置效果：`ReplaceUnitEffect`（替换单位类型）、`ShiftFormationEffect`（平移阵容）、`RotateWallsEffect`（随机旋转墙壁）
+- **Effect.java** — 效果接口。`getName()`/`getDescription()`/`getAuthor()`/`getVersion()`/`getParameters()`/`validate()`/`execute()`。`execute()` 可直接修改传入的 Formation 对象
+- **EffectParameter.java** — 效果参数定义。支持 INT/STRING/BOOLEAN/UNIT_ID 四种类型。BOOLEAN 在 UI 中渲染为 JCheckBox
+- **effects/** 目录 — 内置效果 + 插件 JAR 存放目录。`build_plugin.bat` 编译打包工具（纯 ASCII，拖放 .java 文件即可编译为插件 JAR）
+- **PluginLoader.java** — 插件扫描器。扫描 `effects/*.jar`，通过 `ServiceLoader` 发现 Effect 实现并注册到 EffectRegistry
+- **effects/samples/** — 示例插件：`CopyAndRenameEffect.java`，演示全部四种参数类型 + validate + ServiceLoader 注册
 
 **轨迹预测子系统：**
 - **TraceTab.java** — 轨迹预测标签页。轨迹/要塞壁/变量列表管理 + 编辑对话框 + 色板 + 拖拽排序 + 多选 + 键盘快捷键（Delete/Ctrl+CVXAD）+ 剪贴板序列化

@@ -12,9 +12,10 @@ public class MainGUI extends JFrame {
     private final TraceTab traceTab;
     private final CraftTab craftTab;
     private final UnitDexTab unitDexTab;
+    private final LinkTab linkTab;
 
     public MainGUI() {
-        setTitle("激突Kit v1.6");
+        setTitle("激突Kit v1.7");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(1050, 720);
         setLocationRelativeTo(null);
@@ -54,6 +55,8 @@ public class MainGUI extends JFrame {
         mainTabs.addTab("阵型工作台", craftTab);
         unitDexTab = new UnitDexTab(this);
         mainTabs.addTab("单位图鉴", unitDexTab);
+        linkTab = new LinkTab();
+        mainTabs.addTab("友情链接", linkTab);
 
         // 主题色按钮浮动在右上角，不影响下方布局
         JPanel accentCircle = createAccentCircle();
@@ -169,6 +172,9 @@ public class MainGUI extends JFrame {
         }
         if (unitDexTab != null) {
             unitDexTab.updateDarkMode();
+        }
+        if (linkTab != null) {
+            linkTab.updateDarkMode();
         }
     }
 

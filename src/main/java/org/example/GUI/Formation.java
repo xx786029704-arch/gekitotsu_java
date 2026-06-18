@@ -10,7 +10,7 @@ import java.util.List;
 /** 阵容数据对象，包含阵名和单位列表（第一个单位固定为核心）。 */
 public class Formation {
     public String name;
-    public final List<Unit> units;
+    public List<Unit> units;
 
     public Formation(String name, List<Unit> units) {
         this.name = name;

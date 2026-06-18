@@ -85,14 +85,27 @@ public class WorkflowGraph {
 
     // ---- 执行 ----
 
-    /** 从 INPUT 沿边执行到 OUTPUT，返回最终阵容。 */
+    /** 从 INPUT 沿边执行到 OUTPUT，返回最终阵容。
+     *  每个节点执行前先校验参数；执行中捕获异常并记录到 node.error。 */
     public Formation execute(Formation input) {
         Formation current = input;
         String nodeId = nextNode(INPUT_ID);
         while (nodeId != null && !nodeId.equals(OUTPUT_ID)) {
             WorkflowNode node = nodes.get(nodeId);
             if (node != null && node.enabled) {
-                current = node.effect.execute(current, node.paramValues);
+                node.error = null;
+                // 执行前校验
+                java.util.List<String> errors = node.effect.validate(node.paramValues);
+                if (!errors.isEmpty()) {
+                    node.error = String.join("; ", errors);
+                    break;
+                }
+                try {
+                    current = node.effect.execute(current, node.paramValues);
+                } catch (Exception e) {
+                    node.error = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+                    break;
+                }
             }
             nodeId = nextNode(nodeId);
         }

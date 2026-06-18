@@ -4,6 +4,7 @@ import org.example.GUI.*;
 
 import java.util.*;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /** 墙壁随机旋转：将阵容中所有墙壁类单位的旋转角设为随机值。 */
 public class RotateWallsEffect implements Effect {
@@ -21,16 +22,7 @@ public class RotateWallsEffect implements Effect {
     @Override
     public Formation execute(Formation input, Map<String, Object> params) {
         Random rng = new Random();
-        List<Unit> newUnits = new ArrayList<>();
-        for (Unit u : input.units) {
-            Unit nu;
-            if (u.isWall()) {
-                nu = new Unit(u.id, u.x, u.y, rng.nextInt(360));
-            } else {
-                nu = new Unit(u.id, u.x, u.y, u.r);
-            }
-            newUnits.add(nu);
-        }
-        return new Formation(input.name, newUnits);
+        input.units = input.units.stream().peek(u -> u.r = u.isWall() ? rng.nextInt(360) : u.r).collect(Collectors.toList());
+        return input;
     }
 }

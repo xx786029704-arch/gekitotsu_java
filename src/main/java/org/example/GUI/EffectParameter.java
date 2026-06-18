@@ -7,5 +7,5 @@ public record EffectParameter(
         Type type,
         Object defaultValue
 ) {
-    public enum Type { INT, STRING, BOOLEAN }
+    public enum Type { INT, STRING, BOOLEAN, UNIT_ID }
 }

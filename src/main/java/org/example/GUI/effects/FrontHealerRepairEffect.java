@@ -23,7 +23,7 @@ public class FrontHealerRepairEffect implements Effect {
         List<Unit> src = input.units;
         List<Unit> newUnits = new ArrayList<>();
         // 核心保持在索引0
-        Unit core = src.get(0);
+        Unit core = src.getFirst();
         newUnits.add(new Unit(core.id, core.x, core.y, core.r));
 
         List<Unit> healers = new ArrayList<>();
@@ -44,6 +44,7 @@ public class FrontHealerRepairEffect implements Effect {
         newUnits.addAll(healers);
         newUnits.addAll(repairers);
         newUnits.addAll(others);
-        return new Formation(input.name, newUnits);
+        input.units = newUnits;
+        return input;
     }
 }

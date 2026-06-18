@@ -11,6 +11,7 @@ public class WorkflowNode {
     public final String id;
     public final Effect effect;
     public boolean enabled = true;
+    public String error;
     public final Map<String, Object> paramValues = new HashMap<>();
 
     public WorkflowNode(Effect effect) {

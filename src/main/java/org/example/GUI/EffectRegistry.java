@@ -28,6 +28,7 @@ public class EffectRegistry {
                 e.printStackTrace();
             }
         }
+        PluginLoader.scanPlugins();
     }
 
     public static void register(Effect effect) {

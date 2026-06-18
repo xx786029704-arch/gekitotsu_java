@@ -6,6 +6,7 @@ import org.example.Main;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /** 单位整体替换：将阵容中所有指定类型的单位替换为另一类型，保留坐标和旋转角。 */
 public class ReplaceUnitEffect implements Effect {
@@ -39,18 +40,8 @@ public class ReplaceUnitEffect implements Effect {
         }
         int srcId = Main.pskey.indexOf(sourceId);
         int tgtId = Main.pskey.indexOf(targetId);
-
-        List<Unit> newUnits = new ArrayList<>();
-        for (Unit u : input.units) {
-            Unit nu;
-            if (u.id == srcId) {
-                if (tgtId == 61) continue;
-                nu = new Unit(tgtId, u.x, u.y, u.r);
-            } else {
-                nu = new Unit(u.id, u.x, u.y, u.r);
-            }
-            newUnits.add(nu);
-        }
-        return new Formation(input.name, newUnits);
+        if (Unit.isCore(srcId) != Unit.isCore(tgtId)) return input;
+        input.units = input.units.stream().peek(u -> u.id = u.id == srcId ? tgtId : u.id).collect(Collectors.toList());
+        return input;
     }
 }

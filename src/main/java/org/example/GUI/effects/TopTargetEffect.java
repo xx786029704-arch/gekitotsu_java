@@ -3,8 +3,10 @@ package org.example.GUI.effects;
 import org.example.GUI.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /** 顶置的玉：将所有"的玉"(id=42)的 y 坐标设为 0。 */
 public class TopTargetEffect implements Effect {
@@ -20,14 +22,7 @@ public class TopTargetEffect implements Effect {
 
     @Override
     public Formation execute(Formation input, Map<String, Object> params) {
-        List<Unit> newUnits = new ArrayList<>();
-        for (Unit u : input.units) {
-            if (u.id == 42) {
-                newUnits.add(new Unit(u.id, u.x, 0, u.r));
-            } else {
-                newUnits.add(new Unit(u.id, u.x, u.y, u.r));
-            }
-        }
-        return new Formation(input.name, newUnits);
+        input.units = input.units.stream().peek(u -> u.y = u.id == 42 ? 0 : u.y).collect(Collectors.toList());
+        return input;
     }
 }

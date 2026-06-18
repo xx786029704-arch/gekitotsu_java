@@ -5,6 +5,7 @@ import org.example.GUI.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /** 阵容整体平移：将所有单位的坐标偏移 (dx, dy)。核心也一并偏移。 */
 public class ShiftFormationEffect implements Effect {
@@ -30,12 +31,7 @@ public class ShiftFormationEffect implements Effect {
     public Formation execute(Formation input, Map<String, Object> params) {
         int dx = ((Number) params.getOrDefault("dx", 0)).intValue();
         int dy = ((Number) params.getOrDefault("dy", 0)).intValue();
-
-        List<Unit> newUnits = new ArrayList<>();
-        for (Unit u : input.units) {
-            Unit nu = new Unit(u.id, u.x + dx, u.y + dy, u.r);
-            newUnits.add(nu);
-        }
-        return new Formation(input.name, newUnits);
+        input.units = input.units.stream().peek(u -> {u.x += dx; u.y += dy;}).collect(Collectors.toList());
+        return input;
     }
 }
