@@ -1,13 +1,18 @@
 package org.example;
 
+import org.example.GUI.FormulaTable;
+import org.example.GUI.MainGUI;
+
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class Main {
     public static int MAX_FRAME_LIMIT = 65536;    //最大运行帧数
     public static boolean SHOW_REMAIN_HP = false;
+    public static boolean WORD_WRAP = false;
+    public static boolean DARK_MODE = false;
+    public static String ACCENT_COLOR = "#2675BF";
     public static int MAX_THREADS = Runtime.getRuntime().availableProcessors();
     public static final String CONFIG_FILE = "config.ini";
 
@@ -16,6 +21,7 @@ public class Main {
     public static List<CompiledFort> p1List;
     public static List<CompiledFort> p2List;
     public static ExecutorService pool;
+    public static FormulaTable formulaTable;
 
     public static void main(String[] args) {
         if (java.util.Arrays.asList(args).contains("--cli")) {
@@ -23,7 +29,9 @@ public class Main {
         } else {
             Setting.loadConfig();
             pool = Executors.newFixedThreadPool(MAX_THREADS);
+            formulaTable = new FormulaTable();
             javax.swing.SwingUtilities.invokeLater(() -> {
+                applyTheme(DARK_MODE, ACCENT_COLOR);
                 try {
                     new MainGUI().setVisible(true);
                 } catch (Exception e) {
@@ -44,6 +52,20 @@ public class Main {
             runAllBattles(null);
         }
         pool.shutdown();
+    }
+
+    public static void applyTheme(boolean dark, String accentHex) {
+        if (accentHex != null && !accentHex.isEmpty()) {
+            System.setProperty("flatlaf.accentColor", accentHex);
+            java.util.Map<String, String> extras = new java.util.HashMap<>();
+            extras.put("@accentColor", accentHex);
+            com.formdev.flatlaf.FlatLaf.setGlobalExtraDefaults(extras);
+        }
+        if (dark) {
+            com.formdev.flatlaf.FlatDarkLaf.setup();
+        } else {
+            com.formdev.flatlaf.FlatLightLaf.setup();
+        }
     }
 
     public static java.util.List<FortStats> runAllBattles(java.util.function.Consumer<Integer> onProgress) {

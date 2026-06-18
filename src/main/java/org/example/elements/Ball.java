@@ -24,9 +24,6 @@ public class Ball extends Round {       //兵玉基类
     public float ys = 0;
     public float cos_rot;
     public float sin_rot;
-    //TODO：因为玉的角度都是整数，所以可以尝试做一个0-359度的正余弦值表
-
-
 
     public Ball(GameTask GAME, float X, float Y, int R, int S, int TYPE) {
         super(X, Y, 23.25F);

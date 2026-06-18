@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.HashMap;
+
 public class Utils{     //工具类
 
     public Utils() {
@@ -493,5 +495,14 @@ public class Utils{     //工具类
             return (float) ((universalSeed >> 16) & 32767) / 32768;
         }
         return (float) Math.random();
+    }
+
+    public static String to_rad61(int n, int len) {
+        StringBuilder str  = new StringBuilder();
+        for (int i = len - 1; i >= 0; i--) {
+            str.append(Main.pskey.charAt(n / (int) Math.pow(61, i)));
+            n = n % (int) Math.pow(61, i);
+        }
+        return str.toString();
     }
 }

@@ -1,8 +1,7 @@
 package org.example;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.charset.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -86,6 +85,9 @@ public class Setting {
         }
         Main.MAX_FRAME_LIMIT = Integer.parseInt(prop.getProperty("MAX_FRAME_LIMIT", "65536"));
         Main.SHOW_REMAIN_HP = Boolean.parseBoolean(prop.getProperty("SHOW_REMAIN_HP", "false"));
+        Main.WORD_WRAP = Boolean.parseBoolean(prop.getProperty("WORD_WRAP", "false"));
+        Main.DARK_MODE = Boolean.parseBoolean(prop.getProperty("DARK_MODE", "false"));
+        Main.ACCENT_COLOR = prop.getProperty("ACCENT_COLOR", "#2675BF");
         String threadsProp = prop.getProperty("MAX_THREADS");
         if (threadsProp != null) {
             Main.MAX_THREADS = Integer.parseInt(threadsProp);
@@ -98,6 +100,9 @@ public class Setting {
         Properties prop = new Properties();
         prop.setProperty("MAX_FRAME_LIMIT", String.valueOf(Main.MAX_FRAME_LIMIT));
         prop.setProperty("SHOW_REMAIN_HP", String.valueOf(Main.SHOW_REMAIN_HP));
+        prop.setProperty("WORD_WRAP", String.valueOf(Main.WORD_WRAP));
+        prop.setProperty("DARK_MODE", String.valueOf(Main.DARK_MODE));
+        prop.setProperty("ACCENT_COLOR", Main.ACCENT_COLOR);
         prop.setProperty("MAX_THREADS", String.valueOf(Main.MAX_THREADS));
 
         try (FileOutputStream fos = new FileOutputStream(Main.CONFIG_FILE)) {
@@ -111,11 +116,7 @@ public class Setting {
         List<CompiledFort> list = new ArrayList<>();
         try {
             byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-            String content = decodeBytes(bytes).trim();
-            // 移除 UTF-8 BOM（Windows 记事本默认会添加）
-            if (!content.isEmpty() && content.charAt(0) == '﻿') {
-                content = content.substring(1);
-            }
+            String content = readUtf8(bytes).trim();
 
             String[] parts = content.split("/");
 
@@ -159,27 +160,13 @@ public class Setting {
         }
     }
 
-    static String decodeBytes(byte[] bytes) {
+    public static String readUtf8(byte[] bytes) {
         if (bytes.length == 0) return "";
-
-        int bomOffset = 0;
+        int start = 0;
         if (bytes.length >= 3 && bytes[0] == (byte) 0xEF
                 && bytes[1] == (byte) 0xBB && bytes[2] == (byte) 0xBF) {
-            bomOffset = 3;
+            start = 3;
         }
-
-        CharsetDecoder utf8Decoder = StandardCharsets.UTF_8.newDecoder();
-        utf8Decoder.onMalformedInput(CodingErrorAction.REPORT);
-        try {
-            return utf8Decoder.decode(ByteBuffer.wrap(bytes, bomOffset, bytes.length - bomOffset)).toString();
-        } catch (CharacterCodingException e) {
-            // UTF-8 失败，尝试 GBK
-        }
-
-        try {
-            return new String(bytes, bomOffset, bytes.length - bomOffset, Charset.forName("GBK"));
-        } catch (Exception e) {
-            return new String(bytes, bomOffset, bytes.length - bomOffset, Charset.defaultCharset());
-        }
+        return new String(bytes, start, bytes.length - start, StandardCharsets.UTF_8);
     }
 }
