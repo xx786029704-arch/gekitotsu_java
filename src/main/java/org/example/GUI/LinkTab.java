@@ -17,20 +17,20 @@ public class LinkTab extends JPanel {
 
     private static final Object[][] CATEGORIES = {
         {"原作官网", new LinkEntry[]{
-            new LinkEntry("激突要塞！公式サイト", "https://suznooto.com/")
+            new LinkEntry("激突要塞！公式サイト ", "https://suznooto.com/")
         }},
         {"国内社区", new LinkEntry[]{
-            new LinkEntry("激突要塞百度贴吧", "https://tieba.baidu.com/f?kw=%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
-            new LinkEntry("激突驿站", "https://app-8uul3uungrup.appmiaoda.com/"),
-            new LinkEntry("激突要塞！+萌娘百科", "https://moegirl.icu/%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
-            new LinkEntry("激突要塞比赛QQ群", "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2Ccfro01Pic3O3rsEyFY_W85u-EA6u68&authKey=2eJFmH%2B1lH7%2Bw%2BFWBkX2JAeEq5h4BA8MACVxtM9CW6NKjnhtAjcqkPMNdH76x20j&noverify=0&group_code=836444580")
+            new LinkEntry("激突要塞百度贴吧 ", "https://tieba.baidu.com/f?kw=%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
+            new LinkEntry("激突驿站 ", "https://app-8uul3uungrup.appmiaoda.com/"),
+            new LinkEntry("激突要塞！+萌娘百科 ", "https://moegirl.icu/%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
+            new LinkEntry("激突要塞比赛QQ群 ", "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2Ccfro01Pic3O3rsEyFY_W85u-EA6u68&authKey=2eJFmH%2B1lH7%2Bw%2BFWBkX2JAeEq5h4BA8MACVxtM9CW6NKjnhtAjcqkPMNdH76x20j&noverify=0&group_code=836444580")
         }},
         {"日本社区", new LinkEntry[]{
-            new LinkEntry("Discord频道", "https://discord.com/channels/668116933471633428/896761917748703242"),
-            new LinkEntry("青茶の要塞研究所", "https://bluechartfortress.web.fc2.com/tactics.html"),
-            new LinkEntry("激突要塞！+wiki", "https://wikiwiki.jp/gekitotsu/"),
-            new LinkEntry("激突要塞！+攻略wiki", "https://seesaawiki.jp/gekitotuwiki/"),
-            new LinkEntry("激突要塞！+掲示板", "https://gekitotuchat.wiki.fc2.com/")
+            new LinkEntry("Discord频道 ", "https://discord.com/channels/668116933471633428/896761917748703242"),
+            new LinkEntry("青茶の要塞研究所 ", "https://bluechartfortress.web.fc2.com/tactics.html"),
+            new LinkEntry("激突要塞！+wiki ", "https://wikiwiki.jp/gekitotsu/"),
+            new LinkEntry("激突要塞！+攻略wiki ", "https://seesaawiki.jp/gekitotuwiki/"),
+            new LinkEntry("激突要塞！+掲示板 ", "https://gekitotuchat.wiki.fc2.com/")
         }}
     };
 
@@ -84,7 +84,7 @@ public class LinkTab extends JPanel {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(4, 12, 6, 0));
+        panel.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 0));
 
         JLabel nameLabel = new JLabel(link.name);
         nameLabel.setFont(nameFont);

@@ -15,7 +15,7 @@ public class MainGUI extends JFrame {
     private final LinkTab linkTab;
 
     public MainGUI() {
-        setTitle("激突Kit v1.7");
+        setTitle("激突Kit v" + Main.VERSION);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(1050, 720);
         setLocationRelativeTo(null);
@@ -38,6 +38,23 @@ public class MainGUI extends JFrame {
         JCheckBoxMenuItem darkItem = new JCheckBoxMenuItem("深色主题", Main.DARK_MODE);
         darkItem.addActionListener(e -> toggleTheme(darkItem.isSelected()));
         fileMenu.add(darkItem);
+        fileMenu.addSeparator();
+
+        JMenuItem aboutItem = new JMenuItem("关于");
+        aboutItem.addActionListener(e -> {
+            String msg = String.format(
+                    "<html><div style='text-align:left;'>"
+                    + "<b>激突Kit v%s</b><br><br>"
+                    + "作者：<br>"
+                    + "XX<br>"
+                    + "Claude Code<br>"
+                    + "15222HGH<br>"
+                    + "MKTL"
+                    + "</div></html>",
+                    Main.VERSION);
+            JOptionPane.showMessageDialog(this, msg, "关于", JOptionPane.INFORMATION_MESSAGE);
+        });
+        fileMenu.add(aboutItem);
         fileMenu.addSeparator();
 
         JMenuItem exitItem = new JMenuItem("退出");

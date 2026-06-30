@@ -238,17 +238,25 @@ public class UnitDexDetailPanel extends JPanel {
 
     private String buildExtendedInfo(int id) {
         StringBuilder sb = new StringBuilder();
-        if (unitDetailJson != null) {
-            JsonNode units = unitDetailJson.get("units");
-            if (units != null && units.isArray()) {
-                for (JsonNode u : units) {
-                    if (u.get("id").asInt() == id) {
-                        appendField(sb, "介绍", u.get("description"));
-                        appendField(sb, "进阶", u.get("tactics"));
-                        appendField(sb, "备注", u.get("notes"));
-                        break;
-                    }
+        if (unitDetailJson == null) return sb.toString();
+        JsonNode units = unitDetailJson.get("units");
+        if (units == null || !units.isArray()) return sb.toString();
+        float dmg;
+        for (JsonNode u : units) {
+            if (u.get("id").asInt() == id) {
+                appendField(sb, "介绍", u.get("description"));
+                dmg = Unit.infos[id].dmg();
+                if (dmg > 1000){
+                    sb.append(String.format("\n\n每百帧伤害: %.2f (理论), %.2f", Unit.getDps(id, Math.floorDiv((int) dmg, 1000)), Unit.getDps(id, dmg % 1000)));
+                    sb.append(String.format("\n每百帧每百军资金伤害: %.2f (理论), %.2f\n", Unit.getDpsPer100Cost(id, Math.floorDiv((int) dmg, 1000)), Unit.getDpsPer100Cost(id, dmg % 1000)));
                 }
+                else if (dmg > 0) {
+                    sb.append(String.format("\n\n每百帧伤害: %.2f", Unit.getDps(id, dmg)));
+                    sb.append(String.format("\n每百帧每百军资金伤害: %.2f\n", Unit.getDpsPer100Cost(id, dmg)));
+                }
+                appendField(sb, "进阶", u.get("tactics"));
+                appendField(sb, "备注", u.get("notes"));
+                break;
             }
         }
         return sb.toString();

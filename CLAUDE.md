@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 构建与运行
 
-项目版本 v1.7.0，JDK 21，依赖 FlatLaf 3.5.4 + Jackson 2.18.3。Maven 不在 PATH 中，日常开发用 javac 直接编译；打包时需用 Maven 或手动构建 fat JAR（见下文）。
+项目版本 v1.7.1，JDK 21，依赖 FlatLaf 3.5.4 + Jackson 2.18.3。Maven 不在 PATH 中，日常开发用 javac 直接编译；打包时需用 Maven 或手动构建 fat JAR（见下文）。
 
 ```
 # 编译（需指定 FlatLaf + Jackson classpath，注意 GUI/effects 子包）
@@ -26,7 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # 2. 解压依赖 JAR 到临时目录，合并 target/classes + src/main/resources
 # 3. jar cmf META-INF/MANIFEST.MF gekitotsu_java-1.7.0.jar .
 # 4. jpackage 生成 EXE（复用已打包的 runtime）：
-jpackage --type app-image --name "激突Kit" --app-version 1.7.0 \
+jpackage --type app-image --name "激突Kit" --app-version 1.7.1 \
   --input <jar-dir> --main-jar gekitotsu_java-1.7.0.jar \
   --main-class org.example.Main --icon assets/icon.ico \
   --runtime-image dist/激突Kit/runtime --dest dist

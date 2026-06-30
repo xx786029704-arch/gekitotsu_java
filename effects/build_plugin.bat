@@ -15,13 +15,16 @@ set "CP="
 if exist "target\classes" (
     set "CP=target\classes"
     echo [OK] Found target\classes
-) else if exist "gekitotsu_java-1.7.0.jar" (
-    set "CP=gekitotsu_java-1.7.0.jar"
-    echo [OK] Found gekitotsu_java-1.7.0.jar
-) else if exist "dist\input\gekitotsu_java-1.7.0.jar" (
-    set "CP=dist\input\gekitotsu_java-1.7.0.jar"
-    echo [OK] Found dist\input\gekitotsu_java-1.7.0.jar
 ) else (
+    :: Search for any gekitotsu_java-*.jar in common locations (version-agnostic)
+    for %%f in (gekitotsu_java-*.jar dist\input\gekitotsu_java-*.jar app\gekitotsu_java-*.jar) do (
+        if not defined CP if exist "%%f" (
+            set "CP=%%f"
+            echo [OK] Found %%f
+        )
+    )
+)
+if "%CP%"=="" (
     echo [ERR] Cannot find classpath. Please run this script from the project root.
     pause
     exit /b 1

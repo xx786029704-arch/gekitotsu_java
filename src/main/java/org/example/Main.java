@@ -8,10 +8,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
+    public static final String VERSION = Version.VERSION;
     public static int MAX_FRAME_LIMIT = 65536;    //最大运行帧数
     public static boolean SHOW_REMAIN_HP = false;
     public static boolean WORD_WRAP = false;
-    public static boolean DARK_MODE = false;
+    public static boolean DARK_MODE = true;
     public static String ACCENT_COLOR = "#2675BF";
     public static int MAX_THREADS = Runtime.getRuntime().availableProcessors();
     public static final String CONFIG_FILE = "config.ini";
