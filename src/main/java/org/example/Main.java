@@ -1,15 +1,30 @@
 package org.example;
 
+<<<<<<< Updated upstream
 import org.example.elements.*;
 import org.example.elements.hit.KekkaiField;
 import org.example.elements.units.*;
 import org.example.elements.wall.*;
+=======
+import org.example.server.BattleServer;
+
+>>>>>>> Stashed changes
 import java.util.*;
 
 public class Main {
+<<<<<<< Updated upstream
     public static final boolean ENABLE_VISUALIZATION = true;    //是否开启可视化
     public static final boolean SHOW_UNIT_HP = true;    // 是否显示单位生命值（用于debug）
     public static final int LOGIC_TPS = 60;      //帧率限制，0代表无限制
+=======
+    public static int MAX_FRAME_LIMIT = 65536;    //最大运行帧数
+    public static boolean SHOW_REMAIN_HP = false;
+    public static boolean AUTO_PLAY = false;
+    public static int MAX_THREADS = Runtime.getRuntime().availableProcessors();
+    public static int PORT = 8080;
+    public static String MODE = "interactive";   // interactive | batch | server
+    public static final String CONFIG_FILE = "config.ini";
+>>>>>>> Stashed changes
 
     private static boolean end = false;
     public static boolean norikomi_flg = false;    //怒土の神秘小变量，撞击时会变成true
@@ -53,6 +68,7 @@ public class Main {
     static String default_code = "000P6RAnPDL9 vs 000P6R";    //默认对战代码，为空时在运行时手动输入
 
     public static void main(String[] args) {
+<<<<<<< Updated upstream
         for (int i = 0; i <= 1; i++){
             fort[i].addShape(wall[i]);
             fort[i].addShape(unit[i]);
@@ -206,9 +222,24 @@ public class Main {
             if (bases[1].xs > -1) { bases[1].xs = -1; }
             bases[0].ys = (-bases[0].xs) * 2;
             bases[1].ys = (-bases[1].xs) * 2;
+=======
+        Setting.loadConfig();
+        parseArgs(args);
+        pool = Executors.newFixedThreadPool(MAX_THREADS);
+        System.out.println("正在导入阵容...");
+        p1List = Setting.CompileForts("1P.txt");
+        p2List = Setting.CompileForts("2P.txt");
+        System.out.println("阵容导入完成！");
+
+        switch (MODE) {
+            case "server" -> runServer();
+            case "batch" -> runBatch();
+            default -> runInteractive();
+>>>>>>> Stashed changes
         }
     }
 
+<<<<<<< Updated upstream
     private static void judge(){    //裁决爆炸
         i = 0;
         while (i <= 1) {
@@ -232,6 +263,198 @@ public class Main {
                 }
             }
             i++;
+=======
+    private static void runServer() {
+        System.out.println("对战模拟服务启动中...");
+        System.out.println("监听: http://localhost:" + PORT);
+        System.out.println("已加载阵型: 1P=" + p1List.size() + "个, 2P=" + p2List.size() + "个");
+        System.out.println("线程数: " + MAX_THREADS);
+        System.out.println("按 Ctrl+C 停止");
+        try {
+            BattleServer server = new BattleServer(PORT, pool);
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop(2)));
+            server.start();
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void runBatch() {
+        runOneBatchPass();
+    }
+
+    private static void runInteractive() {
+        while (Setting.setting(scanner)) {
+            runOneBatchPass();
+        }
+    }
+
+    private static void runOneBatchPass() {
+        long total_start = System.nanoTime();
+
+        List<Future<Result>> futures = new ArrayList<>();
+        List<String> meta = new ArrayList<>();
+        for (int j = 0; j < p1List.size(); j++) {
+            for (int i = 0; i < p2List.size(); i++) {
+                CompiledFort f1 = p1List.get(j);
+                CompiledFort f2 = p2List.get(i);
+
+                int roundIndex = j * 200 + i + 1;
+
+                futures.add(pool.submit(() -> {
+                    GameTask g = new GameTask();
+                    return g.run_single(f1, f2);
+                }));
+
+                // 保存元信息（保证顺序）
+                meta.add("Round " + roundIndex +
+                        " | 1P[" + f1.name + "] vs 2P[" + f2.name + "]");
+            }
+        }
+
+        StringBuilder final_result = new StringBuilder();
+        StringBuilder simple_result = new StringBuilder();
+        int done = 0;
+        int score = 0;
+        int win = 0;
+        int lose = 0;
+        int draw = 0;
+        int unknown = 0;
+        for (int i = 0; i < futures.size(); i++) {
+            try {
+                Result r = futures.get(i).get();
+                final_result.append(meta.get(i)).append("\n");
+                String resultStr = switch (r.status) {
+                    case 1 -> "1P 获胜";
+                    case 2 -> "2P 获胜";
+                    case 0 -> "平局";
+                    case -1 -> "超时";
+                    default -> "异常";
+                };
+                final_result.append("结果: ").append(resultStr)
+                        .append(" | 剩余血量: ").append(r.winnerHp)
+                        .append(" | 总帧数: ").append(r.framePassed)
+                        .append(" | 用时: ").append(String.format("%.3f ms", r.timeUsed))
+                        .append("\n\n");
+                if (i % p2List.size() == 0){
+                    if (i > 0) {
+                        simple_result.append("\n\n");
+                        score = 0;
+                        win = 0;
+                        lose = 0;
+                        draw = 0;
+                        unknown = 0;
+                    }
+                    simple_result.append(p1List.get(i / p2List.size()).name).append(": \n");
+                }
+                simple_result.append(r.getSimpleResult());
+                score += r.getScore();
+                win += r.status == 1 ? 1 : 0;
+                lose += r.status == 2 ? 1 : 0;
+                draw += r.status == 0 ? 1 : 0;
+                unknown += r.status < 0 ? 1 : 0;
+                if ((i+1) % p2List.size() == 0){
+                    simple_result.append("\n")
+                            .append("总场次: %d".formatted(p2List.size()))
+                            .append(", 胜: %d".formatted(win))
+                            .append(", 负: %d".formatted(lose))
+                            .append(", 平: %d".formatted(draw))
+                            .append(", 未定: %d".formatted(unknown))
+                            .append(", 胜率: %.2f".formatted((2 * win + draw) * 50F / (win + lose + draw)))
+                            .append("%, 血量积分: ").append(score);
+                }
+                System.out.print("\r进度: " + ++done + "/" + meta.size());
+            } catch (Exception e) {
+                Throwable cause = e.getCause();
+
+                Objects.requireNonNullElse(cause, e).printStackTrace();
+                final_result.append(meta.get(i))
+                        .append("\nERROR: ")
+                        .append(cause != null ? cause : e)
+                        .append("\n\n");
+            }
+        }
+        Setting.writeResult("simple_result.txt", simple_result.toString());
+        float total_time = (System.nanoTime() - total_start) / 1000000.F;
+        final_result.append("====SUMMARY====\n总轮次: ").append(meta.size()).append(String.format("\n总用时: %.3f ms", total_time));
+        Setting.writeResult("result.txt", final_result.toString());
+        System.out.printf("所有对局已完成\n总用时: %.3f ms%n", total_time);
+    }
+
+    private static void parseArgs(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "--mode" -> {
+                    if (i + 1 < args.length) MODE = args[++i];
+                    else { System.err.println("--mode 需要参数"); System.exit(1); }
+                }
+                case "--port" -> {
+                    if (i + 1 < args.length) PORT = Integer.parseInt(args[++i]);
+                    else { System.err.println("--port 需要参数"); System.exit(1); }
+                }
+                case "--help", "-h" -> {
+                    printHelp();
+                    System.exit(0);
+                }
+                default -> {
+                    System.err.println("未知参数: " + args[i]);
+                    printHelp();
+                    System.exit(1);
+                }
+            }
+        }
+    }
+
+    private static void printHelp() {
+        System.out.println("""
+                用法: java -jar gekitotsu_java.jar [选项]
+
+                选项:
+                  --mode <interactive|batch|server>  运行模式（默认 interactive）
+                  --port <端口号>                    server 模式监听端口（默认 8080）
+                  --help, -h                         显示帮助
+
+                模式说明:
+                  interactive 交互菜单，反复对战（默认）
+                  batch       跑完所有 1P×2P 对战写文件后退出（等价于旧版 AUTO_PLAY=true）
+                  server      启动 HTTP 服务常驻，接受外部程序调用
+
+                配置:
+                  上述选项也可通过 config.ini 配置（MODE / PORT / MAX_FRAME_LIMIT 等）
+                  命令行参数优先于 config.ini
+                """);
+    }
+
+    public static CompiledFort compileFort(Fort f) {
+        String code = f.code();
+        if (code.length() < 6) {
+            throw new IllegalArgumentException("阵容代码长度不足: " + f.name() + " [" + code + "]");
+        }
+
+        int[] core = to_xyr(code.substring(1, 6));
+        int baseSeed = (core[0] % 168 + 48) * (core[1] % 168 + 48);
+        int coreX = core[0] - 190;
+        int coreY = core[1] - 400;
+        int coreType = code.charAt(0) - '0';
+        int unitCount = code.length() / 6 - 1;
+        int[] type = new int[unitCount];
+        int[] x = new int[unitCount];
+        int[] y = new int[unitCount];
+        int[] r = new int[unitCount];
+        int[] seed = new int[unitCount];
+
+        for (int i = 0, j = 6; i < unitCount; i++, j += 6) {
+            int[] u = to_xyr(code.substring(j + 1, j + 6));
+            int t = Main.pskey.indexOf(code.charAt(j));
+            type[i] = t;
+            x[i] = u[0];
+            y[i] = u[1];
+            r[i] = u[2];
+            seed[i] = baseSeed * (u[0] % 185 + 30) * (u[1] % 185 + 30);
+>>>>>>> Stashed changes
         }
     }
 
@@ -256,6 +479,7 @@ public class Main {
         String rxy_str = String.format("%09d", rxy);
         return new int[]{Integer.parseInt(rxy_str.substring(3, 6)), Integer.parseInt(rxy_str.substring(6, 9)), Integer.parseInt(rxy_str.substring(0, 3))};
     }
+<<<<<<< Updated upstream
 
     public static int addElement(Shape s){      //增加新元素，返回id值
         elements.put(ID, s);
@@ -406,4 +630,6 @@ public class Main {
             return "?,";
         }
     }
+=======
+>>>>>>> Stashed changes
 }
