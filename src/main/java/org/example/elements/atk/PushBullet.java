@@ -1,8 +1,8 @@
 package org.example.elements.atk;
 
+import org.example.GameTask;
 import org.example.Main;
 import org.example.Shape;
-import org.example.elements.Ball;
 import org.example.elements.Bullet;
 import org.example.elements.hit.HitsDrop;
 
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PushBullet extends Bullet {   //押玉叭↑叭↓
-    public PushBullet(float X, float Y, int S) {   //初始化
-        super(X, Y, S);
+    public PushBullet(GameTask GAME, float X, float Y, int S) {   //初始化
+        super(GAME, X, Y, S);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class PushBullet extends Bullet {   //押玉叭↑叭↓
             kill();
             return;
         }
-        if (Main.team[1 - side].hitTestPoint(x, y) || gei_flg == 2) {
+        if (game.team[1 - side].hitTestPoint(x, y) || gei_flg == 2) {
             hit();
             return;
         }
@@ -29,8 +29,8 @@ public class PushBullet extends Bullet {   //押玉叭↑叭↓
 
     @Override
     public boolean hit() {   //触发击退
-        new HitsDrop(x, y, Main.atk[side]);
-        List<Shape> targets = new ArrayList<>(Main.unit[1 - side].getShapes());
+        new HitsDrop(game, x, y, game.atk[side]);
+        List<Shape> targets = new ArrayList<>(game.unit[1 - side].getShapes());
         for (Shape target : targets) {
             float dx = x - target.x;
             float dy = y - target.y;
@@ -42,8 +42,8 @@ public class PushBullet extends Bullet {   //押玉叭↑叭↓
                     target.y = 566;
                 }
                 if (target.x < 0 || target.x > 1920) {
-                    Main.elements.remove(target.id);
-                    Main.unit[1-side].removeShape(target);
+                    game.elements.remove(target.id);
+                    game.unit[1-side].removeShape(target);
                     kill();
                     return false;
                 }

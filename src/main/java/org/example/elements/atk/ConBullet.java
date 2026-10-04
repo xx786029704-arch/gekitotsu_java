@@ -1,7 +1,8 @@
 package org.example.elements.atk;
 
 import java.util.List;
-import org.example.Main;
+
+import org.example.GameTask;
 import org.example.Shape;
 import org.example.Utils;
 import org.example.elements.Bullet;
@@ -16,8 +17,8 @@ public class ConBullet extends Bullet {   //梱玉导弹
     private float cos_rot;
     private float sin_rot;
 
-    public ConBullet(float X, float Y, int S, int rotation, float _cos_rot, float _sin_rot) {   //初始化
-        super(X, Y, S);
+    public ConBullet(GameTask GAME, float X, float Y, int S, int rotation, float _cos_rot, float _sin_rot) {   //初始化
+        super(GAME, X, Y, S);
         rot = rotation;
         r = 12.4F;
         cos_rot = _cos_rot;
@@ -32,7 +33,7 @@ public class ConBullet extends Bullet {   //梱玉导弹
             kill();
             return;
         }
-        if (Main.team[1 - side].hitTestPoint(x, y) || gei_flg == 2) {
+        if (game.team[1 - side].hitTestPoint(x, y) || gei_flg == 2) {
             hp--;
         }
         if (cnt == 150 || cnt == 152 || cnt == 154 || cnt == 156) {
@@ -42,7 +43,7 @@ public class ConBullet extends Bullet {   //梱玉导弹
             }
         }
         if (hp <= 0 || y > 570) {
-            new HitsBomb(x, y, side);
+            new HitsBomb(game, x, y, side);
             kill();
             return;
         }
@@ -54,12 +55,12 @@ public class ConBullet extends Bullet {   //梱玉导弹
     }
 
     private void spawnMissiles() {   //生成子导弹
-        new ConMissileBullet(x, y, side, rot - 90, pickTargetId());
-        new ConMissileBullet(x, y, side, rot + 90, pickTargetId());
+        new ConMissileBullet(game, x, y, side, rot - 90, pickTargetId());
+        new ConMissileBullet(game, x, y, side, rot + 90, pickTargetId());
     }
 
     private int pickTargetId() {   //挑选目标
-        List<Shape> targets = Main.unit[1-side].getShapes();
+        List<Shape> targets = game.unit[1-side].getShapes();
         if (targets.isEmpty()) {
             return -1;
         }

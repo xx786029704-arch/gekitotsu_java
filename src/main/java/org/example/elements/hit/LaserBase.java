@@ -1,6 +1,6 @@
 package org.example.elements.hit;
 
-import org.example.Main;
+import org.example.GameTask;
 import org.example.Shape;
 
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.awt.geom.Path2D;
 public class LaserBase extends Shape {     //激光类
 
     public float rotDeg;
-    private float thickness;    //激光的宽度
+    private final float thickness;    //激光的宽度
     protected float circleRadius; //激光末端圆圈半径
     protected float xSpeed;
     protected float ySpeed;
@@ -19,9 +19,11 @@ public class LaserBase extends Shape {     //激光类
     protected int side;
     protected int steps;
     private int id;
+    protected final GameTask game;
 
-    public LaserBase(float X, float Y, int RDeg, int S,float thi, float radi) {
+    public LaserBase(GameTask GAME, float X, float Y, int RDeg, int S,float thi, float radi) {
         super(X, Y);
+        game = GAME;
         rotDeg = RDeg;
         thickness = thi;
         circleRadius = radi;
@@ -32,13 +34,13 @@ public class LaserBase extends Shape {     //激光类
         oldRotDeg = 90.F;
         side = S;
         steps = 0;
-        id = Main.addElement(this);
-        Main.atk[side].addShape(this);
+        id = game.addElement(this);
+        game.atk[side].addShape(this);
     }
 
     public void kill() {
-        Main.elements.remove(id);
-        Main.atk[side].removeShape(this);
+        game.elements.remove(id);
+        game.atk[side].removeShape(this);
     }
 
     protected float internalCos(float RDeg){
@@ -70,7 +72,7 @@ public class LaserBase extends Shape {     //激光类
             this.y = this.y + this.ySpeed;
             xySync();
             if (this.y > 570 || this.y < -600 || this.x > 1920 || this.x < 0) break;
-            else if (Main.shield[1 - this.side].hitTestPoint(this.x, this.y) || Main.fort[1 - this.side].hitTestPoint(this.x, this.y))
+            else if (game.shield[1 - this.side].hitTestPoint(this.x, this.y) || game.fort[1 - this.side].hitTestPoint(this.x, this.y))
                 break;
             this.steps++;
         }
@@ -86,34 +88,5 @@ public class LaserBase extends Shape {     //激光类
         dx = X - this.x;
         dy = Y - this.y;
         return dx * dx + dy * dy <= this.circleRadius * this.circleRadius;
-    }
-
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        float dispX = -this.ySpeed * this.thickness * .05f, dispY = this.xSpeed * this.thickness * .05f;
-        Path2D.Float path = new Path2D.Float();
-        path.moveTo(this.startX + dispX, this.startY + dispY);
-        path.lineTo(this.x + dispX, this.y + dispY);
-        path.lineTo(this.x - dispX, this.y - dispY);
-        path.lineTo(this.startX - dispX, this.startY - dispY);
-        path.closePath();
-        g2d.draw(path);
-        g2d.drawOval((int) (this.x - this.circleRadius), (int) (this.y - this.circleRadius), (int) (this.circleRadius * 2), (int) (this.circleRadius * 2));
-        //!!!此处代码用于验证实际判定区域是不是和显示的一样，调试后请删掉
-        /*
-        g2d.setColor(Color.CYAN);
-        for (int i = -1500; i < 1500; i++) {
-            for (int j = -1000; j < 1000; j++) {
-                int testX = (int) this.x + i;
-                int testY = (int) this.y + j;
-                if (hitTestPoint(testX, testY)) {
-                    g2d.drawRect(testX, testY, 1, 1);
-                }
-            }
-        }
-        g2d.setColor(Color.WHITE);
-         */
-        //!!!前述部分结束
     }
 }

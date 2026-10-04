@@ -1,13 +1,13 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.GameTask;
 import org.example.Utils;
 import org.example.elements.Bullet;
 public class HinokoBullet extends Bullet {   //花玉小子弹
     private int cnt = 0;
 
-    public HinokoBullet(float X, float Y, int S, int rotation) {   //初始化
-        super(X, Y, S);
+    public HinokoBullet(GameTask GAME, float X, float Y, int S, int rotation) {   //初始化
+        super(GAME, X, Y, S);
         this.x = X + Utils.cos(rotation) * 14F;
         this.y = Y + Utils.sin(rotation) * 14F;
         xySync();
@@ -20,7 +20,7 @@ public class HinokoBullet extends Bullet {   //花玉小子弹
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.cnt > 20 || this.gei_flg == 2) {
+        if (game.team[1 - this.side].hitTestPoint(this.x, this.y) || this.cnt > 20 || this.gei_flg == 2) {
             hit();
             return;
         }

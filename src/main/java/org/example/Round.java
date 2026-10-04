@@ -19,9 +19,4 @@ public class Round extends Shape{   //圆形类
         float dy = this.y - Y;
         return dx * dx + dy * dy <= r * r;
     }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        g2d.drawOval((int)(x - r), (int)(y - r), (int)(r * 2), (int)(r * 2));
-    }
 }

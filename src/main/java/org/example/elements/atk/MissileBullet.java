@@ -1,10 +1,7 @@
 package org.example.elements.atk;
 
-import org.example.Main;
-import org.example.Round;
-import org.example.Utils;
+import org.example.GameTask;
 import org.example.elements.Bullet;
-import org.example.elements.Core;
 import org.example.elements.hit.HitsBomb;
 
 public class MissileBullet extends Bullet {   //导玉导弹
@@ -12,46 +9,46 @@ public class MissileBullet extends Bullet {   //导玉导弹
     private float speed = 4F;
     private float rot;
 
-    public MissileBullet(float X, float Y, int S, int rotation) {   //初始化
-        super(X, Y, S);
-        this.rot = rotation;
-        this.gei_flg = 1;
+    public MissileBullet(GameTask GAME, float X, float Y, int S, int rotation) {   //初始化
+        super(GAME, X, Y, S);
+        rot = rotation;
+        gei_flg = 1;
         updateVelocity();
     }
 
     @Override
     public void step() {   //每帧逻辑
         cnt++;
-        if (this.y < -1200 || this.x > 2560 || this.x < -640) {
+        if (y < -1200 || x > 2560 || x < -640) {
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.y > 570 || this.gei_flg == 2 || cnt > 200) {
-            new HitsBomb(this.x, this.y, this.side);
+        if (game.team[1 - side].hitTestPoint(x, y) || y > 570 || gei_flg == 2 || cnt > 200) {
+            new HitsBomb(game, x, y, side);
             kill();
             return;
         }
-        float targetRot = Math.round((float) Math.toDegrees(Math.atan2(Main.core_y[1-side] - this.y, Main.core_x[1-side] - this.x)));
-        if (this.rot - 180 > targetRot) {
+        float targetRot = Math.round((float) Math.toDegrees(Math.atan2(game.core_y[1-side] - y, game.core_x[1-side] - x)));
+        if (rot - 180 > targetRot) {
             targetRot += 360;
         }
-        if (this.rot + 180 < targetRot) {
+        if (rot + 180 < targetRot) {
             targetRot -= 360;
         }
-        if (this.speed < 15F) {
-            this.speed += 0.3F;
+        if (speed < 15F) {
+            speed += 0.3F;
         }
-        if (this.speed > 14F) {
-            this.rot = this.rot + (targetRot - this.rot) / 8F;
+        if (speed > 14F) {
+            rot = rot + (targetRot - rot) / 8F;
         }
         updateVelocity();
         move();
     }
 
     private void updateVelocity() {   //更新速度向量
-        float rad = (float) Math.toRadians(this.rot);
-        this.xs = (float) Math.cos(rad) * this.speed;
-        this.ys = (float) Math.sin(rad) * this.speed;
+        float rad = (float) Math.toRadians(rot);
+        xs = (float) Math.cos(rad) * speed;
+        ys = (float) Math.sin(rad) * speed;
     }
 
     @Override

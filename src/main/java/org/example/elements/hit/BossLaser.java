@@ -1,12 +1,13 @@
 package org.example.elements.hit;
 
+import org.example.GameTask;
 import org.example.Main;
 import org.example.Utils;
 
 public class BossLaser extends LaserBase {     //魔玉的激光
 
-    public BossLaser(float X, float Y, int S) {
-        super(X, Y, 90, S, 30.F, 15.5F);
+    public BossLaser(GameTask GAME, float X, float Y, int S) {
+        super(GAME, X, Y, 90, S, 30.F, 15.5F);
     }
 
     @Override
@@ -21,13 +22,13 @@ public class BossLaser extends LaserBase {     //魔玉的激光
 
     @Override
     protected void follow() {
-        if (Main.hp0_flg[this.side] > 0) {
+        if (game.hp0_flg[this.side] > 0) {
             kill();
             return;
         }
         this.rotDeg -= this.side == 0 ? .1F : -.1F;
         this.rotDeg = ((this.rotDeg % 360) + 360) % 360;
-        this.startX = Main.cores[this.side].x + 38.f * internalCos(this.rotDeg);
-        this.startY = Main.cores[this.side].y + 38.f * internalSin(this.rotDeg);
+        this.startX = game.cores[this.side].x + 38.f * internalCos(this.rotDeg);
+        this.startY = game.cores[this.side].y + 38.f * internalSin(this.rotDeg);
     }
 }

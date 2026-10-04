@@ -20,11 +20,11 @@ public class Polygon extends Shape{     //多边形，存储各个顶点坐标�
     public Polygon(float X, float Y, float[][] vertices) {
         super(X, Y);
         this.localVertices = vertices;
-        for (int i = 1; i < vertices.length; i++) {
-            if (vertices[i][0] < minX) minX = vertices[i][0];
-            if (vertices[i][0] > maxX) maxX = vertices[i][0];
-            if (vertices[i][1] < minY) minY = vertices[i][1];
-            if (vertices[i][1] > maxY) maxY = vertices[i][1];
+        for (float[] vertex : vertices) {
+            if (vertex[0] < minX) minX = vertex[0];
+            if (vertex[0] > maxX) maxX = vertex[0];
+            if (vertex[1] < minY) minY = vertex[1];
+            if (vertex[1] > maxY) maxY = vertex[1];
         }
     }
 
@@ -56,19 +56,5 @@ public class Polygon extends Shape{     //多边形，存储各个顶点坐标�
             j = i;
         }
         return hit;
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        g2d.translate(x, y);
-        if (localVertices.length == 0) return;
-        Path2D.Float path = new Path2D.Float();
-        path.moveTo(localVertices[0][0], localVertices[0][1]);
-        for (int i = 1; i < localVertices.length; i++) {
-            path.lineTo(localVertices[i][0], localVertices[i][1]);
-        }
-        path.closePath();
-        g2d.draw(path);
-        g2d.translate(-x, -y);
     }
 }

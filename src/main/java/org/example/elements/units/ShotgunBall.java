@@ -1,15 +1,14 @@
 package org.example.elements.units;
 
+import org.example.GameTask;
 import org.example.Utils;
 import org.example.elements.Ball;
 import org.example.elements.atk.ShotgunBullet;
 
 public class ShotgunBall extends Ball {   //散玉
-    private Utils seeder;
 
-    public ShotgunBall(float X, float Y, int R, int S, int TYPE) {   //初始化
-        super(X, Y, R, S, TYPE);
-        seeder = new Utils();
+    public ShotgunBall(GameTask GAME, float X, float Y, int R, int S, int TYPE) {
+        super(GAME, X, Y, R, S, TYPE);
         speed = 50;
     }
 
@@ -21,12 +20,8 @@ public class ShotgunBall extends Ball {   //散玉
             float spawnY = this.y + sin_rot * 40;
             for (int i = 0; i < 9; i++) {
                 int atkRot = this.rot - 40 + 10 * i;
-                new ShotgunBullet(spawnX, spawnY, this.side).setVecR(atkRot, 27F + Utils.random(this.seeder) * 7F);
+                new ShotgunBullet(game, spawnX, spawnY, this.side).setVecR(atkRot, 27F + game.seeder.random() * 7F);
             }
         }
-    }
-
-    public void setSeed(int seed) {
-        seeder.setSeed(seed);
     }
 }

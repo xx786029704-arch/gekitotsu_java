@@ -1,14 +1,13 @@
 package org.example.elements.wall;
 
-import org.example.Main;
+import org.example.GameTask;
 import org.example.elements.Wall;
-import org.example.elements.hit.HitsJump;
 
 public class Elevator extends Wall {
     private int ys = 1;
 
-    public Elevator(float X, float Y, int S, int TYPE) {
-        super(X, Y, S, TYPE);
+    public Elevator(GameTask GAME, float X, float Y, int S, int TYPE) {
+        super(GAME, X, Y, S, TYPE);
     }
 
     public void stepEx(){   //额外行为
@@ -17,11 +16,11 @@ public class Elevator extends Wall {
         float _y = y;
         x += 100;
         y += 100;
-        if (ys == 1 && Main.fort[side].hitTestPoint(_x, _y + 15)) {
+        if (ys == 1 && game.fort[side].hitTestPoint(_x, _y + 15)) {
             block_flg = true;
             ys = -1;
         }
-        else if (ys == -1 && (Main.wall[side].hitTestPoint(_x, _y - 48) || _y <= Main.bases[side].y - 380)) {
+        else if (ys == -1 && (game.wall[side].hitTestPoint(_x, _y - 48) || _y <= game.bases[side].y - 380)) {
             block_flg = true;
             ys = 1;
         }

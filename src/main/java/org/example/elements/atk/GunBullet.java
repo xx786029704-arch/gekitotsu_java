@@ -1,10 +1,10 @@
 package org.example.elements.atk;
 
-import org.example.Main;
+import org.example.GameTask;
 import org.example.elements.Bullet;
 public class GunBullet extends Bullet {   //机玉子弹
-    public GunBullet(float X, float Y, int S) {   //初始化
-        super(X, Y, S);
+    public GunBullet(GameTask GAME, float X, float Y, int S) {   //初始化
+        super(GAME, X, Y, S);
     }
 
     @Override
@@ -13,7 +13,7 @@ public class GunBullet extends Bullet {   //机玉子弹
             kill();
             return;
         }
-        if (Main.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
+        if (game.team[1 - this.side].hitTestPoint(this.x, this.y) || this.gei_flg == 2) {
             hit();
             return;
         }
