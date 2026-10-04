@@ -23,7 +23,8 @@ public class LinkTab extends JPanel {
             new LinkEntry(org.example.I18n.t("link.site.tieba") + " ", "https://tieba.baidu.com/f?kw=%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
             new LinkEntry(org.example.I18n.t("link.site.station") + " ", "https://app-8uul3uungrup.appmiaoda.com/"),
             new LinkEntry(org.example.I18n.t("link.site.moegirl") + " ", "https://moegirl.icu/%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
-            new LinkEntry(org.example.I18n.t("link.site.qqgroup") + " ", "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2Ccfro01Pic3O3rsEyFY_W85u-EA6u68&authKey=2eJFmH%2B1lH7%2Bw%2BFWBkX2JAeEq5h4BA8MACVxtM9CW6NKjnhtAjcqkPMNdH76x20j&noverify=0&group_code=836444580")
+            new LinkEntry(org.example.I18n.t("link.site.qqgroup") + " ", "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2Ccfro01Pic3O3rsEyFY_W85u-EA6u68&authKey=2eJFmH%2B1lH7%2Bw%2BFWBkX2JAeEq5h4BA8MACVxtM9CW6NKjnhtAjcqkPMNdH76x20j&noverify=0&group_code=836444580"),
+            new LinkEntry(org.example.I18n.t("link.site.hub") + " ", "https://gekitohub.xyz/")
         }},
         {org.example.I18n.t("link.cat.jp"), new LinkEntry[]{
             new LinkEntry(org.example.I18n.t("link.site.discord") + " ", "https://discord.com/channels/668116933471633428/896761917748703242"),
