@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.GUI.FormulaTable;
 import org.example.GUI.MainGUI;
+import org.example.GUI.SplashWindow;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -29,16 +30,32 @@ public class Main {
             runCli();
         } else {
             Setting.loadConfig();
-            pool = Executors.newFixedThreadPool(MAX_THREADS);
-            formulaTable = new FormulaTable();
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                applyTheme(DARK_MODE, ACCENT_COLOR);
-                try {
-                    new MainGUI().setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+            applyTheme(DARK_MODE, ACCENT_COLOR);
+            SplashWindow splash = SplashWindow.createAndShow();
+            try {
+                pool = Executors.newFixedThreadPool(MAX_THREADS);
+                if (splash != null) splash.setStatus("正在载入要塞运动公式…");
+                formulaTable = new FormulaTable();
+                if (splash != null) splash.setStatus("正在初始化界面…");
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    try {
+                        MainGUI gui = new MainGUI();
+                        gui.addWindowListener(new java.awt.event.WindowAdapter() {
+                            @Override
+                            public void windowOpened(java.awt.event.WindowEvent e) {
+                                if (splash != null) splash.close();
+                            }
+                        });
+                        gui.setVisible(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (splash != null) splash.closeImmediately();
+                    }
+                });
+            } catch (Exception e) {
+                if (splash != null) splash.closeImmediately();
+                throw new RuntimeException(e);
+            }
         }
     }
 

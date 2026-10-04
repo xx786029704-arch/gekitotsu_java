@@ -13,6 +13,7 @@ public class MainGUI extends JFrame {
     private final CraftTab craftTab;
     private final UnitDexTab unitDexTab;
     private final LinkTab linkTab;
+    private final ContributionTab contributionTab;
 
     public MainGUI() {
         setTitle("激突Kit v" + Main.VERSION);
@@ -66,6 +67,8 @@ public class MainGUI extends JFrame {
         // 主标签页
         JTabbedPane mainTabs = new JTabbedPane();
         mainTabs.addTab("对战模拟", new BattleTab());
+        contributionTab = new ContributionTab();
+        mainTabs.addTab("贡献分析", contributionTab);
         traceTab = new TraceTab(this);
         mainTabs.addTab("轨迹预测", traceTab);
         craftTab = new CraftTab(this);
@@ -181,6 +184,9 @@ public class MainGUI extends JFrame {
     }
 
     private void updateDarkMode() {
+        if (contributionTab != null) {
+            contributionTab.updateDarkMode();
+        }
         if (traceTab != null) {
             traceTab.updateDarkMode();
         }

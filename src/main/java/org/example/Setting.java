@@ -113,40 +113,58 @@ public class Setting {
     }
 
     public static List<CompiledFort> CompileForts(String fileName) {
-        List<CompiledFort> list = new ArrayList<>();
         try {
             byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-            String content = readUtf8(bytes).trim();
-
-            String[] parts = content.split("/");
-
-            for (String part : parts) {
-                if (part.isEmpty()){
-                    continue;
-                }
-                part = part.trim();
-                if (part.isEmpty()) continue;
-
-                int idx = part.lastIndexOf("&");
-
-                if (idx == -1) {
-                    part = part.replaceAll("[^a-zA-Z0-9]", "");
-                    if (part.length() < 6) continue;
-                    list.add(Main.compileFort(new Fort("", part)));
-                } else {
-                    String name = part.substring(0, idx);
-                    String code = part.substring(idx + 1);
-                    code = code.replaceAll("[^a-zA-Z0-9]", "");
-                    if (code.length() % 6 != 0){
-                        System.out.println("阵"+name+"代码长度错误，已跳过");
-                        continue;
-                    }
-                    list.add(Main.compileFort(new Fort(name, code)));
-                }
-            }
+            return parseForts(readUtf8(bytes));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("读取 " + fileName + " 失败");
+            return new ArrayList<>();
+        }
+    }
+
+    /** 解析 name&code（多条用 / 分隔）文本；自动剥离 #HP 后缀，畸形条目会被跳过（打印提示），不会抛异常。 */
+    public static List<CompiledFort> parseForts(String content) {
+        List<CompiledFort> list = new ArrayList<>();
+        if (content == null) {
+            return list;
+        }
+        String[] parts = content.trim().split("/");
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            part = part.trim();
+            if (part.isEmpty()) {
+                continue;
+            }
+            int idx = part.lastIndexOf("&");
+            String name;
+            String code;
+            if (idx == -1) {
+                name = "";
+                code = part;
+            } else {
+                name = part.substring(0, idx);
+                code = part.substring(idx + 1);
+            }
+            int hash = code.indexOf('#');
+            if (hash >= 0) {
+                code = code.substring(0, hash);
+            }
+            code = code.replaceAll("[^a-zA-Z0-9]", "");
+            if (idx == -1) {
+                if (code.length() < 6) {
+                    continue;
+                }
+                list.add(Main.compileFort(new Fort("", code)));
+            } else {
+                if (code.length() < 6 || code.length() % 6 != 0) {
+                    System.out.println("阵" + name + "代码长度错误，已跳过");
+                    continue;
+                }
+                list.add(Main.compileFort(new Fort(name, code)));
+            }
         }
         return list;
     }

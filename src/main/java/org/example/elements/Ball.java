@@ -89,7 +89,7 @@ public class Ball extends Round {       //兵玉基类
             turn(2);
         }
         if (game.atk[1 - side].hitTestPoint(x - 8, y - 8) || game.atk[1 - side].hitTestPoint(x + 8, y - 8) || game.atk[1 - side].hitTestPoint(x - 8, y + 8) || game.atk[1 - side].hitTestPoint(x + 8, y + 8) || jump_flg == 0 && game.dokkan_flg[on_side]) {
-            hurt(game.dokkan_flg[on_side]);     //从又臭又长的switch()改为调用自己的hurt方法
+            hurt(game.dokkan_flg[on_side]);     //从switch()改为调用自己的hurt方法
             hp--;
         }
         if (hp <= 0 || game.hp0_flg[on_side] > 0 && jump_flg == 0) {
