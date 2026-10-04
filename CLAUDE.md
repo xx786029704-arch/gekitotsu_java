@@ -43,7 +43,7 @@ jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
 
 ## 项目性质
 
-**激突Kit v1.8** — 激突要塞集成工具箱。在复刻 Flash 游戏「激突要塞」物理引擎的基础上，提供批量对战推演、Swing GUI 可视化管理、轨迹预测、阵型工作台（含效果插件系统）、单位图鉴、友情链接等功能，项目服务于高端硬核玩家群体。
+**激突Kit v1.8** — 激突要塞集成工具箱。在复刻 Flash 游戏「激突要塞」物理引擎的基础上，提供批量对战推演、Swing GUI 可视化管理、轨迹预测、阵型工作台（含效果插件系统）、单位图鉴、友情链接等功能，项目服务于高端硬核玩家群体。界面支持简体中文 / 日语 / 英语三语实时切换。
 
 - GUI 框架：Java Swing + FlatLaf 3.5.4（现代 Look & Feel，支持深色/浅色主题切换、自定义主题色）
 - 模拟引擎：零外部依赖，纯 `java.awt` 几何计算
@@ -54,8 +54,9 @@ jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
 
 **主框架：**
 - **SplashWindow.java** — 启动开屏窗口。无边框半透明 `JWindow`：圆角卡片 + 软件图标 + 状态文字 + 循环进度条，在公式表与主界面加载期间立即显示以提供反馈；`Main.main()` 在 EDT 创建，`MainGUI` 的 `windowOpened` 时淡出关闭
-- **MainGUI.java** — 主窗口。菜单栏（深色主题切换 + 退出）+ 5 个标签页容器 + 主题色快捷按钮 + 生命周期管理。`updateDarkMode()` 统一传播深色模式到各子标签页
+- **MainGUI.java** — 主窗口。菜单栏（深色主题切换 + 语言切换 + 退出）+ 6 个标签页容器 + 主题色快捷按钮 + 生命周期管理。`updateDarkMode()` 统一传播深色模式到各子标签页；「选项 → 语言」菜单切换后保存配置并重建主窗口
 - **BattleTab.java** — 对战控制标签页。设置面板 + 阵容编辑器（自动保存）+ 结果查看 + SwingWorker 批量模拟
+- **ContributionTab.java** — 贡献分析标签页。输入玩家阵型 + 评判阵集，枚举/采样删除 n 个单位的组合批量对战，按胜率变化或每费变化排序展示组合排行与单位汇总，可复制删除后的阵型代码
 - **CraftTab.java** — 阵型工作台标签页。三列布局 + 管线协调 + 工作流编排 + 效果插件系统 + Delete 键快捷删除节点
 - **UnitDexTab.java** — 单位图鉴标签页。`null` layout 1/5-4/5 比例分割：左侧 63 个单位缩略图列表（32x32）+ 右侧详情面板。深色模式切换时重建列表条目
 - **LinkTab.java** — 友情链接标签页。分类展示原作官网/国内社区/日本社区资源链接，悬停高亮 + 点击打开浏览器
@@ -96,11 +97,17 @@ jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
 - **AssaultDetector.java** — 突击检测器。`detect(units)` 找到所有突击壁（Far=56/Near=55）并检测其 HitsJump 形状内的兵玉，返回 `AssaultGroup` 列表。冲突解决：Far 优先于 Near ；Near 冲突取代码靠前；Far 冲突取 `wall.x + (unitIdx>wallIndex?1:0)` 较大者。`checkQuickestX(groups)` 检测每组中每种兵玉是否采用最速 x 坐标，未采用则生成建议。`isInJumpRange(unit, wall)` 复刻 HitsJump 的 Wall 形判定（中心 `(wall.x, wall.y-35)`，x 偏移 +0.3）
 - **AssaultGroup.java** — 突击组数据类。`isFar`（true=远突击）、`wallX/wallY/wallIndex`、`unitsBefore/unitsAfter`（代码顺序在壁之前/之后的兵玉）。`mergeNear(other)` 合并两个 Near 组
 
+**贡献分析子系统：**
+- **ContributionAnalyzer.java** — 核心逻辑。解析输入、组合枚举/采样、独立线程池滑动窗口批量对战、聚合与排序、复制代码生成。不修改模拟引擎
+- **ComboSelector.java** — 组合枚举与采样。C(N,n) 计算、字典序排名/反解、Floyd 算法随机采样、全遍历；组合数上限 `MAX_SAMPLES`（100 万）
+- **FortTrimmer.java** — 从 CompiledFort 过滤掉指定索引的单位生成新阵型（单位顺序、随机种子保持不变）
+- **ContributionTab.java** — GUI。数据输入/参数调节/结果显示三面板；探索率 m（0~100%）、删除数 n、线程数；结果表点击表头排序（初始按胜率变化量降序）；基线先显示、滑动窗口进度、ETA、可取消；n=1 时只显示单位汇总页签；组合数超上限时禁止开始
+
 **单位图鉴子系统：**
-- **UnitDexTab.java** — 单位图鉴主标签页。`null` layout + `doLayout()` 比例布局（左 1/5 + 右 4/5）。左侧为 `BoxLayout.Y_AXIS` 单位列表 + `JScrollPane`，右侧为 `UnitDexDetailPanel`。JSON 加载用 Jackson 从 `unit_details.json` 读取。全局 AWT 点击监听取消选择
+- **UnitDexTab.java** — 单位图鉴主标签页。`null` layout + `doLayout()` 比例布局（左 1/5 + 右 4/5）。左侧为 `BoxLayout.Y_AXIS` 单位列表 + `JScrollPane`，右侧为 `UnitDexDetailPanel`。JSON 加载用 Jackson 按当前语言从 `unit_details_zh/ja/en.json` 读取。全局 AWT 点击监听取消选择
 - **UnitDexEntryPanel.java** — 单位列表条目组件。32x32 `ThumbnailPanel` 缩略图 + 单位名称，`CompoundBorder` 选中高亮（主题色 2px）。贴图加载根据 `Unit.isCore(id)` 使用 `SpritePanel.coreSpriteScale`/`nonCoreSpriteScale` 计算有效视觉尺寸后等比缩放，核心单位缩略图按 0.5x 有效比例补偿
 - **UnitDexDetailPanel.java** — 单位详情面板。`null` layout + `doLayout()`：左侧 `SpritePanel`（100x100）+ 右侧双列（名称/编码/流式属性标签 + 最速行动计算面板）+ 底部 JSON 扩展区。`TitledBorder` 颜色在 `updateColors()` 中随深色模式切换
-- **unit_details.json** — 单位详情 JSON 数据文件（`src/main/resources/`），含 63 个条目（id 0-62），每项含 `id`/`description`/`tactics`/`notes` 字段。运行时由 `UnitDexTab` 加载并传入 `UnitDexDetailPanel`，供后续补全单位介绍文案
+- **unit_details_zh.json / unit_details_ja.json / unit_details_en.json** — 单位详情三语 JSON 数据文件（`src/main/resources/`），各含 63 个条目（id 0-62），每项含 `id`/`description`/`tactics`/`notes` 字段。运行时由 `UnitDexTab` 按当前语言加载并传入 `UnitDexDetailPanel`，供后续补全单位介绍文案
 
 **最速行动计算（UnitDexDetailPanel 子功能）：**
 - 显示条件：`cd >= 0 && shoot >= 0 && !Unit.isWallLike(id)`，不符合条件则隐藏整个面板
@@ -110,9 +117,18 @@ jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
 
 **通用组件：**
 - **ColorPicker.java** — HSB/RGB 取色器对话框。`ColorPicker.showDialog(parent, initial, darkMode, showReset)` 静态方法
+- **WrapLayout.java** — 可换行 FlowLayout。按容器宽度计算多行高度并自动增高容器，解决窄窗口下参数行被裁切的问题
 - **FixedJTextArea.java** / **FixedTextAreaUI.java** / **FixedWrappedPlainView.java** — 修复 JDK `WrappedPlainView.viewToModel` 中 `round=false` 的光标向下取整问题
 
-GUI 全局字体为 `黑体`，UI 文案和注释使用中文。
+**国际化子系统：**
+- **I18n.java**（`org.example`）— 三语支持核心。`t(key[, args])` 取词条并 String.format（缺失回退中文→key）；`pick(map, key[, def])` 剪贴板字段名跨语言解析；`unitName(id)` 单位名；`font(style, size)` / `fontFamily()` 按语言返回字体；`detectSystemLang()` 按系统 Locale 推断语言
+- **`src/main/resources/lang.json`** — 全部界面文案三语词条，结构 `{ "zh": {key: text}, "ja": {...}, "en": {...} }`，键名语义化点分命名（如 `battle.start`、`unit.42.name`）
+- 语言存于 `Main.LANGUAGE`（config.ini 的 `LANGUAGE` 键，取值 zh/ja/en），`Setting.loadConfig()` 中设置；未配置时按系统语言推断
+- 剪贴板人类可读序列化（Trace/TraceWall/Variable）字段名随语言翻译，`fromHumanReadable` 用 `I18n.pick` 兼容三种语言的字段名
+- 内置效果（`GUI/effects/*`）的名称/描述/参数名一律走 `I18n.t`
+- 新增界面文案时必须同步在 lang.json 的三个语言块中添加词条
+
+GUI 字体统一通过 `I18n.font(...)` 创建（中文 黑体 / 日文 Meiryo / 英文 Segoe UI），样式与字号语义不变；禁止硬编码 `new Font("黑体", ...)`。UI 文案与注释使用中文，但 UI 文案一律经 `I18n.t` 输出，不得硬编码。
 应用图标位于 `assets/icon.ico`，运行时从 classpath `/icon.ico` 加载。
 
 ### GUI 架构模式
@@ -136,7 +152,7 @@ GUI 全局字体为 `黑体`，UI 文案和注释使用中文。
 
 ### 文件编码
 
-`1P.txt`/`2P.txt` 可能是 UTF-8 或 GBK。`Setting.readUtf8()` 自动检测 BOM 并读取。输出统一 UTF-8。GUI 文本读取共享同一检测逻辑。
+`1P.txt`/`2P.txt` 可能是 UTF-8 或 GBK。`Setting.readUtf8()` 自动检测 BOM 并读取。输出统一 UTF-8。GUI 文本读取共享同一检测逻辑。`config.ini` 保存主题、线程数、帧数上限与 `LANGUAGE`（zh/ja/en）等设置。
 
 ## 不要修改的部分
 
@@ -170,8 +186,26 @@ GUI 全局字体为 `黑体`，UI 文案和注释使用中文。
 
 ## 编码偏好
 
-- 注释和 UI 文案使用中文
-- GUI 字体使用 `黑体`
+- 注释使用中文
+- UI 文案不得硬编码，一律通过 `I18n.t(key)` 输出，并在 `lang.json` 中同步维护三语词条
+- GUI 字体通过 `I18n.font(...)` 创建，不硬编码 `黑体`
 - 修改代码后不自动 git commit，由用户手动提交
 - 可复用的 UI 组件优先抽取为独立类（如 ColorPicker、SpritePanel、UnitInfoPanel）
 - 固定比例的面板布局使用 `null` layout + `ComponentListener` 模式，不使用 `GridBagLayout`（避免 preferred size 引起的布局跳动）
+
+## 翻译术语表（三语统一）
+
+| 中文 | 日语 | 英语 |
+|------|------|------|
+| 兵玉 | 玉 | Ball |
+| 突击 / 突击壁 | 乗り込み / 乗り込み壁 | assault / assault wall |
+| 要塞壁 | 要塞壁 | wall |
+| 核心 | コア | core |
+| 阵型 / 阵容 | 陣形 | fortress |
+| 对战 | 対戦 | battle |
+| 最速行动 | 最速行動 | quickest action |
+| 军资金 | 軍資金 | cost |
+| 工作台 | ワークベンチ | workbench |
+| 轨迹预测 | 軌道予測 | trajectory prediction |
+| 单位图鉴 | ユニット図鑑 | unit dex |
+| 贡献分析 | 貢献分析 | contribution analysis |

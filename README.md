@@ -163,7 +163,7 @@ Effect plugin JARs live in `effects/`. Drop a `.java` file onto `effects/build_p
 Browse all 63 units (id 0–62):
 
 - **Left list** — click an entry to view it.
-- **Right panel** — sprite (100×100), name, code, a wrapping row of stat tags (HP / CD / AT / cost, etc.), an extended description area loaded from `unit_details.json`, and a **Quickest Action calculator**: enter the assault wall x coordinate and whether the ball's code precedes the wall in code order to compute the x coordinates for the earliest possible attack.
+- **Right panel** — sprite (100×100), name, code, a wrapping row of stat tags (HP / CD / AT / cost, etc.), an extended description area loaded from `unit_details_*.json`, and a **Quickest Action calculator**: enter the assault wall x coordinate and whether the ball's code precedes the wall in code order to compute the x coordinates for the earliest possible attack.
 - The Quickest Action panel is shown only for units with `cd >= 0 && shoot >= 0` that are not wall-type units.
 
 ### 6. Links
