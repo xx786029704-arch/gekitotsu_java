@@ -34,12 +34,12 @@ public class ContributionTab extends JPanel {
     private final JSpinner threadSpinner = new JSpinner(
             new SpinnerNumberModel(Math.min(256, Math.max(1, Main.MAX_THREADS)), 1, 256, 1));
     private final JLabel scaleLabel = new JLabel(" ");
-    private final JButton startButton = new JButton("开始分析");
-    private final JButton stopButton = new JButton("停止");
+    private final JButton startButton = new JButton(org.example.I18n.t("contrib.start"));
+    private final JButton stopButton = new JButton(org.example.I18n.t("contrib.stop"));
 
     // —— 进度 ——
     private final JProgressBar progressBar = new JProgressBar();
-    private final JLabel statusLabel = new JLabel("就绪");
+    private final JLabel statusLabel = new JLabel(org.example.I18n.t("contrib.ready"));
     private final JLabel timeLabel = new JLabel(" ");
 
     // —— 结果 ——
@@ -53,7 +53,7 @@ public class ContributionTab extends JPanel {
     private final TableRowSorter<UnitTableModel> unitSorter = new TableRowSorter<>(unitModel);
     private final JScrollPane comboScroll = new JScrollPane(comboTable);
     private final JScrollPane unitScroll = new JScrollPane(unitTable);
-    private final JButton copyButton = new JButton("复制新阵型代码");
+    private final JButton copyButton = new JButton(org.example.I18n.t("contrib.copy"));
 
     // —— 状态 ——
     private final Timer refreshTimer = new Timer(300, e -> refreshInputState());
@@ -74,7 +74,7 @@ public class ContributionTab extends JPanel {
         super(new BorderLayout(8, 8));
         setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         refreshTimer.setRepeats(false);
-        exploreSpinner.setToolTipText("按比例随机采样删除组合，重跑可换样本");
+        exploreSpinner.setToolTipText(org.example.I18n.t("contrib.exploreTip"));
 
         add(buildNorth(), BorderLayout.NORTH);
         add(buildResultPanel(), BorderLayout.CENTER);
@@ -103,47 +103,47 @@ public class ContributionTab extends JPanel {
 
     private JPanel buildInputPanel() {
         JPanel panel = new JPanel(new BorderLayout(8, 4));
-        panel.setBorder(BorderFactory.createTitledBorder("输入"));
+        panel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("contrib.input")));
 
         JPanel playerBox = new JPanel();
         playerBox.setLayout(new BoxLayout(playerBox, BoxLayout.Y_AXIS));
         JPanel playerRow = new JPanel(new BorderLayout(8, 0));
-        playerRow.add(new JLabel("原始阵型:"), BorderLayout.WEST);
-        playerField.setFont(new Font("黑体", Font.PLAIN, 13));
+        playerRow.add(new JLabel(org.example.I18n.t("contrib.playerFort")), BorderLayout.WEST);
+        playerField.setFont(org.example.I18n.font(Font.PLAIN, 13));
         playerRow.add(playerField, BorderLayout.CENTER);
-        importPlayerButton = new JButton("从 1P.txt 导入");
+        importPlayerButton = new JButton(org.example.I18n.t("contrib.importFrom1p"));
         importPlayerButton.addActionListener(e -> {
             String first = firstFormationText(BattleTab.readFileAutoEncoding("1P.txt"));
             if (first == null) {
-                JOptionPane.showMessageDialog(this, "1P.txt 中没有可用阵型", "提示", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, org.example.I18n.t("contrib.noFortIn1p"), org.example.I18n.t("msg.tip"), JOptionPane.WARNING_MESSAGE);
             } else {
                 playerField.setText(first);
             }
         });
         playerRow.add(importPlayerButton, BorderLayout.EAST);
         playerBox.add(playerRow);
-        playerInfoLabel.setFont(new Font("黑体", Font.PLAIN, 12));
+        playerInfoLabel.setFont(org.example.I18n.font(Font.PLAIN, 12));
         playerBox.add(playerInfoLabel);
         panel.add(playerBox, BorderLayout.NORTH);
 
         JPanel evalBox = new JPanel(new BorderLayout(0, 2));
-        evalBox.add(new JLabel("测试阵集:"), BorderLayout.NORTH);
-        evalArea.setFont(new Font("黑体", Font.PLAIN, 13));
+        evalBox.add(new JLabel(org.example.I18n.t("contrib.evalSet")), BorderLayout.NORTH);
+        evalArea.setFont(org.example.I18n.font(Font.PLAIN, 13));
         evalArea.setRows(4);
         evalBox.add(new JScrollPane(evalArea), BorderLayout.CENTER);
         panel.add(evalBox, BorderLayout.CENTER);
 
         JPanel evalButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        import2pButton = new JButton("从 2P.txt 导入");
+        import2pButton = new JButton(org.example.I18n.t("contrib.importFrom2p"));
         import2pButton.addActionListener(e -> evalArea.setText(BattleTab.readFileAutoEncoding("2P.txt")));
-        import1pButton = new JButton("从 1P.txt 导入");
+        import1pButton = new JButton(org.example.I18n.t("contrib.importFrom1p"));
         import1pButton.addActionListener(e -> evalArea.setText(BattleTab.readFileAutoEncoding("1P.txt")));
-        clearEvalButton = new JButton("清空");
+        clearEvalButton = new JButton(org.example.I18n.t("contrib.clear"));
         clearEvalButton.addActionListener(e -> evalArea.setText(""));
         evalButtons.add(import2pButton);
         evalButtons.add(import1pButton);
         evalButtons.add(clearEvalButton);
-        evalInfoLabel.setFont(new Font("黑体", Font.PLAIN, 12));
+        evalInfoLabel.setFont(org.example.I18n.font(Font.PLAIN, 12));
         evalButtons.add(evalInfoLabel);
         panel.add(evalButtons, BorderLayout.SOUTH);
 
@@ -153,29 +153,29 @@ public class ContributionTab extends JPanel {
 
     private JPanel buildParamPanel() {
         JPanel panel = new JPanel(new WrapLayout(FlowLayout.LEFT, 8, 4));
-        panel.setBorder(BorderFactory.createTitledBorder("配置"));
-        panel.add(new JLabel("探索率:"));
+        panel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("contrib.config")));
+        panel.add(new JLabel(org.example.I18n.t("contrib.explore")));
         panel.add(exploreSpinner);
         panel.add(new JLabel("%"));
-        panel.add(new JLabel("删除数:"));
+        panel.add(new JLabel(org.example.I18n.t("contrib.removeCount")));
         panel.add(deleteSpinner);
-        panel.add(new JLabel("线程数:"));
+        panel.add(new JLabel(org.example.I18n.t("contrib.threads")));
         panel.add(threadSpinner);
         panel.add(startButton);
         panel.add(stopButton);
         stopButton.setEnabled(false);
-        scaleLabel.setFont(new Font("黑体", Font.PLAIN, 12));
+        scaleLabel.setFont(org.example.I18n.font(Font.PLAIN, 12));
         panel.add(scaleLabel);
         return panel;
     }
 
     private JPanel buildResultPanel() {
         JPanel panel = new JPanel(new BorderLayout(8, 4));
-        panel.setBorder(BorderFactory.createTitledBorder("结果"));
-        baselineLabel.setFont(new Font("黑体", Font.PLAIN, 13));
+        panel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("contrib.result")));
+        baselineLabel.setFont(org.example.I18n.font(Font.PLAIN, 13));
         panel.add(baselineLabel, BorderLayout.NORTH);
 
-        resultTabs.addTab("单位汇总", unitScroll);
+        resultTabs.addTab(org.example.I18n.t("contrib.unitSummary"), unitScroll);
         panel.add(resultTabs, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
@@ -262,25 +262,25 @@ public class ContributionTab extends JPanel {
             try {
                 parsedEval = Setting.parseForts(evalText);
             } catch (Exception ex) {
-                evalError = "阵集解析失败: " + ex.getMessage();
+                evalError = org.example.I18n.t("contrib.evalParseFail") + ex.getMessage();
             }
         }
         if (evalError != null) {
             evalInfoLabel.setText(evalError);
         } else if (parsedEval.isEmpty()) {
-            evalInfoLabel.setText(evalText.isEmpty() ? "未输入评判阵集" : "未解析到有效阵型");
+            evalInfoLabel.setText(evalText.isEmpty() ? org.example.I18n.t("contrib.noEval") : org.example.I18n.t("contrib.noEvalParsed"));
         } else {
-            evalInfoLabel.setText("已解析 " + parsedEval.size() + " 个阵型");
+            evalInfoLabel.setText(org.example.I18n.t("contrib.evalParsed", parsedEval.size()));
         }
 
         String playerText = playerField.getText().trim();
         if (playerText.isEmpty()) {
-            playerInfoLabel.setText("未输入玩家阵型");
+            playerInfoLabel.setText(org.example.I18n.t("contrib.noPlayer"));
         } else {
             try {
                 List<CompiledFort> forts = Setting.parseForts(playerText);
                 if (forts.size() != 1) {
-                    playerInfoLabel.setText("只能输入一个阵型");
+                    playerInfoLabel.setText(org.example.I18n.t("contrib.onlyOne"));
                 } else {
                     Formation formation = Formation.decode(playerText);
                     deletableCount = formation.units.size() - 1;
@@ -289,11 +289,12 @@ public class ContributionTab extends JPanel {
                         int c = Unit.infos[formation.units.get(i).id].cost();
                         cost += Math.max(c, 1);
                     }
-                    playerInfoLabel.setText("阵名: " + (formation.name.isEmpty() ? "(无)" : formation.name)
-                            + " | 总单位数: " + deletableCount + " | 总军资金: " + cost);
+                    playerInfoLabel.setText(org.example.I18n.t("contrib.playerInfo",
+                            formation.name.isEmpty() ? org.example.I18n.t("common.none") : formation.name,
+                            deletableCount, cost));
                 }
             } catch (Exception ex) {
-                playerInfoLabel.setText("阵型解析失败: " + ex.getMessage());
+                playerInfoLabel.setText(org.example.I18n.t("contrib.fortParseFail") + ex.getMessage());
             }
         }
 
@@ -315,7 +316,7 @@ public class ContributionTab extends JPanel {
             scaleLabel.setText(" ");
             scaleLabel.setForeground(null);
         } else if (m == 0) {
-            scaleLabel.setText("探索率 0%：仅计算基线胜率");
+            scaleLabel.setText(org.example.I18n.t("contrib.scaleZero"));
             scaleLabel.setForeground(null);
         } else {
             long total = ComboSelector.combinationCount(deletableCount, n);
@@ -323,10 +324,10 @@ public class ContributionTab extends JPanel {
             long battles = (k + 1) * parsedEval.size();
             overCap = k > ComboSelector.MAX_SAMPLES;
             if (overCap) {
-                scaleLabel.setText(String.format("采样 %,d 个组合，超过上限 %,d，请降低探索率或删除数",
+                scaleLabel.setText(org.example.I18n.t("contrib.overCap",
                         k, ComboSelector.MAX_SAMPLES));
             } else {
-                scaleLabel.setText(String.format("共 %,d 个组合, 采样 %,d 个, 预计 %,d 场对战", total, k, battles));
+                scaleLabel.setText(org.example.I18n.t("contrib.scaleInfo", total, k, battles));
             }
             scaleLabel.setForeground(overCap || battles > 2_000_000 ? warnColor() : null);
         }
@@ -339,13 +340,13 @@ public class ContributionTab extends JPanel {
         }
         refreshInputState();
         if (parsedEval.isEmpty() || deletableCount < 1) {
-            JOptionPane.showMessageDialog(this, "请先输入有效的玩家阵型和评判阵集", "提示", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, org.example.I18n.t("contrib.needInput"), org.example.I18n.t("msg.tip"), JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (overCap) {
             JOptionPane.showMessageDialog(this,
-                    "采样组合数超过上限 " + ComboSelector.MAX_SAMPLES + "，请降低探索率或减少删除数",
-                    "提示", JOptionPane.WARNING_MESSAGE);
+                    org.example.I18n.t("contrib.overCapMsg", ComboSelector.MAX_SAMPLES),
+                    org.example.I18n.t("msg.tip"), JOptionPane.WARNING_MESSAGE);
             return;
         }
         String playerText = playerField.getText().trim();
@@ -366,11 +367,11 @@ public class ContributionTab extends JPanel {
         copyButton.setEnabled(false);
         comboModel.setRows(List.of());
         unitModel.setRows(List.of());
-        baselineLabel.setText("基线计算中...");
+        baselineLabel.setText(org.example.I18n.t("contrib.startBaseline"));
         progressBar.setMaximum(100);
         progressBar.setValue(0);
         progressBar.setString("0");
-        statusLabel.setText("正在分析...");
+        statusLabel.setText(org.example.I18n.t("contrib.analyzing"));
         timeLabel.setText(" ");
         startTime = System.nanoTime();
 
@@ -388,19 +389,19 @@ public class ContributionTab extends JPanel {
                                     progressBar.setMaximum((int) Math.min(total, Integer.MAX_VALUE));
                                     progressBar.setValue(done);
                                     progressBar.setString(done + " / " + total);
-                                    statusLabel.setText("正在分析[" + phase + "]...");
+                                    statusLabel.setText(org.example.I18n.t("contrib.analyzingPhase", phase));
                                     long elapsedMs = (System.nanoTime() - startTime) / 1_000_000L;
                                     String eta = (done > 0 && total > done)
-                                            ? String.format("剩余约 %.1fs",
+                                            ? org.example.I18n.t("contrib.eta",
                                                     (total - done) * (elapsedMs / (double) done) / 1000.0)
-                                            : (total > done ? "估算中" : "即将完成");
-                                    timeLabel.setText(String.format("已用时: %.1fs | %s", elapsedMs / 1000.0, eta));
+                                            : (total > done ? org.example.I18n.t("contrib.etaEstimating") : org.example.I18n.t("contrib.etaSoon"));
+                                    timeLabel.setText(org.example.I18n.t("contrib.elapsed", elapsedMs / 1000.0, eta));
                                 });
                             }
 
                             @Override
                             public void onBaseline(ContributionAnalyzer.Baseline baseline) {
-                                SwingUtilities.invokeLater(() -> baselineLabel.setText(baselineText(baseline) + " | 组合计算中..."));
+                                SwingUtilities.invokeLater(() -> baselineLabel.setText(baselineText(baseline) + org.example.I18n.t("contrib.comboComputing")));
                             }
                         }, this::isCancelled);
             }
@@ -411,22 +412,22 @@ public class ContributionTab extends JPanel {
                 setControlsEnabled(true);
                 try {
                     if (isCancelled()) {
-                        statusLabel.setText("已取消");
-                        progressBar.setString("已取消");
+                        statusLabel.setText(org.example.I18n.t("contrib.cancelled"));
+                        progressBar.setString(org.example.I18n.t("contrib.cancelled"));
                         return;
                     }
                     ContributionAnalyzer.Report report = get();
                     if (report == null) {
-                        statusLabel.setText("已取消");
-                        progressBar.setString("已取消");
+                        statusLabel.setText(org.example.I18n.t("contrib.cancelled"));
+                        progressBar.setString(org.example.I18n.t("contrib.cancelled"));
                         return;
                     }
                     showReport(report, params);
                 } catch (Exception ex) {
                     Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-                    statusLabel.setText("分析失败: " + cause.getMessage());
+                    statusLabel.setText(org.example.I18n.t("contrib.analyzeFail") + cause.getMessage());
                     JOptionPane.showMessageDialog(ContributionTab.this,
-                            "分析失败:\n" + cause.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+                            org.example.I18n.t("contrib.analyzeFail") + "\n" + cause.getMessage(), org.example.I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         };
@@ -460,7 +461,7 @@ public class ContributionTab extends JPanel {
     private void showReport(ContributionAnalyzer.Report report, ContributionAnalyzer.Params params) {
         lastReport = report;
         baselineLabel.setText(baselineText(report.baseline())
-                + String.format(" | 采样 %d/%d 组合 | 用时 %.1fs",
+                + org.example.I18n.t("contrib.reportSampled",
                 report.sampledCombos(), report.totalCombos(), report.elapsedMs() / 1000.0));
         comboModel.setRefs(report.refs());
         comboModel.setRows(report.combos());
@@ -468,20 +469,20 @@ public class ContributionTab extends JPanel {
         setComboTabVisible(params.deleteCount() >= 2 && report.sampledCombos() > 0);
         applyDefaultSort(params);
         copyButton.setEnabled(false);
-        progressBar.setString("完成");
-        statusLabel.setText("分析完成");
+        progressBar.setString(org.example.I18n.t("contrib.done"));
+        statusLabel.setText(org.example.I18n.t("contrib.analyzeDone"));
         long battles = (long) (report.sampledCombos() + 1) * parsedEval.size();
         if (report.sampledCombos() == 0) {
-            statusLabel.setText("分析完成（未采样任何组合，仅基线）");
+            statusLabel.setText(org.example.I18n.t("contrib.analyzeDoneBaseline"));
         } else if (battles > 0 && report.battleErrors() * 10L > battles) {
-            statusLabel.setText("分析完成（异常场次偏多: " + report.battleErrors() + "）");
+            statusLabel.setText(org.example.I18n.t("contrib.analyzeDoneErrors", report.battleErrors()));
         }
     }
 
     private void setComboTabVisible(boolean visible) {
         int idx = resultTabs.indexOfComponent(comboScroll);
         if (visible && idx < 0) {
-            resultTabs.insertTab("组合排行", null, comboScroll, null, 0);
+            resultTabs.insertTab(org.example.I18n.t("contrib.comboRank"), null, comboScroll, null, 0);
         } else if (!visible && idx >= 0) {
             resultTabs.remove(idx);
         }
@@ -526,7 +527,7 @@ public class ContributionTab extends JPanel {
         }
         String code = ContributionAnalyzer.removeUnitsFromCode(analyzedPlayerText, unitIndices);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(code), null);
-        statusLabel.setText("已复制新阵型代码到剪贴板");
+        statusLabel.setText(org.example.I18n.t("contrib.copied"));
     }
 
     private void updateCopyButton() {
@@ -535,7 +536,7 @@ public class ContributionTab extends JPanel {
     }
 
     private static String baselineText(ContributionAnalyzer.Baseline b) {
-        return String.format("原始胜率: %s | 战绩: 胜%d 负%d 平%d 超时%d",
+        return org.example.I18n.t("contrib.baseline",
                 fmtPercent(b.winRate()), b.win(), b.lose(), b.draw(), b.timeout());
     }
 
@@ -666,8 +667,9 @@ public class ContributionTab extends JPanel {
 
     /** 组合排行表模型。 */
     private static final class ComboTableModel extends AbstractTableModel {
-        private static final String[] COLUMNS =
-                {"删除单位", "删除军资金", "删除后胜率", "胜率变化", "每军资金变化"};
+        private static final String[] COLUMN_KEYS =
+                {"contrib.col.removeUnits", "contrib.col.removedCost", "contrib.col.newWinRate",
+                 "contrib.col.delta", "contrib.col.perCost"};
         private List<ContributionAnalyzer.ComboResult> rows = List.of();
         private List<ContributionAnalyzer.UnitRef> refs = List.of();
 
@@ -691,12 +693,12 @@ public class ContributionTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return COLUMNS.length;
+            return COLUMN_KEYS.length;
         }
 
         @Override
         public String getColumnName(int column) {
-            return COLUMNS[column];
+            return org.example.I18n.t(COLUMN_KEYS[column]);
         }
 
         @Override
@@ -727,7 +729,7 @@ public class ContributionTab extends JPanel {
                     sb.append(" + ");
                 }
                 ContributionAnalyzer.UnitRef ref = refs.get(idx);
-                sb.append(ref.name()).append("(").append(ref.cost()).append(")@(")
+                sb.append(org.example.I18n.unitName(ref.type())).append("(").append(ref.cost()).append(")@(")
                         .append(ref.x()).append(",").append(ref.y()).append(")");
             }
             return sb.toString();
@@ -736,8 +738,8 @@ public class ContributionTab extends JPanel {
 
     /** 单位汇总表模型。 */
     private static final class UnitTableModel extends AbstractTableModel {
-        private static final String[] COLUMNS =
-                {"单位", "军资金", "平均胜率变化", "平均每军资金变化"};
+        private static final String[] COLUMN_KEYS =
+                {"contrib.col.unit", "contrib.col.cost", "contrib.col.avgDelta", "contrib.col.avgPerCost"};
         private List<ContributionAnalyzer.UnitSummary> rows = List.of();
 
         void setRows(List<ContributionAnalyzer.UnitSummary> rows) {
@@ -756,12 +758,12 @@ public class ContributionTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return COLUMNS.length;
+            return COLUMN_KEYS.length;
         }
 
         @Override
         public String getColumnName(int column) {
-            return COLUMNS[column];
+            return org.example.I18n.t(COLUMN_KEYS[column]);
         }
 
         @Override
@@ -777,7 +779,7 @@ public class ContributionTab extends JPanel {
         public Object getValueAt(int row, int column) {
             ContributionAnalyzer.UnitSummary u = rows.get(row);
             return switch (column) {
-                case 0 -> u.unit().name() + "@(" + (u.unit().x()-16) + "," + (u.unit().y()-20) + ")";
+                case 0 -> org.example.I18n.unitName(u.unit().type()) + "@(" + (u.unit().x()-16) + "," + (u.unit().y()-20) + ")";
                 case 1 -> u.unit().cost();
                 case 2 -> u.avgDelta();
                 default -> u.avgDeltaPerCost();

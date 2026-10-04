@@ -30,8 +30,8 @@ public class UnitDexEntryPanel extends JPanel {
         thumbnail.setPreferredSize(new Dimension(THUMB_SIZE, THUMB_SIZE));
         add(thumbnail, BorderLayout.WEST);
 
-        JLabel nameLabel = new JLabel(Unit.infos[unitId].name());
-        nameLabel.setFont(new Font("黑体", Font.PLAIN, 13));
+        JLabel nameLabel = new JLabel(org.example.I18n.unitName(unitId));
+        nameLabel.setFont(org.example.I18n.font(Font.PLAIN, 13));
         add(nameLabel, BorderLayout.CENTER);
 
         addMouseListener(new java.awt.event.MouseAdapter() {

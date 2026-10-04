@@ -108,7 +108,7 @@ public class TraceItemPanel extends JPanel {
 
         if (!isVariable) {
             JLabel label = new JLabel(item.getName());
-            label.setFont(new Font("黑体", Font.PLAIN, 12));
+            label.setFont(org.example.I18n.font(Font.PLAIN, 12));
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e)  { forwardToParent(e); }
@@ -133,7 +133,7 @@ public class TraceItemPanel extends JPanel {
             centerPanel.setOpaque(false);
 
             JLabel nameLabel = new JLabel(var.name);
-            nameLabel.setFont(new Font("黑体", Font.PLAIN, 16));
+            nameLabel.setFont(org.example.I18n.font(Font.PLAIN, 16));
             centerPanel.add(nameLabel, BorderLayout.WEST);
 
             int min = Math.min(var.inf, var.sub);
@@ -144,12 +144,12 @@ public class TraceItemPanel extends JPanel {
             slider.setFocusable(false);
 
             JLabel valLabel = new JLabel(String.valueOf(var.val), SwingConstants.CENTER);
-            valLabel.setFont(new Font("黑体", Font.PLAIN, 12));
+            valLabel.setFont(org.example.I18n.font(Font.PLAIN, 12));
 
             JLabel infLbl = new JLabel(String.valueOf(var.inf));
-            infLbl.setFont(new Font("黑体", Font.PLAIN, 12));
+            infLbl.setFont(org.example.I18n.font(Font.PLAIN, 12));
             JLabel subLbl = new JLabel(String.valueOf(var.sub));
-            subLbl.setFont(new Font("黑体", Font.PLAIN, 12));
+            subLbl.setFont(org.example.I18n.font(Font.PLAIN, 12));
 
             JPanel labelRow = new JPanel(new BorderLayout());
             labelRow.setOpaque(false);

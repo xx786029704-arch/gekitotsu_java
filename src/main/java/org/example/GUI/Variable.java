@@ -24,14 +24,14 @@ public class Variable implements ListItem {
     /** 序列化为人类可读文本，用于剪贴板复制。 */
     public String toHumanReadable() {
         StringBuilder sb = new StringBuilder();
-        sb.append("变量名称: ").append(name).append("\n");
-        sb.append("最大值: ").append(sub).append("\n");
-        sb.append("最小值: ").append(inf).append("\n");
-        sb.append("当前值: ").append(val);
+        sb.append(org.example.I18n.t("field.varName")).append(": ").append(name).append("\n");
+        sb.append(org.example.I18n.t("field.varMax")).append(": ").append(sub).append("\n");
+        sb.append(org.example.I18n.t("field.varMin")).append(": ").append(inf).append("\n");
+        sb.append(org.example.I18n.t("field.varVal")).append(": ").append(val);
         return sb.toString();
     }
 
-    /** 从人类可读文本反序列化。解析失败返回 null。 */
+    /** 从人类可读文本反序列化（字段名兼容中日英三种语言）。解析失败返回 null。 */
     public static Variable fromHumanReadable(String text) {
         try {
             Map<String, String> map = new HashMap<>();
@@ -43,12 +43,12 @@ public class Variable implements ListItem {
                     map.put(trimmed.substring(0, idx), trimmed.substring(idx + 2));
                 }
             }
-            if (!map.containsKey("变量名称")) return null;
+            String name = org.example.I18n.pick(map, "field.varName");
+            if (name == null) return null;
 
-            String name = map.getOrDefault("变量名称", "x");
-            int sub = Integer.parseInt(map.getOrDefault("最大值", "100"));
-            int inf = Integer.parseInt(map.getOrDefault("最小值", "0"));
-            int val = Integer.parseInt(map.getOrDefault("当前值", "0"));
+            int sub = Integer.parseInt(org.example.I18n.pick(map, "field.varMax", "100"));
+            int inf = Integer.parseInt(org.example.I18n.pick(map, "field.varMin", "0"));
+            int val = Integer.parseInt(org.example.I18n.pick(map, "field.varVal", "0"));
 
             return new Variable(name, sub, inf, val);
         } catch (Exception e) {

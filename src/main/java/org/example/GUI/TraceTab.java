@@ -64,41 +64,41 @@ public class TraceTab extends JPanel {
 
         traceCanvas = new TraceCanvas(traces, walls, variables);
         traceCanvas.setBackground(Main.DARK_MODE ? new Color(0x2D, 0x2D, 0x2D) : Color.WHITE);
-        traceCanvas.setBorder(BorderFactory.createTitledBorder("预览"));
+        traceCanvas.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("trace.preview")));
         traceCanvas.setMinimumSize(new Dimension(200, 200));
 
         JPanel traceSettingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 4));
-        traceSettingsPanel.setBorder(BorderFactory.createTitledBorder("轨迹设置"));
+        traceSettingsPanel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("trace.settings")));
 
-        JCheckBox showCenterCheck = new JCheckBox("显示中心", true);
+        JCheckBox showCenterCheck = new JCheckBox(org.example.I18n.t("trace.showCenter"), true);
         showCenterCheck.addChangeListener(e -> {
             traceCanvas.showCenter = showCenterCheck.isSelected();
             traceCanvas.repaint();
         });
         traceSettingsPanel.add(showCenterCheck);
 
-        JCheckBox showLandingCheck = new JCheckBox("显示落地判定");
+        JCheckBox showLandingCheck = new JCheckBox(org.example.I18n.t("trace.showLanding"));
         showLandingCheck.addChangeListener(e -> {
             traceCanvas.showLandingDetection = showLandingCheck.isSelected();
             traceCanvas.repaint();
         });
         traceSettingsPanel.add(showLandingCheck);
 
-        JCheckBox showWallCheck = new JCheckBox("显示撞墙判定");
+        JCheckBox showWallCheck = new JCheckBox(org.example.I18n.t("trace.showWall"));
         showWallCheck.addChangeListener(e -> {
             traceCanvas.showWallDetection = showWallCheck.isSelected();
             traceCanvas.repaint();
         });
         traceSettingsPanel.add(showWallCheck);
 
-        JCheckBox showOutlineCheck = new JCheckBox("显示兵玉轮廓");
+        JCheckBox showOutlineCheck = new JCheckBox(org.example.I18n.t("trace.showBallOutline"));
         showOutlineCheck.addChangeListener(e -> {
             traceCanvas.showUnitOutline = showOutlineCheck.isSelected();
             traceCanvas.repaint();
         });
         traceSettingsPanel.add(showOutlineCheck);
 
-        JCheckBox showFortOutlineCheck = new JCheckBox("显示阵型边界");
+        JCheckBox showFortOutlineCheck = new JCheckBox(org.example.I18n.t("trace.showFortOutline"));
         showFortOutlineCheck.addChangeListener(e -> {
             traceCanvas.showFortOutline = showFortOutlineCheck.isSelected();
             traceCanvas.repaint();
@@ -133,9 +133,9 @@ public class TraceTab extends JPanel {
         variableDrag = new DragState<>(variables, variableListInnerPanel, this::refreshVariableList);
 
         listTabs = new JTabbedPane();
-        listTabs.addTab("轨迹", traceScrollPane);
-        listTabs.addTab("要塞壁", wallScrollPane);
-        listTabs.addTab("变量", variableScrollPane);
+        listTabs.addTab(org.example.I18n.t("trace.tab.traces"), traceScrollPane);
+        listTabs.addTab(org.example.I18n.t("trace.tab.walls"), wallScrollPane);
+        listTabs.addTab(org.example.I18n.t("trace.tab.vars"), variableScrollPane);
         setupKeyBindings();
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listTabs, traceCanvas);
@@ -162,7 +162,7 @@ public class TraceTab extends JPanel {
         listTabs.addMouseListener(clearSelectionAdapter);
         addMouseListener(clearSelectionAdapter);
         Color c = Main.DARK_MODE ? new Color(0xDD, 0xDD, 0xDD) : new Color(0x30, 0x30, 0x30);
-        walls.add(new TraceWall("138", "132", "要塞核心", true, c, true));
+        walls.add(new TraceWall("138", "132", org.example.I18n.unitName(0), true, c, true));
         refreshWallList();
         refreshVariableList();
     }
@@ -239,7 +239,7 @@ public class TraceTab extends JPanel {
             traceListInnerPanel.add(item);
         }
 
-        JButton addButton = new JButton("＋ 添加轨迹");
+        JButton addButton = new JButton(org.example.I18n.t("trace.addTrace"));
         addButton.setHorizontalAlignment(SwingConstants.LEFT);
         addButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, addButton.getPreferredSize().height));
         addButton.addActionListener(e -> showTraceDialog(null));
@@ -249,7 +249,7 @@ public class TraceTab extends JPanel {
         btnWrapper.add(addButton, BorderLayout.CENTER);
         traceListInnerPanel.add(btnWrapper);
 
-        JButton importButton = new JButton("＋ 从代码中导入");
+        JButton importButton = new JButton(org.example.I18n.t("trace.importCode"));
         importButton.setHorizontalAlignment(SwingConstants.LEFT);
         importButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, importButton.getPreferredSize().height));
         importButton.addActionListener(e -> showTraceImportDialog());
@@ -284,7 +284,7 @@ public class TraceTab extends JPanel {
             wallListInnerPanel.add(item);
         }
 
-        JButton addButton = new JButton("＋ 添加要塞壁");
+        JButton addButton = new JButton(org.example.I18n.t("trace.addWall"));
         addButton.setHorizontalAlignment(SwingConstants.LEFT);
         addButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, addButton.getPreferredSize().height));
         addButton.addActionListener(e -> showWallDialog(null));
@@ -294,7 +294,7 @@ public class TraceTab extends JPanel {
         btnWrapper.add(addButton, BorderLayout.CENTER);
         wallListInnerPanel.add(btnWrapper);
 
-        JButton importButton = new JButton("＋ 从代码中导入");
+        JButton importButton = new JButton(org.example.I18n.t("trace.importCode"));
         importButton.setHorizontalAlignment(SwingConstants.LEFT);
         importButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, importButton.getPreferredSize().height));
         importButton.addActionListener(e -> showWallImportDialog());
@@ -329,7 +329,7 @@ public class TraceTab extends JPanel {
             variableListInnerPanel.add(item);
         }
 
-        JButton addButton = new JButton("＋ 添加变量");
+        JButton addButton = new JButton(org.example.I18n.t("trace.addVar"));
         addButton.setHorizontalAlignment(SwingConstants.LEFT);
         addButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, addButton.getPreferredSize().height));
         addButton.addActionListener(e -> showVariableDialog(null));
@@ -347,7 +347,7 @@ public class TraceTab extends JPanel {
 
     private void showVariableDialog(Variable existing) {
         boolean isEdit = existing != null;
-        JDialog dialog = new JDialog(parentFrame, isEdit ? "编辑变量" : "添加变量", true);
+        JDialog dialog = new JDialog(parentFrame, isEdit ? org.example.I18n.t("trace.editVar") : org.example.I18n.t("trace.addVarTitle"), true);
         dialog.setLayout(new BorderLayout(8, 8));
 
         JPanel form = new JPanel(new GridLayout(0, 2, 8, 6));
@@ -368,23 +368,23 @@ public class TraceTab extends JPanel {
         JTextField infField  = new JTextField(existing != null ? String.valueOf(existing.inf) : "0");
         JTextField valField  = new JTextField(existing != null ? String.valueOf(existing.val) : "0");
 
-        form.add(new JLabel("变量名称 (a-z):"));
+        form.add(new JLabel(org.example.I18n.t("trace.varName")));
         form.add(nameField);
-        form.add(new JLabel("最大值 (sub):"));
+        form.add(new JLabel(org.example.I18n.t("trace.varSub")));
         form.add(subField);
-        form.add(new JLabel("最小值 (inf):"));
+        form.add(new JLabel(org.example.I18n.t("trace.varInf")));
         form.add(infField);
-        form.add(new JLabel("当前值 (val):"));
+        form.add(new JLabel(org.example.I18n.t("trace.varVal")));
         form.add(valField);
 
         dialog.add(form, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
-        JButton saveBtn = new JButton("保存");
-        JButton cancelBtn = new JButton("取消");
+        JButton saveBtn = new JButton(org.example.I18n.t("btn.save"));
+        JButton cancelBtn = new JButton(org.example.I18n.t("btn.cancel"));
 
         if (isEdit) {
-            JButton deleteBtn = new JButton("删除");
+            JButton deleteBtn = new JButton(org.example.I18n.t("btn.delete"));
             deleteBtn.addActionListener(e -> {
                 selectedVariables.remove(existing);
                 variables.remove(existing);
@@ -411,7 +411,7 @@ public class TraceTab extends JPanel {
                     }
                 }
                 if (duplicate) {
-                    JOptionPane.showMessageDialog(dialog, "变量已存在", "错误", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(dialog, org.example.I18n.t("trace.varExists"), org.example.I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -474,7 +474,7 @@ public class TraceTab extends JPanel {
 
     private void showTraceDialog(Trace existing) {
         boolean isEdit = existing != null;
-        JDialog dialog = new JDialog(parentFrame, isEdit ? "编辑轨迹" : "添加轨迹", true);
+        JDialog dialog = new JDialog(parentFrame, isEdit ? org.example.I18n.t("trace.editTrace") : org.example.I18n.t("trace.addTraceTitle"), true);
         dialog.setLayout(new BorderLayout(8, 8));
 
         JPanel form = new JPanel(new GridLayout(0, 2, 8, 6));
@@ -486,41 +486,41 @@ public class TraceTab extends JPanel {
         JTextField sp0Field = new JTextField(existing != null ? existing.speed0 : "0");
         JTextField sp1Field = new JTextField(existing != null ? existing.speed1 : "0");
         JTextField timesField = new JTextField(existing != null ? existing.times : "1");
-        JTextField nameField = new JTextField(existing != null ? existing.name : "轨迹");
+        JTextField nameField = new JTextField(existing != null ? existing.name : org.example.I18n.t("trace.defaultName"));
         JCheckBox nearCheck = new JCheckBox("", existing != null && existing.isNear);
         JCheckBox ballFirstCheck = new JCheckBox("", existing != null && existing.isBallFirst);
 
-        form.add(new JLabel("轨迹名称:"));
+        form.add(new JLabel(org.example.I18n.t("trace.traceName")));
         form.add(nameField);
-        form.add(new JLabel("突击壁x:"));
+        form.add(new JLabel(org.example.I18n.t("trace.assaultWallX")));
         form.add(wxField);
-        form.add(new JLabel("兵玉x:"));
+        form.add(new JLabel(org.example.I18n.t("trace.ballX")));
         form.add(xField);
-        form.add(new JLabel("兵玉y:"));
+        form.add(new JLabel(org.example.I18n.t("trace.ballY")));
         form.add(yField);
-        form.add(new JLabel("1P加速度等级:"));
+        form.add(new JLabel(org.example.I18n.t("trace.accel1p")));
         form.add(sp0Field);
-        form.add(new JLabel("2P加速度等级:"));
+        form.add(new JLabel(org.example.I18n.t("trace.accel2p")));
         form.add(sp1Field);
-        form.add(new JLabel("突击段数:"));
+        form.add(new JLabel(org.example.I18n.t("trace.stages")));
         form.add(timesField);
-        form.add(new JLabel("是否为近突击壁:"));
+        form.add(new JLabel(org.example.I18n.t("trace.isNear")));
         form.add(nearCheck);
-        form.add(new JLabel("兵玉代码在前:"));
+        form.add(new JLabel(org.example.I18n.t("trace.ballFirst")));
         form.add(ballFirstCheck);
 
         Color[] selectedColor = { existing != null ? existing.color : pickUnusedTraceColor() };
-        form.add(new JLabel("颜色:"));
+        form.add(new JLabel(org.example.I18n.t("trace.color")));
         form.add(createColorSwatch(dialog, selectedColor));
 
         dialog.add(form, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
-        JButton saveBtn = new JButton("保存");
-        JButton cancelBtn = new JButton("取消");
+        JButton saveBtn = new JButton(org.example.I18n.t("btn.save"));
+        JButton cancelBtn = new JButton(org.example.I18n.t("btn.cancel"));
 
         if (isEdit) {
-            JButton deleteBtn = new JButton("删除");
+            JButton deleteBtn = new JButton(org.example.I18n.t("btn.delete"));
             deleteBtn.addActionListener(e -> {
                 selectedTraces.remove(existing);
                 traces.remove(existing);
@@ -567,38 +567,38 @@ public class TraceTab extends JPanel {
 
     private void showWallDialog(TraceWall existing) {
         boolean isEdit = existing != null;
-        JDialog dialog = new JDialog(parentFrame, isEdit ? "编辑要塞壁" : "添加要塞壁", true);
+        JDialog dialog = new JDialog(parentFrame, isEdit ? org.example.I18n.t("trace.editWall") : org.example.I18n.t("trace.addWallTitle"), true);
         dialog.setLayout(new BorderLayout(8, 8));
 
         JPanel form = new JPanel(new GridLayout(0, 2, 8, 6));
         form.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        JTextField nameField = new JTextField(existing != null ? existing.name : "要塞壁");
+        JTextField nameField = new JTextField(existing != null ? existing.name : org.example.I18n.t("trace.defaultWallName"));
         JTextField xField = new JTextField(existing != null ? existing.x : "");
         JTextField yField = new JTextField(existing != null ? existing.y : "");
         JCheckBox coreCheck = new JCheckBox("", existing != null && existing.isCore);
 
-        form.add(new JLabel("名称:"));
+        form.add(new JLabel(org.example.I18n.t("trace.colName")));
         form.add(nameField);
         form.add(new JLabel("x:"));
         form.add(xField);
         form.add(new JLabel("y:"));
         form.add(yField);
-        form.add(new JLabel("核心:"));
+        form.add(new JLabel(org.example.I18n.t("trace.colCore")));
         form.add(coreCheck);
 
         Color[] selectedColor = { existing != null ? existing.color : pickUnusedWallColor() };
-        form.add(new JLabel("颜色:"));
+        form.add(new JLabel(org.example.I18n.t("trace.color")));
         form.add(createColorSwatch(dialog, selectedColor));
 
         dialog.add(form, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
-        JButton saveBtn = new JButton("保存");
-        JButton cancelBtn = new JButton("取消");
+        JButton saveBtn = new JButton(org.example.I18n.t("btn.save"));
+        JButton cancelBtn = new JButton(org.example.I18n.t("btn.cancel"));
 
         if (isEdit) {
-            JButton deleteBtn = new JButton("删除");
+            JButton deleteBtn = new JButton(org.example.I18n.t("btn.delete"));
             deleteBtn.addActionListener(e -> {
                 selectedWalls.remove(existing);
                 walls.remove(existing);
@@ -640,23 +640,23 @@ public class TraceTab extends JPanel {
 
     /** 从阵容代码导入要塞壁：解析 → 稳定化 → 提取所有 isWallLike 单位。 */
     private void showWallImportDialog() {
-        JDialog dialog = new JDialog(parentFrame, "从代码导入要塞壁", true);
+        JDialog dialog = new JDialog(parentFrame, org.example.I18n.t("trace.importWallTitle"), true);
         dialog.setLayout(new BorderLayout(8, 8));
 
         JTextArea codeArea = new JTextArea(8, 40);
-        codeArea.setFont(new Font("黑体", Font.PLAIN, 14));
+        codeArea.setFont(org.example.I18n.font(Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(codeArea);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("阵容代码"));
+        scrollPane.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("trace.fortCode")));
         dialog.add(scrollPane, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
-        JButton importBtn = new JButton("导入");
-        JButton cancelBtn = new JButton("取消");
+        JButton importBtn = new JButton(org.example.I18n.t("btn.import"));
+        JButton cancelBtn = new JButton(org.example.I18n.t("btn.cancel"));
 
         importBtn.addActionListener(e -> {
             String code = codeArea.getText().trim();
             if (code.isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "请输入阵容代码", "错误", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, org.example.I18n.t("trace.inputCode"), org.example.I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {
@@ -669,14 +669,14 @@ public class TraceTab extends JPanel {
                     if (!u.isWallLike()) continue;
                     String x = String.valueOf(u.x);
                     String y = String.valueOf(u.y);
-                    String name = Unit.infos[u.id].name();
+                    String name = org.example.I18n.unitName(u.id);
                     boolean isCore = u.isCore();
                     walls.add(new TraceWall(x, y, name, true, pickUnusedWallColor(), isCore));
                 }
                 refreshWallList();
                 dialog.dispose();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(dialog, "代码解析失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, org.example.I18n.t("err.parseFail") + ex.getMessage(), org.example.I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -692,19 +692,19 @@ public class TraceTab extends JPanel {
 
     /** 从阵容代码导入轨迹：解析 → 稳定化 → 检测突击组 → 每个单位生成一条 Trace。 */
     private void showTraceImportDialog() {
-        JDialog dialog = new JDialog(parentFrame, "从代码导入轨迹", true);
+        JDialog dialog = new JDialog(parentFrame, org.example.I18n.t("trace.importTraceTitle"), true);
         dialog.setLayout(new BorderLayout(8, 8));
 
         JPanel topPanel = new JPanel(new BorderLayout(8, 8));
         topPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         JTextArea codeArea = new JTextArea(8, 40);
-        codeArea.setFont(new Font("黑体", Font.PLAIN, 14));
+        codeArea.setFont(org.example.I18n.font(Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(codeArea);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("阵容代码"));
+        scrollPane.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("trace.fortCode")));
 
         JPanel speedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
-        speedPanel.add(new JLabel("对方加速度等级:"));
+        speedPanel.add(new JLabel(org.example.I18n.t("trace.oppAccel")));
         JTextField speedField = new JTextField("0", 5);
         speedPanel.add(speedField);
 
@@ -713,14 +713,14 @@ public class TraceTab extends JPanel {
         dialog.add(topPanel, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
-        JButton importBtn = new JButton("导入");
-        JButton cancelBtn = new JButton("取消");
+        JButton importBtn = new JButton(org.example.I18n.t("btn.import"));
+        JButton cancelBtn = new JButton(org.example.I18n.t("btn.cancel"));
 
         importBtn.addActionListener(e -> {
             String code = codeArea.getText().trim();
             String speed1Str = speedField.getText().trim();
             if (code.isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "请输入阵容代码", "错误", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, org.example.I18n.t("trace.inputCode"), org.example.I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {
@@ -741,7 +741,7 @@ public class TraceTab extends JPanel {
                                 !g.isFar,
                                 true,
                                 pickUnusedTraceColor(),
-                                Unit.infos[u.id].name()
+                                org.example.I18n.unitName(u.id)
                         ));
                     }
                     for (Unit u : g.unitsAfter) {
@@ -755,19 +755,19 @@ public class TraceTab extends JPanel {
                                 !g.isFar,
                                 false,
                                 pickUnusedTraceColor(),
-                                Unit.infos[u.id].name()
+                                org.example.I18n.unitName(u.id)
                         ));
                     }
                 }
 
                 if (groups.isEmpty()) {
-                    JOptionPane.showMessageDialog(dialog, "未检测到任何突击组", "提示", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(dialog, org.example.I18n.t("trace.noAssault"), org.example.I18n.t("msg.tip"), JOptionPane.INFORMATION_MESSAGE);
                 }
 
                 refreshTraceList();
                 dialog.dispose();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(dialog, "代码解析失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, org.example.I18n.t("err.parseFail") + ex.getMessage(), org.example.I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -973,13 +973,13 @@ public class TraceTab extends JPanel {
                     } else {
                         int choice = JOptionPane.showOptionDialog(
                                 this,
-                                "变量 '" + v.name + "' 已存在，如何处理？",
-                                "变量冲突",
+                                org.example.I18n.t("trace.varConflictMsg", v.name),
+                                org.example.I18n.t("trace.varConflictTitle"),
                                 JOptionPane.YES_NO_CANCEL_OPTION,
                                 JOptionPane.QUESTION_MESSAGE,
                                 null,
-                                new String[]{"替换", "取消", "重命名"},
-                                "替换");
+                                new String[]{org.example.I18n.t("trace.replace"), org.example.I18n.t("btn.cancel"), org.example.I18n.t("trace.rename")},
+                                org.example.I18n.t("trace.replace"));
                         if (choice == 0) { // 替换
                             int idx = variables.indexOf(conflict);
                             variables.set(idx, v);

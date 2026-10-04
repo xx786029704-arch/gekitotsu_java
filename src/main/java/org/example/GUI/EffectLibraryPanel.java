@@ -22,8 +22,8 @@ public class EffectLibraryPanel extends JPanel {
         this.onAddEffect = onAddEffect;
 
         searchField = new JTextField();
-        searchField.setFont(new Font("黑体", Font.PLAIN, 13));
-        searchField.putClientProperty("JTextField.placeholderText", "搜索效果...");
+        searchField.setFont(org.example.I18n.font(Font.PLAIN, 13));
+        searchField.putClientProperty("JTextField.placeholderText", org.example.I18n.t("effect.search"));
 
         listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
@@ -77,7 +77,7 @@ public class EffectLibraryPanel extends JPanel {
         entry.setMaximumSize(new Dimension(Integer.MAX_VALUE, 34));
 
         JLabel nameLabel = new JLabel(effect.getName());
-        nameLabel.setFont(new Font("黑体", Font.PLAIN, 12));
+        nameLabel.setFont(org.example.I18n.font(Font.PLAIN, 12));
         nameLabel.setToolTipText(effect.getDescription());
         nameLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         entry.add(nameLabel, BorderLayout.CENTER);

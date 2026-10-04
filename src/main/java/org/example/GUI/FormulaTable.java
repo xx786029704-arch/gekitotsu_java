@@ -33,7 +33,7 @@ public class FormulaTable {
     private boolean loadFromResource() {
         try (InputStream in = getClass().getResourceAsStream("/formula.json")) {
             if (in == null) {
-                System.err.println("FormulaTable: formula.json 未找到");
+                System.err.println(org.example.I18n.t("formula.notFound"));
                 return false;
             }
             ObjectMapper mapper = new ObjectMapper();
@@ -42,7 +42,7 @@ public class FormulaTable {
             for (int dim = 0; dim < 4; dim++) {
                 JsonNode dimNode = root.get(DIM_KEYS[dim]);
                 if (dimNode == null || !dimNode.isArray()) {
-                    System.err.println("FormulaTable: 缺少键 " + DIM_KEYS[dim]);
+                    System.err.println(org.example.I18n.t("formula.missingKey", DIM_KEYS[dim]));
                     return false;
                 }
                 for (int sp1 = 0; sp1 < SPEED_LEVELS; sp1++) {
@@ -64,7 +64,7 @@ public class FormulaTable {
             }
             return true;
         } catch (IOException e) {
-            System.err.println("FormulaTable: 加载失败 - " + e.getMessage());
+            System.err.println(org.example.I18n.t("formula.loadFail", e.getMessage()));
             return false;
         }
     }

@@ -34,8 +34,8 @@ public class TraceCanvas extends JPanel {
         this.walls = walls;
         this.variables = variables;
 
-        JButton resetBtn = new JButton("复原");
-        resetBtn.setFont(new Font("黑体", Font.PLAIN, 13));
+        JButton resetBtn = new JButton(org.example.I18n.t("trace.resetView"));
+        resetBtn.setFont(org.example.I18n.font(Font.PLAIN, 13));
         resetBtn.setMargin(new java.awt.Insets(0, 6, 0, 6));
         resetBtn.setFocusable(false);
         resetBtn.addActionListener(e -> {
@@ -142,7 +142,7 @@ public class TraceCanvas extends JPanel {
 
         // 缩放比例（右下角）
         String zoomText = (int) (scale * 100) + "%";
-        g2.setFont(new Font("黑体", Font.PLAIN, 12));
+        g2.setFont(org.example.I18n.font(Font.PLAIN, 12));
         FontMetrics fm = g2.getFontMetrics();
         int textWidth = fm.stringWidth(zoomText);
         int textHeight = fm.getHeight();

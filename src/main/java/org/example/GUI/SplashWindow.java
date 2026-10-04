@@ -20,7 +20,7 @@ public class SplashWindow extends JWindow {
     private static final int ARC = 18;
 
     private BufferedImage icon;
-    private String status = "正在启动…";
+    private String status = org.example.I18n.t("splash.starting");
     private double phase = 0;
     private long shownAt = 0;
     private final Timer animTimer;
@@ -242,12 +242,12 @@ public class SplashWindow extends JWindow {
 
         // 标题与版本
         int textX = 152;
-        g2.setFont(new Font("黑体", Font.BOLD, 27));
+        g2.setFont(org.example.I18n.font(Font.BOLD, 27));
         g2.setColor(dark ? new Color(0xF2, 0xF3, 0xF5) : new Color(0x20, 0x24, 0x2B));
         g2.drawString("激突Kit", textX, 66);
 
         String ver = "v" + Main.VERSION;
-        Font verFont = new Font("黑体", Font.BOLD, 12);
+        Font verFont = org.example.I18n.font(Font.BOLD, 12);
         g2.setFont(verFont);
         FontMetrics vfm = g2.getFontMetrics();
         int chipW = vfm.stringWidth(ver) + 18;
@@ -259,7 +259,7 @@ public class SplashWindow extends JWindow {
         g2.drawString(ver, textX + 9, chipY + 15);
 
         // 副标题
-        g2.setFont(new Font("黑体", Font.PLAIN, 12));
+        g2.setFont(org.example.I18n.font(Font.PLAIN, 12));
         g2.setColor(dark ? new Color(0x9A, 0xA0, 0xAA) : new Color(0x7A, 0x80, 0x89));
         g2.drawString(msg, textX + 1, 118);
 
@@ -268,7 +268,7 @@ public class SplashWindow extends JWindow {
         g2.drawLine(INSET + 20, 144, w - INSET - 20, 144);
 
         // 状态文字
-        g2.setFont(new Font("黑体", Font.PLAIN, 12));
+        g2.setFont(org.example.I18n.font(Font.PLAIN, 12));
         g2.setColor(dark ? new Color(0xB8, 0xBC, 0xC4) : new Color(0x5A, 0x5F, 0x68));
         g2.drawString(status, INSET + 20, 168);
 

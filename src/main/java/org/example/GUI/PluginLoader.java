@@ -29,7 +29,7 @@ public class PluginLoader {
                     EffectRegistry.register(effect);
                 }
             } catch (Exception e) {
-                System.err.println("[PluginLoader] 加载插件失败: " + jar.getName() + " - " + e.getMessage());
+                System.err.println(org.example.I18n.t("plugin.loadFail", jar.getName(), e.getMessage()));
             }
         }
     }

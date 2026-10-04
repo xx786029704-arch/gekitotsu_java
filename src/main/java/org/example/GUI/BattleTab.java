@@ -46,9 +46,9 @@ public class BattleTab extends JPanel {
 
         // --- 设置栏 ---
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 4));
-        settingsPanel.setBorder(BorderFactory.createTitledBorder("设置"));
+        settingsPanel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("battle.settings")));
 
-        settingsPanel.add(new JLabel("帧数上限:"));
+        settingsPanel.add(new JLabel(org.example.I18n.t("battle.frameLimit")));
         NumberFormat fmt = NumberFormat.getIntegerInstance();
         fmt.setGroupingUsed(false);
         NumberFormatter nf = new NumberFormatter(fmt);
@@ -59,22 +59,22 @@ public class BattleTab extends JPanel {
         frameLimitField.setPreferredSize(new Dimension(80, 22));
         settingsPanel.add(frameLimitField);
 
-        settingsPanel.add(new JLabel("线程数:"));
+        settingsPanel.add(new JLabel(org.example.I18n.t("battle.threads")));
         int cores = Runtime.getRuntime().availableProcessors();
         threadSpinner = new JSpinner(new SpinnerNumberModel(cores, 1, 256, 1));
         threadSpinner.setPreferredSize(new Dimension(60, 22));
         settingsPanel.add(threadSpinner);
 
-        JLabel coresLabel = new JLabel("(可用: " + cores + ")");
+        JLabel coresLabel = new JLabel(org.example.I18n.t("battle.cores", cores));
         settingsPanel.add(coresLabel);
 
-        showHpCheck = new JCheckBox("血量积分");
+        showHpCheck = new JCheckBox(org.example.I18n.t("battle.hpScore"));
         settingsPanel.add(showHpCheck);
 
-        wordWrapCheck = new JCheckBox("自动换行");
+        wordWrapCheck = new JCheckBox(org.example.I18n.t("battle.wordWrap"));
         settingsPanel.add(wordWrapCheck);
 
-        battleButton = new JButton("开始模拟");
+        battleButton = new JButton(org.example.I18n.t("battle.start"));
         settingsPanel.add(battleButton);
 
         add(settingsPanel, BorderLayout.NORTH);
@@ -94,12 +94,12 @@ public class BattleTab extends JPanel {
         addAutoSave(p2TextArea, p2SaveTimer, () -> loadingP2);
 
         JTabbedPane playerTabs = new JTabbedPane();
-        playerTabs.addTab("1P阵容", new JScrollPane(p1TextArea));
-        playerTabs.addTab("2P阵容", new JScrollPane(p2TextArea));
+        playerTabs.addTab(org.example.I18n.t("battle.p1"), new JScrollPane(p1TextArea));
+        playerTabs.addTab(org.example.I18n.t("battle.p2"), new JScrollPane(p2TextArea));
 
         JTabbedPane resultTabs = new JTabbedPane();
-        resultTabs.addTab("详细结果", new JScrollPane(resultTextArea));
-        resultTabs.addTab("简要结果", new JScrollPane(simpleResultTextArea));
+        resultTabs.addTab(org.example.I18n.t("battle.detail"), new JScrollPane(resultTextArea));
+        resultTabs.addTab(org.example.I18n.t("battle.simple"), new JScrollPane(simpleResultTextArea));
 
         JSplitPane subTabs = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, playerTabs, resultTabs);
         subTabs.setResizeWeight(0.5);
@@ -112,7 +112,7 @@ public class BattleTab extends JPanel {
         progressPanel.add(progressBar, BorderLayout.NORTH);
 
         JPanel statusRow = new JPanel(new BorderLayout());
-        statusLabel = new JLabel("就绪");
+        statusLabel = new JLabel(org.example.I18n.t("battle.ready"));
         timeLabel = new JLabel("");
         statusRow.add(statusLabel, BorderLayout.WEST);
         statusRow.add(timeLabel, BorderLayout.EAST);
@@ -161,7 +161,7 @@ public class BattleTab extends JPanel {
         applySettings();
         setButtonsEnabled(false);
         progressBar.setValue(0);
-        statusLabel.setText("正在模拟...");
+        statusLabel.setText(org.example.I18n.t("battle.simulating"));
         timeLabel.setText("");
         battleStartTime = System.nanoTime();
 
@@ -184,7 +184,7 @@ public class BattleTab extends JPanel {
                     progressBar.setString(latest + " / " + total);
                 }
                 long elapsed = (System.nanoTime() - battleStartTime) / 1_000_000L;
-                timeLabel.setText(String.format("已用时: %.1fs", elapsed / 1000.0));
+                timeLabel.setText(org.example.I18n.t("battle.elapsed", elapsed / 1000.0));
             }
 
             @Override
@@ -194,7 +194,7 @@ public class BattleTab extends JPanel {
                     refreshResultTabs();
                     long elapsed = (System.nanoTime() - battleStartTime) / 1_000_000L;
                     progressBar.setValue(100);
-                    progressBar.setString("完成");
+                    progressBar.setString(org.example.I18n.t("battle.done"));
 
                     int p1Count = Main.p1List != null ? Main.p1List.size() : 0;
                     int p2Count = Main.p2List != null ? Main.p2List.size() : 0;
@@ -206,12 +206,11 @@ public class BattleTab extends JPanel {
                             totalDraws += s.draw;
                         }
                     }
-                    statusLabel.setText(String.format(
-                            "完成 %d×%d=%d场 | 总胜:%d 总负:%d 平:%d | 用时:%.1fs",
+                    statusLabel.setText(org.example.I18n.t("battle.summary",
                             p1Count, p2Count, p1Count * p2Count,
                             totalWins, totalLosses, totalDraws, elapsed / 1000.0));
                 } catch (Exception e) {
-                    statusLabel.setText("对战出错: " + e.getMessage());
+                    statusLabel.setText(org.example.I18n.t("battle.error") + e.getMessage());
                     e.printStackTrace();
                 }
                 setButtonsEnabled(true);
@@ -257,7 +256,7 @@ public class BattleTab extends JPanel {
     private static FixedJTextArea createTextArea(boolean editable) {
         FixedJTextArea area = new FixedJTextArea();
         area.setEditable(editable);
-        area.setFont(new Font("黑体", Font.PLAIN, 13));
+        area.setFont(org.example.I18n.font(Font.PLAIN, 13));
         area.setTabSize(4);
         area.setLineWrap(Main.WORD_WRAP);
         area.setWrapStyleWord(false);
@@ -282,7 +281,7 @@ public class BattleTab extends JPanel {
             if (!Files.exists(path)) return "";
             return Setting.readUtf8(Files.readAllBytes(path));
         } catch (IOException e) {
-            return "读取文件失败: " + e.getMessage();
+            return org.example.I18n.t("battle.readError") + e.getMessage();
         }
     }
 

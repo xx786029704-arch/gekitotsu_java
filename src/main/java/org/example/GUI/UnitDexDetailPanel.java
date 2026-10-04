@@ -49,7 +49,7 @@ public class UnitDexDetailPanel extends JPanel {
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setOpaque(false);
         nameLabel = new JLabel();
-        nameLabel.setFont(new Font("黑体", Font.BOLD, 16));
+        nameLabel.setFont(org.example.I18n.font(Font.BOLD, 16));
         headerPanel.add(nameLabel);
         headerPanel.add(Box.createVerticalStrut(2));
         codeLabel = createDetailLabel();
@@ -72,7 +72,7 @@ public class UnitDexDetailPanel extends JPanel {
         add(infoPanel);
 
         // 最速行动计算子面板
-        quickestBorder = BorderFactory.createTitledBorder("最速行动计算");
+        quickestBorder = BorderFactory.createTitledBorder(org.example.I18n.t("dex.quickest"));
         quickestPanel = new JPanel();
         quickestPanel.setLayout(new BoxLayout(quickestPanel, BoxLayout.Y_AXIS));
         quickestPanel.setOpaque(false);
@@ -80,15 +80,15 @@ public class UnitDexDetailPanel extends JPanel {
 
         JPanel wallRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         wallRow.setOpaque(false);
-        wallXLabel = new JLabel("突击壁x:");
+        wallXLabel = new JLabel(org.example.I18n.t("trace.assaultWallX"));
         wallRow.add(wallXLabel);
         wallXField = new JTextField(4);
-        wallXField.setFont(new Font("黑体", Font.PLAIN, 13));
+        wallXField.setFont(org.example.I18n.font(Font.PLAIN, 13));
         wallRow.add(wallXField);
         quickestPanel.add(wallRow);
 
-        isFirstCheck = new JCheckBox("兵玉代码在前");
-        isFirstCheck.setFont(new Font("黑体", Font.PLAIN, 12));
+        isFirstCheck = new JCheckBox(org.example.I18n.t("trace.ballFirst"));
+        isFirstCheck.setFont(org.example.I18n.font(Font.PLAIN, 12));
         isFirstCheck.setOpaque(false);
 
         JPanel checkRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -98,7 +98,7 @@ public class UnitDexDetailPanel extends JPanel {
 
         quickestResultArea = new JTextArea();
         quickestResultArea.setEditable(false);
-        quickestResultArea.setFont(new Font("黑体", Font.PLAIN, 12));
+        quickestResultArea.setFont(org.example.I18n.font(Font.PLAIN, 12));
         quickestResultArea.setLineWrap(true);
         quickestResultArea.setWrapStyleWord(true);
         quickestResultArea.setOpaque(false);
@@ -120,12 +120,12 @@ public class UnitDexDetailPanel extends JPanel {
 
         extArea = new JTextArea();
         extArea.setEditable(false);
-        extArea.setFont(new Font("黑体", Font.PLAIN, 13));
+        extArea.setFont(org.example.I18n.font(Font.PLAIN, 13));
         extArea.setLineWrap(true);
         extArea.setWrapStyleWord(true);
         extArea.setOpaque(true);
         extScroll = new JScrollPane(extArea);
-        extScroll.setBorder(BorderFactory.createTitledBorder("详细资料"));
+        extScroll.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("dex.details")));
         extScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(extScroll);
     }
@@ -171,7 +171,7 @@ public class UnitDexDetailPanel extends JPanel {
 
     private JLabel createDetailLabel() {
         JLabel label = new JLabel();
-        label.setFont(new Font("黑体", Font.PLAIN, 13));
+        label.setFont(org.example.I18n.font(Font.PLAIN, 13));
         return label;
     }
 
@@ -186,14 +186,14 @@ public class UnitDexDetailPanel extends JPanel {
         spritePanel.setUnit(unit);
 
         char pskeyChar = id < 61 ? Main.pskey.charAt(id % 61) : Main.pskey.charAt(id - 61 + id / 61);
-        nameLabel.setText(info.name() + String.format("  №%02d", id));
-        codeLabel.setText("编码: " + pskeyChar);
+        nameLabel.setText(org.example.I18n.unitName(id) + String.format("  №%02d", id));
+        codeLabel.setText(org.example.I18n.t("dex.code") + " " + pskeyChar);
 
-        costLabel.setText("军资金: " + (info.cost() <= 0 ? "-" : info.cost() + "￥"));
-        techLabel.setText("解锁关卡: " + (info.tech() < 0 ? "-" : String.valueOf(info.tech())));
-        hpLabel.setText("生命值: " + (info.hp() < 0 ? "-" : String.valueOf(info.hp())));
-        cdLabel.setText("冷却: " + (info.cd() < 0 ? "-" : info.cd()));
-        atLabel.setText("行动时间: " + (info.at() < 0 ? "-" : String.valueOf(info.at())));
+        costLabel.setText(org.example.I18n.t("dex.cost") + " " + (info.cost() <= 0 ? "-" : info.cost() + "￥"));
+        techLabel.setText(org.example.I18n.t("dex.tech") + " " + (info.tech() < 0 ? "-" : String.valueOf(info.tech())));
+        hpLabel.setText(org.example.I18n.t("dex.hp") + " " + (info.hp() < 0 ? "-" : String.valueOf(info.hp())));
+        cdLabel.setText(org.example.I18n.t("dex.cd") + " " + (info.cd() < 0 ? "-" : info.cd()));
+        atLabel.setText(org.example.I18n.t("dex.at") + " " + (info.at() < 0 ? "-" : String.valueOf(info.at())));
 
         // 最速行动面板：仅在 cd>=0 && shoot>=0 && 非墙壁类单位时显示
         boolean showQuickest = info.cd() >= 0 && info.shoot() >= 0 && !Unit.isWallLike(id);
@@ -203,7 +203,7 @@ public class UnitDexDetailPanel extends JPanel {
         }
 
         String ext = buildExtendedInfo(id);
-        extArea.setText(ext.isEmpty() ? "详细资料待补全" : ext);
+        extArea.setText(ext.isEmpty() ? org.example.I18n.t("dex.pending") : ext);
         extArea.setCaretPosition(0);
 
         updateColors();
@@ -222,7 +222,7 @@ public class UnitDexDetailPanel extends JPanel {
             boolean isFirst = isFirstCheck.isSelected();
             List<Integer> xs = Unit.getQuickestXList(currentUnitId, wallX, isFirst);
             if (xs.isEmpty()) {
-                quickestResultArea.setText("无可行x坐标");
+                quickestResultArea.setText(org.example.I18n.t("dex.noX"));
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < xs.size(); i++) {
@@ -232,7 +232,7 @@ public class UnitDexDetailPanel extends JPanel {
                 quickestResultArea.setText("x: " + sb);
             }
         } catch (NumberFormatException e) {
-            quickestResultArea.setText("请输入有效整数");
+            quickestResultArea.setText(org.example.I18n.t("dex.inputInt"));
         }
     }
 
@@ -244,18 +244,20 @@ public class UnitDexDetailPanel extends JPanel {
         float dmg;
         for (JsonNode u : units) {
             if (u.get("id").asInt() == id) {
-                appendField(sb, "介绍", u.get("description"));
+                appendField(sb, org.example.I18n.t("dex.desc"), u.get("description"));
                 dmg = Unit.infos[id].dmg();
                 if (dmg > 1000){
-                    sb.append(String.format("\n\n每百帧伤害: %.2f (理论), %.2f", Unit.getDps(id, Math.floorDiv((int) dmg, 1000)), Unit.getDps(id, dmg % 1000)));
-                    sb.append(String.format("\n每百帧每百军资金伤害: %.2f (理论), %.2f\n", Unit.getDpsPer100Cost(id, Math.floorDiv((int) dmg, 1000)), Unit.getDpsPer100Cost(id, dmg % 1000)));
+                    sb.append(org.example.I18n.t("dex.dps",
+                            Unit.getDps(id, Math.floorDiv((int) dmg, 1000)), Unit.getDps(id, dmg % 1000)));
+                    sb.append(org.example.I18n.t("dex.dpsPerCost",
+                            Unit.getDpsPer100Cost(id, Math.floorDiv((int) dmg, 1000)), Unit.getDpsPer100Cost(id, dmg % 1000)));
                 }
                 else if (dmg > 0) {
-                    sb.append(String.format("\n\n每百帧伤害: %.2f", Unit.getDps(id, dmg)));
-                    sb.append(String.format("\n每百帧每百军资金伤害: %.2f\n", Unit.getDpsPer100Cost(id, dmg)));
+                    sb.append(org.example.I18n.t("dex.dpsSingle", Unit.getDps(id, dmg)));
+                    sb.append(org.example.I18n.t("dex.dpsPerCostSingle", Unit.getDpsPer100Cost(id, dmg)));
                 }
-                appendField(sb, "进阶", u.get("tactics"));
-                appendField(sb, "备注", u.get("notes"));
+                appendField(sb, org.example.I18n.t("dex.tactics"), u.get("tactics"));
+                appendField(sb, org.example.I18n.t("dex.notes"), u.get("notes"));
                 break;
             }
         }
@@ -265,7 +267,7 @@ public class UnitDexDetailPanel extends JPanel {
     private void appendField(StringBuilder sb, String label, JsonNode node) {
         if (node != null && !node.asText().isEmpty()) {
             if (!sb.isEmpty()) sb.append("\n\n");
-            sb.append("【").append(label).append("】\n").append(node.asText());
+            sb.append(org.example.I18n.t("dex.fieldBlock", label, node.asText()));
         }
     }
 

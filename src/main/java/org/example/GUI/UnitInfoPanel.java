@@ -33,7 +33,7 @@ public class UnitInfoPanel extends JPanel {
         textPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4 + SPRITE_SIZE + SPRITE_MARGIN));
 
         nameLabel = new JLabel();
-        nameLabel.setFont(new Font("黑体", Font.BOLD, 14));
+        nameLabel.setFont(org.example.I18n.font(Font.BOLD, 14));
         textPanel.add(nameLabel);
         textPanel.add(Box.createVerticalStrut(4));
 
@@ -72,7 +72,7 @@ public class UnitInfoPanel extends JPanel {
 
     private JLabel createInfoLabel() {
         JLabel label = new JLabel();
-        label.setFont(new Font("黑体", Font.PLAIN, 13));
+        label.setFont(org.example.I18n.font(Font.PLAIN, 13));
         return label;
     }
 
@@ -80,7 +80,7 @@ public class UnitInfoPanel extends JPanel {
         Unit.Info info = Unit.infos[unit.id];
 
         char pskeyChar = Main.pskey.charAt(unit.id % 61 + unit.id / 61);
-        nameLabel.setText(info.name() + " (" + pskeyChar + ")");
+        nameLabel.setText(org.example.I18n.unitName(unit.id) + " (" + pskeyChar + ")");
 
         int maxHp = info.hp();
         if (unit.hp == maxHp) {

@@ -62,7 +62,7 @@ public final class ComboSelector {
     /** 字典序排名反解为组合；要求 0 <= rank < C(n,k)。 */
     public static int[] unrank(long rank, int n, int k) {
         if (k < 0 || k > n || rank < 0 || rank >= combinationCount(n, k)) {
-            throw new IllegalArgumentException("组合排名越界: " + rank + " (n=" + n + ", k=" + k + ")");
+            throw new IllegalArgumentException(I18n.t("combo.err.rankOob", rank, n, k));
         }
         int[] comb = new int[k];
         int start = 0;
@@ -86,7 +86,7 @@ public final class ComboSelector {
         public List<int[]> materialize() {
             if (!ranked) {
                 if (count > MAX_SAMPLES) {
-                    throw new IllegalStateException("组合数过大，无法展开");
+                    throw new IllegalStateException(I18n.t("combo.err.tooLarge"));
                 }
                 return enumerate(unitCount, deleteCount, count);
             }
@@ -101,15 +101,15 @@ public final class ComboSelector {
     /** 生成采样方案。探索率 100% 或采样数达到总数时为全遍历。 */
     public static Selection plan(int unitCount, int deleteCount, int explorationPercent, Random rng) {
         if (unitCount < 1) {
-            throw new IllegalArgumentException("没有可删除的单位");
+            throw new IllegalArgumentException(I18n.t("combo.err.none"));
         }
         if (deleteCount < 1 || deleteCount > unitCount) {
-            throw new IllegalArgumentException("删除数必须在 1~" + unitCount + " 之间");
+            throw new IllegalArgumentException(I18n.t("combo.err.range", unitCount));
         }
         long total = combinationCount(unitCount, deleteCount);
         long k = plannedCount(total, explorationPercent);
         if (k > MAX_SAMPLES) {
-            throw new IllegalArgumentException("组合数过大（超过 " + MAX_SAMPLES + " 个），请降低探索率或减少删除数");
+            throw new IllegalArgumentException(I18n.t("combo.err.overCap", MAX_SAMPLES));
         }
         if (k <= 0) {
             return new Selection(unitCount, deleteCount, total, 0, new long[0], true);

@@ -75,7 +75,7 @@ public class CraftTab extends JPanel {
         inputPanel = new JScrollPane(inputTextArea);
         outputPanel = new JScrollPane(outputTextArea);
         unitInfoPanel = new JPanel(new BorderLayout());
-        unitInfoPanel.setBorder(BorderFactory.createTitledBorder("单位信息"));
+        unitInfoPanel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("craft.unitInfo")));
         unitInfoContent = new UnitInfoPanel();
         unitInfoPanel.add(unitInfoContent, BorderLayout.CENTER);
 
@@ -84,15 +84,15 @@ public class CraftTab extends JPanel {
         fortInfoPanel.add(fortPreviewPanel, BorderLayout.CENTER);
         analysisPanel = new AnalysisPanel();
 
-        inputPanel.setBorder(BorderFactory.createTitledBorder("输入"));
-        outputPanel.setBorder(BorderFactory.createTitledBorder("输出"));
-        fortInfoPanel.setBorder(BorderFactory.createTitledBorder("阵型预览"));
+        inputPanel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("craft.input")));
+        outputPanel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("craft.output")));
+        fortInfoPanel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("craft.preview")));
 
 
         // ---- 要塞信息标签页 ----
         fortInfoTextArea = new JTextPane();
         fortInfoTextArea.setEditable(false);
-        fortInfoTextArea.setFont(new Font("黑体", Font.PLAIN, 14));
+        fortInfoTextArea.setFont(org.example.I18n.font(Font.PLAIN, 14));
 
         inputTextArea.setMargin(new Insets(0,0,0,0));
         fortInfoTextArea.setMargin(new Insets(0,0,0,0));
@@ -117,8 +117,8 @@ public class CraftTab extends JPanel {
         infoTabPane.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Main.DARK_MODE ? new Color(70, 70, 70) : new Color(200, 200, 200)),
                 BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-        infoTabPane.addTab("要塞信息", fortInfoScroll);
-        infoTabPane.addTab("单位列表", unitListScroll);
+        infoTabPane.addTab(org.example.I18n.t("craft.fortInfo"), fortInfoScroll);
+        infoTabPane.addTab(org.example.I18n.t("craft.unitList"), unitListScroll);
         infoTabPane.addChangeListener(e -> {
             if (infoTabPane.getSelectedIndex() != 1) deselectUnit();
         });
@@ -129,8 +129,8 @@ public class CraftTab extends JPanel {
         });
 
         // ---- 工作台面板 ----
-        workflowInputLabel = createWorkflowLabel("▼ 输入");
-        workflowOutputLabel = createWorkflowLabel("▼ 输出");
+        workflowInputLabel = createWorkflowLabel(org.example.I18n.t("craft.workflowIn"));
+        workflowOutputLabel = createWorkflowLabel(org.example.I18n.t("craft.workflowOut"));
 
         workflowContent = new WorkflowDropPanel();
         workflowContent.add(workflowInputLabel);
@@ -214,7 +214,7 @@ public class CraftTab extends JPanel {
         outputToInputBtn.setContentAreaFilled(false);
         outputToInputBtn.setFocusPainted(false);
         outputToInputBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        outputToInputBtn.setToolTipText("将输出内容复制到输入");
+        outputToInputBtn.setToolTipText(org.example.I18n.t("craft.outputToInput"));
         outputToInputBtn.addActionListener(e -> {
             inputTextArea.setText(outputTextArea.getText());
             inputTextArea.setCaretPosition(0);
@@ -472,7 +472,7 @@ public class CraftTab extends JPanel {
             outputTextArea.setCaretPosition(0);
         } catch (Exception e) {
             clearResults();
-            fortInfoTextArea.setText("解析失败: " + e.getMessage());
+            fortInfoTextArea.setText(org.example.I18n.t("err.parseFail") + e.getMessage());
             outputTextArea.setCaretPosition(0);
             workflowContent.repaint();
         }
@@ -506,7 +506,7 @@ public class CraftTab extends JPanel {
 
         javax.swing.text.StyledDocument doc = fortInfoTextArea.getStyledDocument();
         javax.swing.text.SimpleAttributeSet normal = new javax.swing.text.SimpleAttributeSet();
-        javax.swing.text.StyleConstants.setFontFamily(normal, "黑体");
+        javax.swing.text.StyleConstants.setFontFamily(normal, org.example.I18n.fontFamily());
         javax.swing.text.StyleConstants.setFontSize(normal, 14);
         javax.swing.text.StyleConstants.setForeground(normal, fortInfoTextArea.getForeground());
 
@@ -517,13 +517,16 @@ public class CraftTab extends JPanel {
 
         try {
             doc.remove(0, doc.getLength());
-            doc.insertString(doc.getLength(), "\n 阵型名称: " + (currentFortName.isEmpty() ? "(无)" : currentFortName) + "\n\n", normal);
-            doc.insertString(doc.getLength(), " 加速等级: " + accelLevel + "\n\n", normal);
-            doc.insertString(doc.getLength(), " 总军资金: ", normal);
+            doc.insertString(doc.getLength(), "\n " + org.example.I18n.t("craft.fortName")
+                    + (currentFortName.isEmpty() ? org.example.I18n.t("common.none") : currentFortName) + "\n\n", normal);
+            doc.insertString(doc.getLength(), " " + org.example.I18n.t("craft.accelLevel") + accelLevel + "\n\n", normal);
+            doc.insertString(doc.getLength(), " " + org.example.I18n.t("craft.totalCost"), normal);
             doc.insertString(doc.getLength(), String.valueOf(totalCost), costAttr);
             doc.insertString(doc.getLength(), "\n", normal);
         } catch (javax.swing.text.BadLocationException ex) {
-            fortInfoTextArea.setText("\n 阵型名称: " + currentFortName + "\n\n 加速等级: " + accelLevel + "\n\n 总军资金: " + totalCost);
+            fortInfoTextArea.setText("\n " + org.example.I18n.t("craft.fortName") + currentFortName
+                    + "\n\n " + org.example.I18n.t("craft.accelLevel") + accelLevel
+                    + "\n\n " + org.example.I18n.t("craft.totalCost") + totalCost);
         }
     }
 
@@ -579,7 +582,7 @@ public class CraftTab extends JPanel {
 
     private JLabel createWorkflowLabel(String text) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setFont(new Font("黑体", Font.BOLD, 12));
+        label.setFont(org.example.I18n.font(Font.BOLD, 12));
         label.setForeground(Main.DARK_MODE ? new Color(160, 160, 160) : new Color(100, 100, 100));
         label.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
         label.setAlignmentX(CENTER_ALIGNMENT);
@@ -589,7 +592,7 @@ public class CraftTab extends JPanel {
 private static FixedJTextArea createTextArea(boolean editable) {
         FixedJTextArea area = new FixedJTextArea(5, 20);
         area.setEditable(editable);
-        area.setFont(new Font("黑体", Font.PLAIN, 13));
+        area.setFont(org.example.I18n.font(Font.PLAIN, 13));
         area.setTabSize(4);
         area.setLineWrap(true);
         area.setWrapStyleWord(false);

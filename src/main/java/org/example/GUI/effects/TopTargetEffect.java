@@ -15,10 +15,10 @@ public class TopTargetEffect implements Effect {
     }
 
     @Override
-    public String getName() { return "顶置的玉"; }
+    public String getName() { return org.example.I18n.t("effect.topTarget.name"); }
 
     @Override
-    public String getDescription() { return "将所有「的玉」(id42) 的 y 坐标设为 0。"; }
+    public String getDescription() { return org.example.I18n.t("effect.topTarget.desc"); }
 
     @Override
     public Formation execute(Formation input, Map<String, Object> params) {

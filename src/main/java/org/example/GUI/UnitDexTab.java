@@ -37,7 +37,7 @@ public class UnitDexTab extends JPanel {
         buildUnitEntries();
 
         listScroll = new JScrollPane(listContent);
-        listScroll.setBorder(BorderFactory.createTitledBorder("单位列表"));
+        listScroll.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("dex.list")));
         listScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         listScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         listScroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -54,7 +54,7 @@ public class UnitDexTab extends JPanel {
         // 右侧详情
         detailPanel = new UnitDexDetailPanel(unitDetailJson);
         detailScroll = new JScrollPane(detailPanel);
-        detailScroll.setBorder(BorderFactory.createTitledBorder("单位详情"));
+        detailScroll.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("dex.detail")));
         detailScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         detailScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         detailScroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -131,14 +131,19 @@ public class UnitDexTab extends JPanel {
     }
 
     private static JsonNode loadUnitDetails() {
-        try (InputStream in = UnitDexTab.class.getResourceAsStream("/unit_details.json")) {
+        String file = switch (org.example.I18n.lang) {
+            case org.example.I18n.JA -> "/unit_details_ja.json";
+            case org.example.I18n.EN -> "/unit_details_en.json";
+            default -> "/unit_details_zh.json";
+        };
+        try (InputStream in = UnitDexTab.class.getResourceAsStream(file)) {
             if (in == null) {
-                System.err.println("UnitDexTab: unit_details.json 未找到");
+                System.err.println(org.example.I18n.t("dex.jsonNotFound", file));
                 return null;
             }
             return new ObjectMapper().readTree(in);
         } catch (IOException e) {
-            System.err.println("UnitDexTab: 加载 unit_details.json 失败: " + e.getMessage());
+            System.err.println(org.example.I18n.t("dex.jsonLoadFail", file, e.getMessage()));
             return null;
         }
     }

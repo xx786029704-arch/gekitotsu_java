@@ -114,7 +114,7 @@ public class Formation {
         name = name.replace("/", "");
         code = code.replaceAll("[^A-Za-z0-9]", "");
         if (code.length() % 6 != 0) {
-            throw new IllegalArgumentException("代码长度错误");
+            throw new IllegalArgumentException(org.example.I18n.t("err.codeLength"));
         }
         return new Formation(name, decodeUnits(code)).decodeHp(hpCode);
     }

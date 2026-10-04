@@ -260,19 +260,18 @@ public final class AssaultDetector {
 
                 if (!hasOptimal) {
                     StringBuilder sb = new StringBuilder();
-                    String unitName = Unit.infos[id].name();
-                    String type = g.isFar ? "远突击" : "近突击";
-                    sb.append(unitName).append(" 在(").append(g.wallX).append(",").append(g.wallY)
-                            .append(")处的").append(type).append("中没有采用落地最速，可能需要修改，推荐的x坐标为");
+                    String unitName = org.example.I18n.unitName(id);
+                    String type = org.example.I18n.t(g.isFar ? "assault.type.far" : "assault.type.near");
+                    sb.append(org.example.I18n.t("assault.suggest.head", unitName, g.wallX, g.wallY, type));
 
                     boolean first = true;
                     if (!optimalBefore.isEmpty()) {
-                        sb.append(new TreeSet<>(optimalBefore)).append("（兵玉代码在前）");
+                        sb.append(new TreeSet<>(optimalBefore)).append(org.example.I18n.t("assault.suggest.before"));
                         first = false;
                     }
                     if (!optimalAfter.isEmpty()) {
-                        if (!first) sb.append("，");
-                        sb.append(new TreeSet<>(optimalAfter)).append("（兵玉代码在后）");
+                        if (!first) sb.append(org.example.I18n.t("assault.suggest.sep"));
+                        sb.append(new TreeSet<>(optimalAfter)).append(org.example.I18n.t("assault.suggest.after"));
                     }
                     suggestions.add(sb.toString());
                 }

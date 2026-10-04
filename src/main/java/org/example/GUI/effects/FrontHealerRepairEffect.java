@@ -13,10 +13,10 @@ public class FrontHealerRepairEffect implements Effect {
     }
 
     @Override
-    public String getName() { return "前置愈缮玉"; }
+    public String getName() { return org.example.I18n.t("effect.frontHealer.name"); }
 
     @Override
-    public String getDescription() { return "将所有愈玉(id18)移至核心后最前方，缮玉(id17)紧随其后。"; }
+    public String getDescription() { return org.example.I18n.t("effect.frontHealer.desc"); }
 
     @Override
     public Formation execute(Formation input, Map<String, Object> params) {

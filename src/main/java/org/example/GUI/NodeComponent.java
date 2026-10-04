@@ -60,27 +60,27 @@ public class NodeComponent extends JPanel {
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         effectSwitch = new JLabel("●");
-        effectSwitch.setFont(new Font("黑体", Font.PLAIN, 14));
+        effectSwitch.setFont(org.example.I18n.font(Font.PLAIN, 14));
         effectSwitch.setForeground(new Color(150, 150, 150));
         add(effectSwitch, BorderLayout.WEST);
 
         nameLabel = new JLabel(node.effect.getName());
-        nameLabel.setFont(new Font("黑体", Font.PLAIN, 13));
+        nameLabel.setFont(org.example.I18n.font(Font.PLAIN, 13));
         add(nameLabel, BorderLayout.CENTER);
 
         // 右键菜单
         JPopupMenu menu = new JPopupMenu();
-        JMenuItem toggleItem = new JMenuItem(node.enabled ? "禁用" : "启用");
+        JMenuItem toggleItem = new JMenuItem(node.enabled ? org.example.I18n.t("effect.disable") : org.example.I18n.t("effect.enable"));
         toggleItem.addActionListener(e -> {
             node.enabled = !node.enabled;
             repaint();
             onChanged.run();
         });
         menu.add(toggleItem);
-        JMenuItem paramItem = new JMenuItem("编辑参数");
+        JMenuItem paramItem = new JMenuItem(org.example.I18n.t("effect.editParams"));
         paramItem.addActionListener(e -> showParameterDialog());
         menu.add(paramItem);
-        JMenuItem deleteItem = new JMenuItem("删除");
+        JMenuItem deleteItem = new JMenuItem(org.example.I18n.t("btn.delete"));
         deleteItem.addActionListener(e -> onDelete.run());
         menu.add(deleteItem);
         setComponentPopupMenu(menu);
@@ -249,7 +249,7 @@ public class NodeComponent extends JPanel {
     public void showParameterDialog() {
         java.util.List<EffectParameter> params = node.effect.getParameters();
         if (params.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "该效果没有可配置的参数", "参数",
+            JOptionPane.showMessageDialog(this, org.example.I18n.t("effect.noParams"), org.example.I18n.t("effect.paramsTitle"),
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -261,7 +261,7 @@ public class NodeComponent extends JPanel {
             if (p.type() == EffectParameter.Type.UNIT_ID) {
                 String[] unitNames = new String[63];
                 for (int i = 0; i < 63; i++) {
-                    unitNames[i] = i + " " + Unit.infos[i].name();
+                    unitNames[i] = i + " " + org.example.I18n.unitName(i);
                 }
                 JComboBox<String> combo = new JComboBox<>(unitNames);
                 Object cur = node.paramValues.get(p.key());
@@ -285,7 +285,7 @@ public class NodeComponent extends JPanel {
         }
 
         int result = JOptionPane.showConfirmDialog(this, form,
-                "编辑参数 - " + node.effect.getName(),
+                org.example.I18n.t("effect.editParamsTitle", node.effect.getName()),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             for (EffectParameter p : params) {

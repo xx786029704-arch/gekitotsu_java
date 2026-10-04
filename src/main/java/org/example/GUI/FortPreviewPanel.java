@@ -69,7 +69,7 @@ public class FortPreviewPanel extends JPanel {
         saveButton.setContentAreaFilled(false);
         saveButton.setFocusPainted(false);
         saveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        saveButton.setToolTipText("保存预览图");
+        saveButton.setToolTipText(org.example.I18n.t("preview.saveTip"));
         saveButton.addActionListener(e -> saveImage());
         add(saveButton);
 
@@ -110,7 +110,7 @@ public class FortPreviewPanel extends JPanel {
     private void saveImage() {
         JFileChooser chooser = new JFileChooser();
         chooser.setSelectedFile(new File((!name.isEmpty() ? name : "fort_preview") + ".png"));
-        chooser.setFileFilter(new FileNameExtensionFilter("PNG 图像 (*.png)", "png"));
+        chooser.setFileFilter(new FileNameExtensionFilter(org.example.I18n.t("preview.pngFilter"), "png"));
         if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
 
         File file = chooser.getSelectedFile();
@@ -130,7 +130,7 @@ public class FortPreviewPanel extends JPanel {
         try {
             ImageIO.write(image, "png", file);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "保存失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, org.example.I18n.t("preview.saveFail") + ex.getMessage(), org.example.I18n.t("msg.error"), JOptionPane.ERROR_MESSAGE);
         }
     }
 

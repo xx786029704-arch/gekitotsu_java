@@ -55,7 +55,7 @@ public class AssaultGroup {
     /** 将另一个 Near 突击组合并到当前实例（会清空对方）。 */
     public void mergeNear(AssaultGroup other) {
         if (this.isFar || other.isFar) {
-            throw new IllegalArgumentException("只有近突击组之间可以合并");
+            throw new IllegalArgumentException(org.example.I18n.t("assault.err.mergeNear"));
         }
         this.unitsBefore.addAll(other.unitsBefore);
         this.unitsAfter.addAll(other.unitsAfter);
@@ -65,8 +65,8 @@ public class AssaultGroup {
 
     @Override
     public String toString() {
-        String type = isFar ? "远突击" : "近突击";
-        return type + "壁(" + wallX + "," + wallY + ") "
-                + "前" + unitsBefore.size() + "个 后" + unitsAfter.size() + "个";
+        String type = org.example.I18n.t(isFar ? "assault.type.far" : "assault.type.near");
+        return org.example.I18n.t("assault.group.desc", type, wallX, wallY,
+                unitsBefore.size(), unitsAfter.size());
     }
 }

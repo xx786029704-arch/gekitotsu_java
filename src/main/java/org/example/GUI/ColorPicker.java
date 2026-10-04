@@ -42,7 +42,7 @@ public class ColorPicker extends JDialog {
     }
 
     private ColorPicker(Window owner, Color initial, boolean darkMode, boolean showReset, boolean supportAlpha) {
-        super(owner, "颜色选择器", ModalityType.APPLICATION_MODAL);
+        super(owner, org.example.I18n.t("color.title"), ModalityType.APPLICATION_MODAL);
         this.originalColor = initial;
         this.isDarkMode = darkMode;
         this.showReset = showReset;
@@ -84,11 +84,11 @@ public class ColorPicker extends JDialog {
         content.add(pickerRow, BorderLayout.CENTER);
 
         // ---- 底部：按钮 ----
-        Font labelFont = new Font("黑体", Font.PLAIN, 12);
+        Font labelFont = org.example.I18n.font(Font.PLAIN, 12);
 
         JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 4));
         
-        JButton cancelBtn = new JButton("取消");
+        JButton cancelBtn = new JButton(org.example.I18n.t("btn.cancel"));
         cancelBtn.setFont(labelFont);
         cancelBtn.addActionListener(e -> {
             result = null;
@@ -97,7 +97,7 @@ public class ColorPicker extends JDialog {
         buttonRow.add(cancelBtn);
         content.add(buttonRow, BorderLayout.SOUTH);
 
-        JButton okBtn = new JButton("确定");
+        JButton okBtn = new JButton(org.example.I18n.t("btn.ok"));
         okBtn.setFont(labelFont);
         okBtn.addActionListener(e -> {
             result = getCurrentColor();
@@ -139,7 +139,7 @@ public class ColorPicker extends JDialog {
         panel.add(Box.createVerticalStrut(8));
 
         // RGB 竖排
-        Font labelFont = new Font("黑体", Font.PLAIN, 12);
+        Font labelFont = org.example.I18n.font(Font.PLAIN, 12);
         Color labelFg = isDarkMode ? Color.WHITE : Color.BLACK;
 
         JPanel rgbPanel = new JPanel();
@@ -224,10 +224,10 @@ public class ColorPicker extends JDialog {
         if (icon != null) {
             btn = new JButton(icon);
         } else {
-            btn = new JButton("重置");
+            btn = new JButton(org.example.I18n.t("btn.reset"));
         }
-        btn.setFont(new Font("黑体", Font.PLAIN, 12));
-        btn.setToolTipText("恢复默认颜色");
+        btn.setFont(org.example.I18n.font(Font.PLAIN, 12));
+        btn.setToolTipText(org.example.I18n.t("color.resetTip"));
         btn.addActionListener(e -> {
             Color defaultColor = new Color(0x26, 0x75, 0xBF);
             float[] hsb = Color.RGBtoHSB(

@@ -16,21 +16,21 @@ public class LinkTab extends JPanel {
     }
 
     private static final Object[][] CATEGORIES = {
-        {"原作官网", new LinkEntry[]{
-            new LinkEntry("激突要塞！公式サイト ", "https://suznooto.com/")
+        {org.example.I18n.t("link.cat.official"), new LinkEntry[]{
+            new LinkEntry(org.example.I18n.t("link.site.official") + " ", "https://suznooto.com/")
         }},
-        {"国内社区", new LinkEntry[]{
-            new LinkEntry("激突要塞百度贴吧 ", "https://tieba.baidu.com/f?kw=%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
-            new LinkEntry("激突驿站 ", "https://app-8uul3uungrup.appmiaoda.com/"),
-            new LinkEntry("激突要塞！+萌娘百科 ", "https://moegirl.icu/%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
-            new LinkEntry("激突要塞比赛QQ群 ", "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2Ccfro01Pic3O3rsEyFY_W85u-EA6u68&authKey=2eJFmH%2B1lH7%2Bw%2BFWBkX2JAeEq5h4BA8MACVxtM9CW6NKjnhtAjcqkPMNdH76x20j&noverify=0&group_code=836444580")
+        {org.example.I18n.t("link.cat.cn"), new LinkEntry[]{
+            new LinkEntry(org.example.I18n.t("link.site.tieba") + " ", "https://tieba.baidu.com/f?kw=%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
+            new LinkEntry(org.example.I18n.t("link.site.station") + " ", "https://app-8uul3uungrup.appmiaoda.com/"),
+            new LinkEntry(org.example.I18n.t("link.site.moegirl") + " ", "https://moegirl.icu/%E6%BF%80%E7%AA%81%E8%A6%81%E5%A1%9E"),
+            new LinkEntry(org.example.I18n.t("link.site.qqgroup") + " ", "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2Ccfro01Pic3O3rsEyFY_W85u-EA6u68&authKey=2eJFmH%2B1lH7%2Bw%2BFWBkX2JAeEq5h4BA8MACVxtM9CW6NKjnhtAjcqkPMNdH76x20j&noverify=0&group_code=836444580")
         }},
-        {"日本社区", new LinkEntry[]{
-            new LinkEntry("Discord频道 ", "https://discord.com/channels/668116933471633428/896761917748703242"),
-            new LinkEntry("青茶の要塞研究所 ", "https://bluechartfortress.web.fc2.com/tactics.html"),
-            new LinkEntry("激突要塞！+wiki ", "https://wikiwiki.jp/gekitotsu/"),
-            new LinkEntry("激突要塞！+攻略wiki ", "https://seesaawiki.jp/gekitotuwiki/"),
-            new LinkEntry("激突要塞！+掲示板 ", "https://gekitotuchat.wiki.fc2.com/")
+        {org.example.I18n.t("link.cat.jp"), new LinkEntry[]{
+            new LinkEntry(org.example.I18n.t("link.site.discord") + " ", "https://discord.com/channels/668116933471633428/896761917748703242"),
+            new LinkEntry(org.example.I18n.t("link.site.bluechart") + " ", "https://bluechartfortress.web.fc2.com/tactics.html"),
+            new LinkEntry(org.example.I18n.t("link.site.wiki") + " ", "https://wikiwiki.jp/gekitotsu/"),
+            new LinkEntry(org.example.I18n.t("link.site.guidewiki") + " ", "https://seesaawiki.jp/gekitotuwiki/"),
+            new LinkEntry(org.example.I18n.t("link.site.bbs") + " ", "https://gekitotuchat.wiki.fc2.com/")
         }}
     };
 
@@ -59,9 +59,9 @@ public class LinkTab extends JPanel {
     }
 
     private void buildContent() {
-        Font headerFont = new Font("黑体", Font.BOLD, 16);
-        Font nameFont = new Font("黑体", Font.PLAIN, 14);
-        Font urlFont = new Font("黑体", Font.PLAIN, 12);
+        Font headerFont = org.example.I18n.font(Font.BOLD, 16);
+        Font nameFont = org.example.I18n.font(Font.PLAIN, 14);
+        Font urlFont = org.example.I18n.font(Font.PLAIN, 12);
 
         for (Object[] cat : CATEGORIES) {
             String title = (String) cat[0];

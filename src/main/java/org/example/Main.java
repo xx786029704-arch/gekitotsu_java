@@ -15,6 +15,7 @@ public class Main {
     public static boolean WORD_WRAP = false;
     public static boolean DARK_MODE = true;
     public static String ACCENT_COLOR = "#2675BF";
+    public static String LANGUAGE = I18n.detectSystemLang();   //zh/ja/en
     public static int MAX_THREADS = Runtime.getRuntime().availableProcessors();
     public static final String CONFIG_FILE = "config.ini";
 
@@ -34,9 +35,9 @@ public class Main {
             SplashWindow splash = SplashWindow.createAndShow();
             try {
                 pool = Executors.newFixedThreadPool(MAX_THREADS);
-                if (splash != null) splash.setStatus("正在载入要塞运动公式…");
+                if (splash != null) splash.setStatus(I18n.t("splash.loadingFormula"));
                 formulaTable = new FormulaTable();
-                if (splash != null) splash.setStatus("正在初始化界面…");
+                if (splash != null) splash.setStatus(I18n.t("splash.loadingUi"));
                 javax.swing.SwingUtilities.invokeLater(() -> {
                     try {
                         MainGUI gui = new MainGUI();
@@ -62,10 +63,10 @@ public class Main {
     private static void runCli() {
         Setting.loadConfig();
         pool = Executors.newFixedThreadPool(MAX_THREADS);
-        System.out.println("正在导入阵容...");
+        System.out.println(I18n.t("main.importing"));
         p1List = Setting.CompileForts("1P.txt");
         p2List = Setting.CompileForts("2P.txt");
-        System.out.println("阵容导入完成！");
+        System.out.println(I18n.t("main.importDone"));
         while (Setting.setting(scanner)) {
             runAllBattles(null);
         }
@@ -103,8 +104,7 @@ public class Main {
                     return g.run_single(f1, f2);
                 }));
 
-                meta.add("Round " + roundIndex +
-                        " | 1P[" + f1.name + "] vs 2P[" + f2.name + "]");
+                meta.add(I18n.t("result.round", roundIndex, f1.name, f2.name));
             }
         }
 
@@ -122,16 +122,14 @@ public class Main {
                 Result r = futures.get(i).get();
                 final_result.append(meta.get(i)).append("\n");
                 String resultStr = switch (r.status) {
-                    case 1 -> "1P 获胜";
-                    case 2 -> "2P 获胜";
-                    case 0 -> "平局";
-                    case -1 -> "超时";
-                    default -> "异常";
+                    case 1 -> I18n.t("result.p1win");
+                    case 2 -> I18n.t("result.p2win");
+                    case 0 -> I18n.t("result.draw");
+                    case -1 -> I18n.t("result.timeout");
+                    default -> I18n.t("result.abnormal");
                 };
-                final_result.append("结果: ").append(resultStr)
-                        .append(" | 剩余血量: ").append(r.winnerHp)
-                        .append(" | 总帧数: ").append(r.framePassed)
-                        .append(" | 用时: ").append(String.format("%.3f ms", r.timeUsed))
+                final_result.append(I18n.t("result.line", resultStr, r.winnerHp, r.framePassed,
+                                String.format("%.3f", r.timeUsed)))
                         .append("\n\n");
                 if (i % p2List.size() == 0) {
                     if (i > 0) {
@@ -156,19 +154,14 @@ public class Main {
                 unknown += r.status < 0 ? 1 : 0;
                 if ((i + 1) % p2List.size() == 0) {
                     simple_result.append("\n")
-                            .append("总场次: %d".formatted(p2List.size()))
-                            .append(", 胜: %d".formatted(win))
-                            .append(", 负: %d".formatted(lose))
-                            .append(", 平: %d".formatted(draw))
-                            .append(", 未定: %d".formatted(unknown))
-                            .append(", 胜率: %.2f".formatted((2 * win + draw) * 50F / (win + lose + draw)))
-                            .append("%, 血量积分: ").append(score);
+                            .append(I18n.t("result.stats", p2List.size(), win, lose, draw, unknown,
+                                    (2 * win + draw) * 50F / (win + lose + draw), score));
                 }
                 done++;
                 if (onProgress != null) {
                     onProgress.accept(done);
                 }
-                System.out.print("\r进度: " + done + "/" + meta.size());
+                System.out.print("\r" + I18n.t("result.progress", done, meta.size()));
             } catch (Exception e) {
                 Throwable cause = e.getCause();
 
@@ -188,9 +181,9 @@ public class Main {
         }
         Setting.writeResult("simple_result.txt", simple_result.toString());
         float total_time = (System.nanoTime() - total_start) / 1000000.F;
-        final_result.append("====SUMMARY====\n总轮次: ").append(meta.size()).append(String.format("\n总用时: %.3f ms", total_time));
+        final_result.append(I18n.t("result.summary", meta.size(), String.format("%.3f", total_time)));
         Setting.writeResult("result.txt", final_result.toString());
-        System.out.printf("%n所有对局已完成%n总用时: %.3f ms%n", total_time);
+        System.out.printf("%n" + I18n.t("main.allDone") + "%n", total_time);
         return statsList;
     }
 
@@ -218,7 +211,7 @@ public class Main {
     public static CompiledFort compileFort(Fort f) {
         String code = f.code();
         if (code.length() < 6) {
-            throw new IllegalArgumentException("阵容代码长度不足: " + f.name() + " [" + code + "]");
+            throw new IllegalArgumentException(I18n.t("err.codeTooShort", f.name(), code));
         }
 
         int[] core = to_xyr(code.substring(1, 6));

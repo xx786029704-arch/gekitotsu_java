@@ -36,16 +36,16 @@ public class TraceWall implements ListItem {
     /** 序列化为人类可读文本，用于剪贴板复制。 */
     public String toHumanReadable() {
         StringBuilder sb = new StringBuilder();
-        sb.append("要塞壁名称: ").append(name).append("\n");
+        sb.append(org.example.I18n.t("field.wallName")).append(": ").append(name).append("\n");
         sb.append("x: ").append(x).append("\n");
         sb.append("y: ").append(y).append("\n");
-        sb.append("颜色: ").append(colorToHex(color)).append("\n");
-        sb.append("核心: ").append(isCore).append("\n");
-        sb.append("可见: ").append(visible);
+        sb.append(org.example.I18n.t("field.color")).append(": ").append(colorToHex(color)).append("\n");
+        sb.append(org.example.I18n.t("field.core")).append(": ").append(isCore).append("\n");
+        sb.append(org.example.I18n.t("field.visible")).append(": ").append(visible);
         return sb.toString();
     }
 
-    /** 从人类可读文本反序列化。解析失败返回 null。 */
+    /** 从人类可读文本反序列化（字段名兼容中日英三种语言）。解析失败返回 null。 */
     public static TraceWall fromHumanReadable(String text) {
         try {
             Map<String, String> map = new HashMap<>();
@@ -57,14 +57,14 @@ public class TraceWall implements ListItem {
                     map.put(trimmed.substring(0, idx), trimmed.substring(idx + 2));
                 }
             }
-            if (!map.containsKey("要塞壁名称")) return null;
+            String name = org.example.I18n.pick(map, "field.wallName");
+            if (name == null) return null;
 
-            String name = map.getOrDefault("要塞壁名称", "要塞壁");
             String x = map.getOrDefault("x", "0");
             String y = map.getOrDefault("y", "0");
-            Color color = Color.decode(map.getOrDefault("颜色", "#E03E3E"));
-            boolean isCore = Boolean.parseBoolean(map.getOrDefault("核心", "false"));
-            boolean visible = Boolean.parseBoolean(map.getOrDefault("可见", "true"));
+            Color color = Color.decode(org.example.I18n.pick(map, "field.color", "#E03E3E"));
+            boolean isCore = Boolean.parseBoolean(org.example.I18n.pick(map, "field.core", "false"));
+            boolean visible = Boolean.parseBoolean(org.example.I18n.pick(map, "field.visible", "true"));
 
             return new TraceWall(x, y, name, visible, color, isCore);
         } catch (Exception e) {

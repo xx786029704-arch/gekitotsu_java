@@ -34,31 +34,40 @@ public class MainGUI extends JFrame {
 
         // 菜单栏
         JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("选项");
+        JMenu fileMenu = new JMenu(org.example.I18n.t("menu.options"));
 
-        JCheckBoxMenuItem darkItem = new JCheckBoxMenuItem("深色主题", Main.DARK_MODE);
+        JCheckBoxMenuItem darkItem = new JCheckBoxMenuItem(org.example.I18n.t("menu.dark"), Main.DARK_MODE);
         darkItem.addActionListener(e -> toggleTheme(darkItem.isSelected()));
         fileMenu.add(darkItem);
+
+        // 语言子菜单：各语言以本名显示
+        JMenu langMenu = new JMenu(org.example.I18n.t("menu.language"));
+        ButtonGroup langGroup = new ButtonGroup();
+        addLangItem(langMenu, langGroup, "中文", org.example.I18n.ZH);
+        addLangItem(langMenu, langGroup, "日本語", org.example.I18n.JA);
+        addLangItem(langMenu, langGroup, "English", org.example.I18n.EN);
+        fileMenu.add(langMenu);
         fileMenu.addSeparator();
 
-        JMenuItem aboutItem = new JMenuItem("关于");
+        JMenuItem aboutItem = new JMenuItem(org.example.I18n.t("menu.about"));
         aboutItem.addActionListener(e -> {
             String msg = String.format(
                     "<html><div style='text-align:left;'>"
                     + "<b>激突Kit v%s</b><br><br>"
-                    + "作者：<br>"
+                    + "%s<br>"
                     + "XX<br>"
-                    + "Claude Code<br>"
+                    + "DeepSeek<br>"
                     + "15222HGH<br>"
                     + "MKTL"
                     + "</div></html>",
-                    Main.VERSION);
-            JOptionPane.showMessageDialog(this, msg, "关于", JOptionPane.INFORMATION_MESSAGE);
+                    Main.VERSION,
+                    org.example.I18n.t("about.author"));
+            JOptionPane.showMessageDialog(this, msg, org.example.I18n.t("menu.about"), JOptionPane.INFORMATION_MESSAGE);
         });
         fileMenu.add(aboutItem);
         fileMenu.addSeparator();
 
-        JMenuItem exitItem = new JMenuItem("退出");
+        JMenuItem exitItem = new JMenuItem(org.example.I18n.t("menu.exit"));
         exitItem.addActionListener(e -> shutdown());
         fileMenu.add(exitItem);
         menuBar.add(fileMenu);
@@ -66,17 +75,17 @@ public class MainGUI extends JFrame {
 
         // 主标签页
         JTabbedPane mainTabs = new JTabbedPane();
-        mainTabs.addTab("对战模拟", new BattleTab());
+        mainTabs.addTab(org.example.I18n.t("tab.battle"), new BattleTab());
         contributionTab = new ContributionTab();
-        mainTabs.addTab("贡献分析", contributionTab);
+        mainTabs.addTab(org.example.I18n.t("tab.contribution"), contributionTab);
         traceTab = new TraceTab(this);
-        mainTabs.addTab("轨迹预测", traceTab);
+        mainTabs.addTab(org.example.I18n.t("tab.trace"), traceTab);
         craftTab = new CraftTab(this);
-        mainTabs.addTab("阵型工作台", craftTab);
+        mainTabs.addTab(org.example.I18n.t("tab.craft"), craftTab);
         unitDexTab = new UnitDexTab(this);
-        mainTabs.addTab("单位图鉴", unitDexTab);
+        mainTabs.addTab(org.example.I18n.t("tab.dex"), unitDexTab);
         linkTab = new LinkTab();
-        mainTabs.addTab("友情链接", linkTab);
+        mainTabs.addTab(org.example.I18n.t("tab.links"), linkTab);
 
         // 主题色按钮浮动在右上角，不影响下方布局
         JPanel accentCircle = createAccentCircle();
@@ -102,6 +111,26 @@ public class MainGUI extends JFrame {
                 shutdown();
             }
         });
+    }
+
+    /** 添加一个语言单选菜单项；点击后保存设置并重建主窗口使新语言生效。 */
+    private void addLangItem(JMenu menu, ButtonGroup group, String label, String code) {
+        JRadioButtonMenuItem item = new JRadioButtonMenuItem(label);
+        item.setSelected(code.equals(Main.LANGUAGE));
+        item.addActionListener(e -> switchLanguage(code));
+        group.add(item);
+        menu.add(item);
+    }
+
+    private void switchLanguage(String code) {
+        if (code.equals(Main.LANGUAGE)) {
+            return;
+        }
+        Main.LANGUAGE = code;
+        org.example.I18n.setLang(code);
+        Setting.saveConfig();
+        dispose();
+        javax.swing.SwingUtilities.invokeLater(() -> new MainGUI().setVisible(true));
     }
 
     private static Image loadIconImage(String path) {
@@ -139,7 +168,7 @@ public class MainGUI extends JFrame {
             {
                 setOpaque(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setToolTipText("点击选择主题色");
+                setToolTipText(org.example.I18n.t("tooltip.accent"));
             }
             @Override
             protected void paintComponent(Graphics g) {

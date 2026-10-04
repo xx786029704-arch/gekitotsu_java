@@ -65,23 +65,23 @@ public final class ContributionAnalyzer {
 
         List<CompiledFort> playerForts = Setting.parseForts(playerText);
         if (playerForts.size() != 1) {
-            throw new IllegalArgumentException("玩家阵型必须且只能包含一个阵型");
+            throw new IllegalArgumentException(I18n.t("contrib.err.oneFort"));
         }
         CompiledFort player = playerForts.get(0);
         Formation formation = Formation.decode(playerText.trim());
         int unitCount = player.unitCount;
         if (formation.units.size() - 1 != unitCount) {
-            throw new IllegalArgumentException("阵型文本与代码解析结果不一致");
+            throw new IllegalArgumentException(I18n.t("contrib.err.mismatch"));
         }
 
         List<CompiledFort> evalForts = Setting.parseForts(evalText);
         if (evalForts.isEmpty()) {
-            throw new IllegalArgumentException("评判阵集为空或格式错误");
+            throw new IllegalArgumentException(I18n.t("contrib.err.emptyEval"));
         }
 
         int n = params.deleteCount();
         if (n < 1 || n > unitCount) {
-            throw new IllegalArgumentException("删除数必须在 1~" + unitCount + " 之间");
+            throw new IllegalArgumentException(I18n.t("contrib.err.deleteRange", unitCount));
         }
 
         List<UnitRef> refs = new ArrayList<>();
@@ -177,7 +177,7 @@ public final class ContributionAnalyzer {
                 long now = System.nanoTime();
                 if (listener != null && (now - lastNotify > 100_000_000L || battlesDone == totalBattles)) {
                     lastNotify = now;
-                    listener.onProgress(battlesDone, totalBattles, res[0] < 0 ? "基线" : "组合");
+                    listener.onProgress(battlesDone, totalBattles, res[0] < 0 ? I18n.t("contrib.phaseBaseline") : I18n.t("contrib.phaseCombo"));
                 }
             }
         } catch (InterruptedException e) {
@@ -246,7 +246,7 @@ public final class ContributionAnalyzer {
         boolean[] remove = new boolean[formation.units.size()];
         for (int idx : unitIndices) {
             if (idx < 0 || idx >= formation.units.size() - 1) {
-                throw new IllegalArgumentException("单位索引越界: " + idx);
+                throw new IllegalArgumentException(I18n.t("contrib.err.indexOob", idx));
             }
             remove[idx + 1] = true;
         }

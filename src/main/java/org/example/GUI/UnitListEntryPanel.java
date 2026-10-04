@@ -22,12 +22,12 @@ public class UnitListEntryPanel extends JPanel {
                 BorderFactory.createEmptyBorder(6, 10, 6, 10)));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-        String unitName = Unit.infos[unit.id].name();
+        String unitName = org.example.I18n.unitName(unit.id);
         JLabel nameLabel = new JLabel(unitName);
-        nameLabel.setFont(new Font("黑体", Font.PLAIN, 13));
+        nameLabel.setFont(org.example.I18n.font(Font.PLAIN, 13));
 
         JLabel coordLabel = new JLabel(unit.getLabel());
-        coordLabel.setFont(new Font("黑体", Font.PLAIN, 12));
+        coordLabel.setFont(org.example.I18n.font(Font.PLAIN, 12));
         coordLabel.setForeground(Main.DARK_MODE ? new Color(180, 180, 180) : new Color(120, 120, 120));
 
         JPanel leftP = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
@@ -39,7 +39,7 @@ public class UnitListEntryPanel extends JPanel {
 
         if (unit.isCore()) {
             JLabel coreTag = new JLabel("¤");
-            coreTag.setFont(new Font("黑体", Font.BOLD, 11));
+            coreTag.setFont(org.example.I18n.font(Font.BOLD, 11));
             add(coreTag, BorderLayout.EAST);
             setOpaque(true);
         }

@@ -71,20 +71,20 @@ public class Trace implements ListItem {
     /** 序列化为人类可读文本，用于剪贴板复制。 */
     public String toHumanReadable() {
         StringBuilder sb = new StringBuilder();
-        sb.append("轨迹名称: ").append(name).append("\n");
-        sb.append("兵玉x: ").append(x).append("\n");
-        sb.append("兵玉y: ").append(y).append("\n");
-        sb.append("突击壁x: ").append(wall_x).append("\n");
-        sb.append("1P加速度等级: ").append(speed0).append("\n");
-        sb.append("2P加速度等级: ").append(speed1).append("\n");
-        sb.append("突击段数: ").append(times).append("\n");
-        sb.append("是否为近突击壁: ").append(isNear).append("\n");
-        sb.append("兵玉代码在前: ").append(isBallFirst).append("\n");
-        sb.append("颜色: ").append(colorToHex(color));
+        sb.append(org.example.I18n.t("field.traceName")).append(": ").append(name).append("\n");
+        sb.append(org.example.I18n.t("field.ballX")).append(": ").append(x).append("\n");
+        sb.append(org.example.I18n.t("field.ballY")).append(": ").append(y).append("\n");
+        sb.append(org.example.I18n.t("field.wallX")).append(": ").append(wall_x).append("\n");
+        sb.append(org.example.I18n.t("field.accel0")).append(": ").append(speed0).append("\n");
+        sb.append(org.example.I18n.t("field.accel1")).append(": ").append(speed1).append("\n");
+        sb.append(org.example.I18n.t("field.stages")).append(": ").append(times).append("\n");
+        sb.append(org.example.I18n.t("field.isNear")).append(": ").append(isNear).append("\n");
+        sb.append(org.example.I18n.t("field.ballFirst")).append(": ").append(isBallFirst).append("\n");
+        sb.append(org.example.I18n.t("field.color")).append(": ").append(colorToHex(color));
         return sb.toString();
     }
 
-    /** 从人类可读文本反序列化。解析失败返回 null。 */
+    /** 从人类可读文本反序列化（字段名兼容中日英三种语言）。解析失败返回 null。 */
     public static Trace fromHumanReadable(String text) {
         try {
             Map<String, String> map = new HashMap<>();
@@ -96,18 +96,18 @@ public class Trace implements ListItem {
                     map.put(trimmed.substring(0, idx), trimmed.substring(idx + 2));
                 }
             }
-            if (!map.containsKey("轨迹名称")) return null;
+            String name = org.example.I18n.pick(map, "field.traceName");
+            if (name == null) return null;
 
-            String name = map.getOrDefault("轨迹名称", "轨迹");
-            String x = map.getOrDefault("兵玉x", "0");
-            String y = map.getOrDefault("兵玉y", "0");
-            String wx = map.getOrDefault("突击壁x", "0");
-            String sp0 = map.getOrDefault("1P加速度等级", "0");
-            String sp1 = map.getOrDefault("2P加速度等级", "0");
-            String times = map.getOrDefault("突击段数", "1");
-            boolean isNear = Boolean.parseBoolean(map.getOrDefault("是否为近突击壁", "false"));
-            boolean isBallFirst = Boolean.parseBoolean(map.getOrDefault("兵玉代码在前", "false"));
-            Color color = Color.decode(map.getOrDefault("颜色", "#E03E3E"));
+            String x = org.example.I18n.pick(map, "field.ballX", "0");
+            String y = org.example.I18n.pick(map, "field.ballY", "0");
+            String wx = org.example.I18n.pick(map, "field.wallX", "0");
+            String sp0 = org.example.I18n.pick(map, "field.accel0", "0");
+            String sp1 = org.example.I18n.pick(map, "field.accel1", "0");
+            String times = org.example.I18n.pick(map, "field.stages", "1");
+            boolean isNear = Boolean.parseBoolean(org.example.I18n.pick(map, "field.isNear", "false"));
+            boolean isBallFirst = Boolean.parseBoolean(org.example.I18n.pick(map, "field.ballFirst", "false"));
+            Color color = Color.decode(org.example.I18n.pick(map, "field.color", "#E03E3E"));
 
             return new Trace(x, y, wx, sp0, sp1, times, isNear, isBallFirst, color, name);
         } catch (Exception e) {

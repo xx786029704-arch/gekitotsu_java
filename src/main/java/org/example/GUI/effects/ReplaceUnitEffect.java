@@ -15,16 +15,16 @@ public class ReplaceUnitEffect implements Effect {
     }
 
     @Override
-    public String getName() { return "单位替换"; }
+    public String getName() { return org.example.I18n.t("effect.replace.name"); }
 
     @Override
-    public String getDescription() { return "将一种单位整体替换为另一种单位，保留原有坐标和旋转角。"; }
+    public String getDescription() { return org.example.I18n.t("effect.replace.desc"); }
 
     @Override
     public List<EffectParameter> getParameters() {
         return List.of(
-                new EffectParameter("sourceId", "源单位ID", EffectParameter.Type.STRING, ""),
-                new EffectParameter("targetId", "目标单位ID", EffectParameter.Type.STRING, "")
+                new EffectParameter("sourceId", org.example.I18n.t("effect.replace.source"), EffectParameter.Type.STRING, ""),
+                new EffectParameter("targetId", org.example.I18n.t("effect.replace.target"), EffectParameter.Type.STRING, "")
         );
     }
 

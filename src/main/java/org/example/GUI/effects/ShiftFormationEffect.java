@@ -14,16 +14,16 @@ public class ShiftFormationEffect implements Effect {
     }
 
     @Override
-    public String getName() { return "阵容平移"; }
+    public String getName() { return org.example.I18n.t("effect.shift.name"); }
 
     @Override
-    public String getDescription() { return "将阵容中所有单位（含核心）沿 X/Y 轴平移指定距离。"; }
+    public String getDescription() { return org.example.I18n.t("effect.shift.desc"); }
 
     @Override
     public List<EffectParameter> getParameters() {
         return List.of(
-                new EffectParameter("dx", "X偏移", EffectParameter.Type.INT, 0),
-                new EffectParameter("dy", "Y偏移", EffectParameter.Type.INT, 0)
+                new EffectParameter("dx", org.example.I18n.t("effect.shift.dx"), EffectParameter.Type.INT, 0),
+                new EffectParameter("dy", org.example.I18n.t("effect.shift.dy"), EffectParameter.Type.INT, 0)
         );
     }
 

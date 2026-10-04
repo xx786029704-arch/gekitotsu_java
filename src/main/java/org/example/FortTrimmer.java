@@ -17,7 +17,7 @@ public final class FortTrimmer {
         boolean[] remove = new boolean[src.unitCount];
         for (int idx : removeIndices) {
             if (idx < 0 || idx >= src.unitCount) {
-                throw new IllegalArgumentException("单位索引越界: " + idx);
+                throw new IllegalArgumentException(I18n.t("err.indexOob", idx));
             }
             remove[idx] = true;
         }

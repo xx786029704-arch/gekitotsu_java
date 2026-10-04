@@ -21,11 +21,11 @@ public class AnalysisPanel extends JPanel {
 
     public AnalysisPanel() {
         super(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("分析"));
+        setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("analysis.title")));
 
         textPane = new JTextPane();
         textPane.setEditable(false);
-        textPane.setFont(new Font("黑体", Font.PLAIN, 14));
+        textPane.setFont(org.example.I18n.font(Font.PLAIN, 14));
         textPane.setMargin(new Insets(0, 0, 0, 0));
 
         JScrollPane scrollPane = new JScrollPane(textPane);
@@ -93,7 +93,7 @@ public class AnalysisPanel extends JPanel {
                             : Math.min(-dd + info.cd() + info.at(), dd);
                 if (dd > 3) continue;
 
-                String name = Unit.infos[a.id].name();
+                String name = org.example.I18n.unitName(a.id);
                 String pos = "(" + a.x + ", " + a.y + ")";
                 int severity;
                 String message;
@@ -101,12 +101,12 @@ public class AnalysisPanel extends JPanel {
                 if (dx == 0 && dy == 0 && dr == 0) {
                     severity = 4;
                     message = j == i + 1
-                            ? "多个" + name + "在" + pos + "处完全重叠，可能需要修改"
-                            : "多个" + name + "在" + pos + "处重叠，可能需要修改";
+                            ? org.example.I18n.t("analysis.overlapExact", name, pos)
+                            : org.example.I18n.t("analysis.overlap", name, pos);
                 } else {
                     if ((a.id == 1 || a.id == 7 || a.id == 17 || a.id == 18) && dd > 1) continue;
                     severity = 3;
-                    message = "多个" + name + "在" + pos + "处距离过近，可能需要修改";
+                    message = org.example.I18n.t("analysis.tooClose", name, pos);
                 }
 
                 SimpleAttributeSet style = switch (severity) {
@@ -144,13 +144,13 @@ public class AnalysisPanel extends JPanel {
         if (walls.size() == 1) {
             Unit w = walls.get(0);
             if (w.x % 60 != 54) {
-                appendLine(doc, "壁玉坐标可能需要调整，建议的坐标有[54, 114, 174, 234, 294]", suggest);
+                appendLine(doc, org.example.I18n.t("analysis.wallJade1"), suggest);
             }
         } else {
             for (Unit w : walls) {
                 int m = w.x % 60;
                 if (m != 43 && m != 45 && m != 53 && m != 55) {
-                    appendLine(doc, "壁玉坐标可能需要调整", suggest);
+                    appendLine(doc, org.example.I18n.t("analysis.wallJade2"), suggest);
                     return;
                 }
             }
@@ -163,7 +163,8 @@ public class AnalysisPanel extends JPanel {
             if (u.id != 8 || u.y != 349) continue;
             boolean badAngle = (u.r >= 357 && u.r <= 359) || (u.r >= 0 && u.r <= 1);
             if (badAngle) {
-                appendLine(doc, "枪玉(" + u.x + ", " + u.y + ", " + u.r + ")角度可能需要改为2", suggest);
+                appendLine(doc, org.example.I18n.t("analysis.gunAngle",
+                        org.example.I18n.unitName(8), u.x, u.y, u.r), suggest);
             }
         }
     }
@@ -184,7 +185,8 @@ public class AnalysisPanel extends JPanel {
                 Unit u = units.get(i);
                 if (!u.isWallLike() && u.id != 18) {
                     Unit h = units.get(healerIdx);
-                    appendLine(doc, "愈玉(" + h.x + ", " + h.y + ", " + h.r + ")可能需要前置", suggest);
+                    appendLine(doc, org.example.I18n.t("analysis.healerFront",
+                            org.example.I18n.unitName(18), h.x, h.y, h.r), suggest);
                     break;
                 }
             }
@@ -195,7 +197,8 @@ public class AnalysisPanel extends JPanel {
                 Unit u = units.get(i);
                 if (u.isWall()) {
                     Unit r = units.get(repairIdx);
-                    appendLine(doc, "缮玉(" + r.x + ", " + r.y + ", " + r.r + ")可能需要前置", suggest);
+                    appendLine(doc, org.example.I18n.t("analysis.repairFront",
+                            org.example.I18n.unitName(17), r.x, r.y, r.r), suggest);
                     break;
                 }
             }
@@ -215,7 +218,7 @@ public class AnalysisPanel extends JPanel {
 
     private SimpleAttributeSet mkStyle(Color fg) {
         SimpleAttributeSet s = new SimpleAttributeSet();
-        StyleConstants.setFontFamily(s, "黑体");
+        StyleConstants.setFontFamily(s, org.example.I18n.fontFamily());
         StyleConstants.setFontSize(s, 14);
         StyleConstants.setForeground(s, fg != null ? fg : textPane.getForeground());
         return s;

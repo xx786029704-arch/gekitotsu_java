@@ -14,10 +14,10 @@ public class RotateWallsEffect implements Effect {
     }
 
     @Override
-    public String getName() { return "要塞壁随机旋转"; }
+    public String getName() { return org.example.I18n.t("effect.rotateWalls.name"); }
 
     @Override
-    public String getDescription() { return "将所有要塞壁的角度随机化。"; }
+    public String getDescription() { return org.example.I18n.t("effect.rotateWalls.desc"); }
 
     @Override
     public Formation execute(Formation input, Map<String, Object> params) {
