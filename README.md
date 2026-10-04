@@ -9,6 +9,7 @@
 English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 GekitotsuKit is a fan-made toolkit built on a faithful reimplementation of the Gekitotsu Fortress physics engine. It provides batch battle simulation, a fortress workbench with a pluggable effect system, trajectory prediction, a unit dex, contribution analysis and curated community links. It is designed for advanced and hardcore players who want to study, verify and optimize their fortresses.
+For performance reasons, the engine uses geometric collision instead of pixel-perfect collision. Individual match results may therefore differ from the original game, but win rates remain accurate to roughly ±5% given a sufficiently large sample size.
 
 > This is an unofficial fan project. It is not affiliated with, endorsed by, or connected to the original game or its author.
 
@@ -201,19 +202,25 @@ Input files may be UTF-8 or GBK; the reader auto-detects a BOM and decodes accor
 
 ## FAQ
 
-**Q1. "formula.json not found" at startup.**
+**Q1. Why do simulation results differ from the original game?**
+The original game runs on the Flash engine, while this project uses a Java engine. In some places the engine uses collision rules that differ from the original to speed up simulation.
+
+**Q2. Do special techniques that rely on quirks of the original game still work?**
+The simulator reproduces techniques such as Box Assault (箱突), Double Repair-Heal (二倍缮愈), Two-Stage Assault (二段突击) and Impact Drop (撞击下落), which cover most practical cases. Extremely precise techniques (e.g. four-stage assault or other delicate structures) may differ slightly from the original game.
+
+**Q3. "formula.json not found" at startup.**
 The resource file is missing. When running from source, make sure that all files from `src/main/resources` are present under `target/classes` (running `build_exe.bat` copies them automatically; IntelliJ IDEA usually does too).
 
-**Q2. Simulation results look wrong.**
+**Q4. Simulation results look wrong.**
 Check the fortress code format (`name&code`) and the unit coordinates. Validate the code with the workbench parser first.
 
-**Q3. An effect plugin does not appear.**
+**Q5. An effect plugin does not appear.**
 Make sure the plugin JAR is in the `effects/` directory, implements the `Effect` interface and is registered via `ServiceLoader`. See `effects/samples/CopyAndRenameEffect.java`. A plugin JAR whose filename starts with `_` is disabled.
 
-**Q4. Parts of the UI did not refresh after switching themes.**
+**Q6. Parts of the UI did not refresh after switching themes.**
 Theme switching refreshes all tabs. If anything still looks wrong, restart the application.
 
-**Q5. How do I build the EXE?**
+**Q7. How do I build the EXE?**
 Run `build_exe.bat` in the project root. The output goes to `dist/`:
 
 - `dist/激突Kit/激突Kit.exe` — application image
@@ -223,6 +230,10 @@ The first build is slow because a JRE runtime is generated; later builds reuse `
 
 ## Credits
 
-Created by **XX**, **Claude Code**, **15222HGH** and **MKTL**.
+Created by **XX**, **DeepSeek**, **15222HGH** and **MKTL**.
 
 Gekitotsu Fortress (激突要塞) and all game assets belong to their original authors. This project is an unofficial fan work.
+
+## License
+
+Released under the [MIT License](LICENSE).
