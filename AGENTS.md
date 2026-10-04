@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## 构建与运行
 
@@ -54,8 +54,9 @@ jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
 
 **主框架：**
 - **SplashWindow.java** — 启动开屏窗口。无边框半透明 `JWindow`：圆角卡片 + 软件图标 + 状态文字 + 循环进度条，在公式表与主界面加载期间立即显示以提供反馈；`Main.main()` 在 EDT 创建，`MainGUI` 的 `windowOpened` 时淡出关闭
-- **MainGUI.java** — 主窗口。菜单栏（深色主题切换 + 退出）+ 5 个标签页容器 + 主题色快捷按钮 + 生命周期管理。`updateDarkMode()` 统一传播深色模式到各子标签页
+- **MainGUI.java** — 主窗口。菜单栏（深色主题切换 + 退出）+ 6 个标签页容器 + 主题色快捷按钮 + 生命周期管理。`updateDarkMode()` 统一传播深色模式到各子标签页
 - **BattleTab.java** — 对战控制标签页。设置面板 + 阵容编辑器（自动保存）+ 结果查看 + SwingWorker 批量模拟
+- **ContributionTab.java** — 贡献分析标签页。输入玩家阵型 + 评判阵集，枚举/采样删除 n 个单位的组合批量对战，按胜率变化或每费变化排序展示组合排行与单位汇总，可复制删除后的阵型代码
 - **CraftTab.java** — 阵型工作台标签页。三列布局 + 管线协调 + 工作流编排 + 效果插件系统 + Delete 键快捷删除节点
 - **UnitDexTab.java** — 单位图鉴标签页。`null` layout 1/5-4/5 比例分割：左侧 63 个单位缩略图列表（32x32）+ 右侧详情面板。深色模式切换时重建列表条目
 - **LinkTab.java** — 友情链接标签页。分类展示原作官网/国内社区/日本社区资源链接，悬停高亮 + 点击打开浏览器
@@ -96,6 +97,12 @@ jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
 - **AssaultDetector.java** — 突击检测器。`detect(units)` 找到所有突击壁（Far=56/Near=55）并检测其 HitsJump 形状内的兵玉，返回 `AssaultGroup` 列表。冲突解决：Far 优先于 Near ；Near 冲突取代码靠前；Far 冲突取 `wall.x + (unitIdx>wallIndex?1:0)` 较大者。`checkQuickestX(groups)` 检测每组中每种兵玉是否采用最速 x 坐标，未采用则生成建议。`isInJumpRange(unit, wall)` 复刻 HitsJump 的 Wall 形判定（中心 `(wall.x, wall.y-35)`，x 偏移 +0.3）
 - **AssaultGroup.java** — 突击组数据类。`isFar`（true=远突击）、`wallX/wallY/wallIndex`、`unitsBefore/unitsAfter`（代码顺序在壁之前/之后的兵玉）。`mergeNear(other)` 合并两个 Near 组
 
+**贡献分析子系统：**
+- **ContributionAnalyzer.java** — 核心逻辑。解析输入、组合枚举/采样、独立线程池滑动窗口批量对战、聚合与排序、复制代码生成。不修改模拟引擎
+- **ComboSelector.java** — 组合枚举与采样。C(N,n) 计算、字典序排名/反解、Floyd 算法随机采样、全遍历；组合数上限 `MAX_SAMPLES`（100 万）
+- **FortTrimmer.java** — 从 CompiledFort 过滤掉指定索引的单位生成新阵型（单位顺序、随机种子保持不变）
+- **ContributionTab.java** — GUI。数据输入/参数调节/结果显示三面板；探索率 m（0~100%）、删除数 n、线程数；结果表点击表头排序（初始按胜率变化量降序）；基线先显示、滑动窗口进度、ETA、可取消；n=1 时只显示单位汇总页签；组合数超上限时禁止开始
+
 **单位图鉴子系统：**
 - **UnitDexTab.java** — 单位图鉴主标签页。`null` layout + `doLayout()` 比例布局（左 1/5 + 右 4/5）。左侧为 `BoxLayout.Y_AXIS` 单位列表 + `JScrollPane`，右侧为 `UnitDexDetailPanel`。JSON 加载用 Jackson 从 `unit_details.json` 读取。全局 AWT 点击监听取消选择
 - **UnitDexEntryPanel.java** — 单位列表条目组件。32x32 `ThumbnailPanel` 缩略图 + 单位名称，`CompoundBorder` 选中高亮（主题色 2px）。贴图加载根据 `Unit.isCore(id)` 使用 `SpritePanel.coreSpriteScale`/`nonCoreSpriteScale` 计算有效视觉尺寸后等比缩放，核心单位缩略图按 0.5x 有效比例补偿
@@ -110,6 +117,7 @@ jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
 
 **通用组件：**
 - **ColorPicker.java** — HSB/RGB 取色器对话框。`ColorPicker.showDialog(parent, initial, darkMode, showReset)` 静态方法
+- **WrapLayout.java** — 可换行 FlowLayout。按容器宽度计算多行高度并自动增高容器，解决窄窗口下参数行被裁切的问题
 - **FixedJTextArea.java** / **FixedTextAreaUI.java** / **FixedWrappedPlainView.java** — 修复 JDK `WrappedPlainView.viewToModel` 中 `round=false` 的光标向下取整问题
 
 GUI 全局字体为 `黑体`，UI 文案和注释使用中文。
