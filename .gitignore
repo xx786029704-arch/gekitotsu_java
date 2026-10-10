@@ -13,6 +13,26 @@ target/
 /battle_cache.bin
 /battle_cache.bin.tmp
 
+### 运行时数据与生成文件（不随仓库分发） ###
+/config.ini
+/1P.txt
+/2P.txt
+/result.txt
+/simple_result.txt
+/formula.json
+/*.bak-*
+/dependency-reduced-pom.xml
+
+### AI 工具本地配置（不随仓库分发） ###
+/AGENTS.md
+/CLAUDE.md
+/.claude/
+/.codex/
+/.agents/
+
+### IntelliJ IDEA（本地配置，不随仓库分发） ###
+/.idea/
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
