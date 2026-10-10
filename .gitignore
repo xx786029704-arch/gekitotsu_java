@@ -4,6 +4,15 @@ target/
 !**/src/test/**/target/
 .kotlin
 
+### 本地原生库副本（由 build_native.ps1 生成） ###
+/native/
+
+### 阵集强度 / 对局持久缓存（运行时生成） ###
+/strength_cache.bin
+/strength_cache.bin.tmp
+/battle_cache.bin
+/battle_cache.bin.tmp
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml

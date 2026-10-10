@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 构建与运行
 
-项目版本 v1.8.0，JDK 21，依赖 FlatLaf 3.5.4 + Jackson 2.18.3。Maven 不在 PATH 中，日常开发用 javac 直接编译；打包时需用 Maven 或手动构建 fat JAR（见下文）。
+项目版本 v1.9.1，JDK 21，依赖 FlatLaf 3.5.4 + Jackson 2.18.3。Maven 不在 PATH 中，日常开发用 javac 直接编译；打包时需用 Maven 或手动构建 fat JAR（见下文）。
 
 ```
 # 编译（需指定 FlatLaf + Jackson classpath，注意 GUI/effects 子包）
@@ -26,7 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # 2. 解压依赖 JAR 到临时目录，合并 target/classes + src/main/resources
 # 3. jar cmf META-INF/MANIFEST.MF gekitotsu_java-1.8.0.jar .
 # 4. jpackage 生成 EXE（复用已打包的 runtime）：
-jpackage --type app-image --name "激突Kit" --app-version 1.8.0 \
+jpackage --type app-image --name "激突Kit" --app-version 1.9.1 \
   --input <jar-dir> --main-jar gekitotsu_java-1.8.0.jar \
   --main-class org.example.Main --icon assets/icon.ico \
   --runtime-image dist/激突Kit/runtime --dest dist
@@ -201,7 +201,7 @@ GUI 字体统一通过 `I18n.font(...)` 创建（中文 黑体 / 日文 Meiryo /
 | 突击 / 突击壁 | 乗り込み / 乗り込み壁 | assault / assault wall |
 | 要塞壁 | 要塞壁 | wall |
 | 核心 | コア | core |
-| 阵型 / 阵容 | 陣形 | fortress |
+| 阵型 / 阵容 | 要塞 | fortress |
 | 对战 | 対戦 | battle |
 | 最速行动 | 最速行動 | quickest action |
 | 军资金 | 軍資金 | cost |

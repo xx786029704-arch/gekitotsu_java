@@ -24,6 +24,7 @@ public class BattleTab extends JPanel {
     private final JCheckBox showHpCheck;
     private final JCheckBox wordWrapCheck;
     private final JButton battleButton;
+    private final JLabel engineLabel;
     private final JProgressBar progressBar;
     private final JLabel statusLabel;
     private final JLabel timeLabel;
@@ -76,6 +77,10 @@ public class BattleTab extends JPanel {
 
         battleButton = new JButton(org.example.I18n.t("battle.start"));
         settingsPanel.add(battleButton);
+
+        engineLabel = new JLabel();
+        refreshEngineLabel();
+        settingsPanel.add(engineLabel);
 
         add(settingsPanel, BorderLayout.NORTH);
 
@@ -159,6 +164,11 @@ public class BattleTab extends JPanel {
 
     private void startBattle() {
         applySettings();
+        // 先同步落盘编辑器内容，避免 500ms 自动保存防抖导致本轮读取到旧阵型
+        p1SaveTimer.stop();
+        p2SaveTimer.stop();
+        saveFile("1P.txt", p1TextArea);
+        saveFile("2P.txt", p2TextArea);
         setButtonsEnabled(false);
         progressBar.setValue(0);
         statusLabel.setText(org.example.I18n.t("battle.simulating"));
@@ -168,8 +178,10 @@ public class BattleTab extends JPanel {
         SwingWorker<List<Main.FortStats>, Integer> worker = new SwingWorker<>() {
             @Override
             protected List<Main.FortStats> doInBackground() {
-                Main.p1List = Setting.CompileForts("1P.txt");
-                Main.p2List = Setting.CompileForts("2P.txt");
+                Main.p1Raws = Setting.ReadFortsRaw("1P.txt");
+                Main.p2Raws = Setting.ReadFortsRaw("2P.txt");
+                Main.p1List = Setting.compileAll(Main.p1Raws);
+                Main.p2List = Setting.compileAll(Main.p2Raws);
                 return Main.runAllBattles(this::publish);
             }
 
@@ -217,6 +229,17 @@ public class BattleTab extends JPanel {
             }
         };
         worker.execute();
+    }
+
+    private void refreshEngineLabel() {
+        if (org.example.rust.RustBattle.available()) {
+            engineLabel.setText(org.example.I18n.t("battle.engineRust"));
+            engineLabel.setToolTipText(org.example.I18n.t("battle.engineTipRust"));
+        } else {
+            engineLabel.setText(org.example.I18n.t("battle.engineJava"));
+            engineLabel.setToolTipText(org.example.I18n.t("battle.engineTipJava",
+                    org.example.rust.RustBattle.unavailableReason()));
+        }
     }
 
     private void setButtonsEnabled(boolean enabled) {

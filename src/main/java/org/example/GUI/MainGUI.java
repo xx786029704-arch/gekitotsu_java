@@ -13,7 +13,7 @@ public class MainGUI extends JFrame {
     private final CraftTab craftTab;
     private final UnitDexTab unitDexTab;
     private final LinkTab linkTab;
-    private final ContributionTab contributionTab;
+    private final BehaviorAnalysisTab behaviorTab;
 
     public MainGUI() {
         setTitle("激突Kit v" + Main.VERSION);
@@ -49,6 +49,17 @@ public class MainGUI extends JFrame {
         fileMenu.add(langMenu);
         fileMenu.addSeparator();
 
+        JMenuItem checkUpdateItem = new JMenuItem(org.example.I18n.t("menu.checkUpdate"));
+        checkUpdateItem.addActionListener(e -> {
+            checkUpdateItem.setEnabled(false);
+            checkUpdateItem.setText(org.example.I18n.t("menu.checkingUpdate"));
+            org.example.UpdateChecker.checkManual(this, () -> {
+                checkUpdateItem.setEnabled(true);
+                checkUpdateItem.setText(org.example.I18n.t("menu.checkUpdate"));
+            }, this::shutdown);
+        });
+        fileMenu.add(checkUpdateItem);
+
         JMenuItem aboutItem = new JMenuItem(org.example.I18n.t("menu.about"));
         aboutItem.addActionListener(e -> {
             String msg = String.format(
@@ -76,8 +87,8 @@ public class MainGUI extends JFrame {
         // 主标签页
         JTabbedPane mainTabs = new JTabbedPane();
         mainTabs.addTab(org.example.I18n.t("tab.battle"), new BattleTab());
-        contributionTab = new ContributionTab();
-        mainTabs.addTab(org.example.I18n.t("tab.contribution"), contributionTab);
+        behaviorTab = new BehaviorAnalysisTab();
+        mainTabs.addTab(org.example.I18n.t("tab.behavior"), behaviorTab);
         traceTab = new TraceTab(this);
         mainTabs.addTab(org.example.I18n.t("tab.trace"), traceTab);
         craftTab = new CraftTab(this);
@@ -111,6 +122,9 @@ public class MainGUI extends JFrame {
                 shutdown();
             }
         });
+
+        // 启动后异步检查更新（失败静默，不阻塞启动；语言切换重建窗口时不会重复检查）
+        org.example.UpdateChecker.checkOnStartup(this, this::shutdown);
     }
 
     /** 添加一个语言单选菜单项；点击后保存设置并重建主窗口使新语言生效。 */
@@ -213,8 +227,8 @@ public class MainGUI extends JFrame {
     }
 
     private void updateDarkMode() {
-        if (contributionTab != null) {
-            contributionTab.updateDarkMode();
+        if (behaviorTab != null) {
+            behaviorTab.updateDarkMode();
         }
         if (traceTab != null) {
             traceTab.updateDarkMode();

@@ -20,6 +20,7 @@ public class EffectRegistry {
                 "org.example.GUI.effects.RotateWallsEffect",
                 "org.example.GUI.effects.FrontHealerRepairEffect",
                 "org.example.GUI.effects.TopTargetEffect",
+                "org.example.GUI.effects.NormalizeAnglesEffect",
         };
         for (String className : builtins) {
             try {

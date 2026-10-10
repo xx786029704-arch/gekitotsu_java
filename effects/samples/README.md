@@ -1,21 +1,25 @@
 # 自定义 Effect 开发指南
 
+> 项目源码：<https://github.com/xx786029704-arch/gekitotsu_java>
+>
+> `Effect` 接口定义、内置效果实现与示例插件源码（`src/main/java/org/example/GUI/effects/`、`effects/samples/`）均可在此查阅，欢迎随时参考。
+
 ## 目录结构
 
 ```
 effects/
 ├── build_plugin.bat            ← 一键编译打包工具（双击即可使用）
-├── _example_sort_units.jar     ← 示例插件（已禁用，去掉 _ 前缀即启用）
+├── _CopyAndRenameEffect.jar    ← 示例插件「重影幻视」（默认禁用，去掉 _ 前缀即启用）
 └── samples/
-    ├── SortUnitsEffect.java    ← 示例源码（含详细注释）
-    └── README.md               ← 本文件
+    ├── CopyAndRenameEffect.java    ← 示例源码（含详细注释）
+    └── README.md                   ← 本文件
 ```
 
 ## 快速开始（推荐方式）
 
 ### 1. 编写 Java 源文件
 
-复制 `effects/samples/SortUnitsEffect.java` 作为模板，修改其中的逻辑。
+复制 `effects/samples/CopyAndRenameEffect.java` 作为模板，修改其中的逻辑。
 
 需要重写的方法：
 

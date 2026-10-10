@@ -62,21 +62,30 @@ public final class ContributionAnalyzer {
     public static Report analyze(String playerText, String evalText, Params params,
                                  ProgressListener listener, BooleanSupplier cancelled) throws Exception {
         long startNanos = System.nanoTime();
+        boolean useRust = org.example.rust.RustBattle.available();
 
-        List<CompiledFort> playerForts = Setting.parseForts(playerText);
-        if (playerForts.size() != 1) {
+        List<Fort> playerRaws = Setting.parseFortsRaw(playerText);
+        if (playerRaws.size() != 1) {
             throw new IllegalArgumentException(I18n.t("contrib.err.oneFort"));
         }
-        CompiledFort player = playerForts.get(0);
+        String playerCode = playerRaws.get(0).code();
+        CompiledFort player = Main.compileFort(playerRaws.get(0));
         Formation formation = Formation.decode(playerText.trim());
         int unitCount = player.unitCount;
         if (formation.units.size() - 1 != unitCount) {
             throw new IllegalArgumentException(I18n.t("contrib.err.mismatch"));
         }
 
-        List<CompiledFort> evalForts = Setting.parseForts(evalText);
-        if (evalForts.isEmpty()) {
+        List<Fort> evalRaws = Setting.parseFortsRaw(evalText);
+        if (evalRaws.isEmpty()) {
             throw new IllegalArgumentException(I18n.t("contrib.err.emptyEval"));
+        }
+        List<CompiledFort> evalForts = useRust ? null : Setting.compileAll(evalRaws);
+        String[] evalCodes = useRust ? new String[evalRaws.size()] : null;
+        if (useRust) {
+            for (int i = 0; i < evalRaws.size(); i++) {
+                evalCodes[i] = evalRaws.get(i).code();
+            }
         }
 
         int n = params.deleteCount();
@@ -99,7 +108,7 @@ public final class ContributionAnalyzer {
                 ComboSelector.plan(unitCount, n, params.explorationPercent(), new Random());
         List<int[]> combos = selection.materialize();
         int k = combos.size();
-        int m = evalForts.size();
+        int m = evalRaws.size();
         int threads = Math.max(1, Math.min(256, params.threads()));
         long totalBattles = (long) (k + 1) * m;
         int window = Math.max(64, threads * 4);
@@ -107,6 +116,7 @@ public final class ContributionAnalyzer {
         int[] baselineCounts = new int[4];
         int[] comboCounts = new int[k * 4];
         Map<Integer, CompiledFort> activeForts = new HashMap<>();
+        Map<Integer, String> activeCodes = new HashMap<>();
         int[] pendingBattles = new int[k];
         int errors = 0;
         int battlesDone = 0;
@@ -126,21 +136,38 @@ public final class ContributionAnalyzer {
                     int oppIdx = job < m ? job : (job - m) % m;
                     // 惰性裁剪：只保留窗口内仍有在途对战的组合，避免一次性持有全部裁剪结果
                     final CompiledFort p1;
+                    final String p1Code;
                     if (comboIdx < 0) {
                         p1 = player;
+                        p1Code = playerCode;
                     } else {
-                        CompiledFort active = activeForts.get(comboIdx);
-                        if (active == null) {
-                            active = FortTrimmer.trim(player, combos.get(comboIdx));
-                            activeForts.put(comboIdx, active);
+                        if (useRust) {
+                            p1 = null;
+                            String active = activeCodes.get(comboIdx);
+                            if (active == null) {
+                                active = FortTrimmer.trimCode(playerCode, combos.get(comboIdx));
+                                activeCodes.put(comboIdx, active);
+                            }
+                            p1Code = active;
+                        } else {
+                            p1Code = null;
+                            CompiledFort active = activeForts.get(comboIdx);
+                            if (active == null) {
+                                active = FortTrimmer.trim(player, combos.get(comboIdx));
+                                activeForts.put(comboIdx, active);
+                            }
+                            p1 = active;
                         }
-                        p1 = active;
                         pendingBattles[comboIdx]++;
                     }
-                    CompiledFort p2 = evalForts.get(oppIdx);
+                    final CompiledFort p2 = useRust ? null : evalForts.get(oppIdx);
+                    final String p2Code = useRust ? evalCodes[oppIdx] : null;
                     completion.submit(() -> {
                         try {
-                            Result r = new GameTask().run_single(p1, p2);
+                            Result r = useRust
+                                    ? org.example.rust.RustBattle.runSingle(
+                                            p1Code, p2Code, Main.MAX_FRAME_LIMIT)
+                                    : new GameTask().run_single(p1, p2);
                             return new int[]{comboIdx, r.status};
                         } catch (Exception t) {
                             return new int[]{comboIdx, -2};
@@ -172,6 +199,7 @@ public final class ContributionAnalyzer {
                     comboCounts[res[0] * 4 + bucket]++;
                     if (--pendingBattles[res[0]] == 0) {
                         activeForts.remove(res[0]);
+                        activeCodes.remove(res[0]);
                     }
                 }
                 long now = System.nanoTime();

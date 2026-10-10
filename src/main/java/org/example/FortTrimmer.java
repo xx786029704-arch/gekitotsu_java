@@ -6,6 +6,29 @@ public final class FortTrimmer {
     private FortTrimmer() {}
 
     /**
+     * 在原始阵型代码上删除指定索引的单位（0 基，对应第一个非核心单位），
+     * 用于把裁剪后的阵型直接交给 Rust 模拟器，避免重编码引入差异。
+     */
+    public static String trimCode(String code, int[] removeIndices) {
+        int unitCount = code.length() / 6 - 1;
+        boolean[] remove = new boolean[unitCount];
+        for (int idx : removeIndices) {
+            if (idx < 0 || idx >= unitCount) {
+                throw new IllegalArgumentException(I18n.t("err.indexOob", idx));
+            }
+            remove[idx] = true;
+        }
+        StringBuilder sb = new StringBuilder(code.length());
+        sb.append(code, 0, 6);
+        for (int i = 0; i < unitCount; i++) {
+            if (!remove[i]) {
+                sb.append(code, (i + 1) * 6, (i + 2) * 6);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * 删除指定索引的单位，返回新的 CompiledFort（核心字段、单位顺序与随机种子保持不变，
      * 返回的数组不与 src 共享引用）。
      *

@@ -16,6 +16,7 @@ public class Main {
     public static boolean DARK_MODE = true;
     public static String ACCENT_COLOR = "#2675BF";
     public static String LANGUAGE = I18n.detectSystemLang();   //zh/ja/en
+    public static String SKIP_UPDATE_VERSION = "";    //用户选择不再提示的版本号
     public static int MAX_THREADS = Runtime.getRuntime().availableProcessors();
     public static final String CONFIG_FILE = "config.ini";
 
@@ -23,6 +24,9 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     public static List<CompiledFort> p1List;
     public static List<CompiledFort> p2List;
+    /** 与 p1List/p2List 对应的原始阵型（名称 + 清洗后代码），供 Rust 模拟器直接使用。 */
+    public static List<Fort> p1Raws;
+    public static List<Fort> p2Raws;
     public static ExecutorService pool;
     public static FormulaTable formulaTable;
 
@@ -64,8 +68,10 @@ public class Main {
         Setting.loadConfig();
         pool = Executors.newFixedThreadPool(MAX_THREADS);
         System.out.println(I18n.t("main.importing"));
-        p1List = Setting.CompileForts("1P.txt");
-        p2List = Setting.CompileForts("2P.txt");
+        p1Raws = Setting.ReadFortsRaw("1P.txt");
+        p2Raws = Setting.ReadFortsRaw("2P.txt");
+        p1List = Setting.compileAll(p1Raws);
+        p2List = Setting.compileAll(p2Raws);
         System.out.println(I18n.t("main.importDone"));
         while (Setting.setting(scanner)) {
             runAllBattles(null);
@@ -90,87 +96,123 @@ public class Main {
     public static java.util.List<FortStats> runAllBattles(java.util.function.Consumer<Integer> onProgress) {
         long total_start = System.nanoTime();
 
-        java.util.List<java.util.concurrent.Future<Result>> futures = new java.util.ArrayList<>();
-        java.util.List<String> meta = new java.util.ArrayList<>();
-        for (int j = 0; j < p1List.size(); j++) {
-            for (int i = 0; i < p2List.size(); i++) {
-                CompiledFort f1 = p1List.get(j);
-                CompiledFort f2 = p2List.get(i);
+        int p1Count = p1List.size();
+        int p2Count = p2List.size();
 
+        java.util.List<String> meta = new java.util.ArrayList<>(p1Count * p2Count);
+        for (int j = 0; j < p1Count; j++) {
+            for (int i = 0; i < p2Count; i++) {
                 int roundIndex = j * 200 + i + 1;
+                meta.add(I18n.t("result.round", roundIndex, p1List.get(j).name, p2List.get(i).name));
+            }
+        }
 
-                futures.add(pool.submit(() -> {
-                    GameTask g = new GameTask();
-                    return g.run_single(f1, f2);
-                }));
+        java.util.List<Result> results = new java.util.ArrayList<>(meta.size());
+        java.util.List<String> errors = new java.util.ArrayList<>(meta.size());
 
-                meta.add(I18n.t("result.round", roundIndex, f1.name, f2.name));
+        boolean rustReady = org.example.rust.RustBattle.available()
+                && p1Raws != null && p2Raws != null
+                && p1Raws.size() == p1Count && p2Raws.size() == p2Count;
+        if (rustReady) {
+            String[] codes1 = new String[p1Count];
+            String[] codes2 = new String[p2Count];
+            for (int j = 0; j < p1Count; j++) {
+                codes1[j] = p1Raws.get(j).code();
+            }
+            for (int i = 0; i < p2Count; i++) {
+                codes2[i] = p2Raws.get(i).code();
+            }
+            org.example.rust.RustBattle.BatchCallback callback = onProgress == null
+                    ? null : (done, total) -> onProgress.accept(done);
+            results = org.example.rust.RustBattle.runBatch(
+                    codes1, codes2, MAX_FRAME_LIMIT, MAX_THREADS, callback);
+            for (int i = 0; i < results.size(); i++) {
+                errors.add(null);
+            }
+        } else {
+            final boolean cacheable = p1Raws != null && p2Raws != null
+                    && p1Raws.size() == p1Count && p2Raws.size() == p2Count;
+            java.util.List<java.util.concurrent.Future<Result>> futures = new java.util.ArrayList<>();
+            for (int j = 0; j < p1Count; j++) {
+                for (int i = 0; i < p2Count; i++) {
+                    final int jj = j;
+                    final int ii = i;
+                    CompiledFort f1 = p1List.get(j);
+                    CompiledFort f2 = p2List.get(i);
+                    futures.add(pool.submit(() -> cacheable
+                            ? BattleCache.cached("java", p1Raws.get(jj).code(), p2Raws.get(ii).code(),
+                                    MAX_FRAME_LIMIT, () -> new GameTask().run_single(f1, f2))
+                            : new GameTask().run_single(f1, f2)));
+                }
+            }
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    results.add(futures.get(i).get());
+                    errors.add(null);
+                    if (onProgress != null) {
+                        onProgress.accept(i + 1);
+                    }
+                } catch (Exception e) {
+                    Throwable cause = e.getCause();
+                    Objects.requireNonNullElse(cause, e).printStackTrace();
+                    results.add(null);
+                    errors.add(String.valueOf(cause != null ? cause : e));
+                }
             }
         }
 
         StringBuilder final_result = new StringBuilder();
         StringBuilder simple_result = new StringBuilder();
         java.util.List<FortStats> statsList = new java.util.ArrayList<>();
-        int done = 0;
         int score = 0;
         int win = 0;
         int lose = 0;
         int draw = 0;
         int unknown = 0;
-        for (int i = 0; i < futures.size(); i++) {
-            try {
-                Result r = futures.get(i).get();
-                final_result.append(meta.get(i)).append("\n");
-                String resultStr = switch (r.status) {
-                    case 1 -> I18n.t("result.p1win");
-                    case 2 -> I18n.t("result.p2win");
-                    case 0 -> I18n.t("result.draw");
-                    case -1 -> I18n.t("result.timeout");
-                    default -> I18n.t("result.abnormal");
-                };
-                final_result.append(I18n.t("result.line", resultStr, r.winnerHp, r.framePassed,
-                                String.format("%.3f", r.timeUsed)))
-                        .append("\n\n");
-                if (i % p2List.size() == 0) {
-                    if (i > 0) {
-                        simple_result.append("\n\n");
-                        statsList.add(new FortStats(
-                                p1List.get((i / p2List.size()) - 1).name,
-                                win, lose, draw, unknown, score, p2List.size()
-                        ));
-                        score = 0;
-                        win = 0;
-                        lose = 0;
-                        draw = 0;
-                        unknown = 0;
-                    }
-                    simple_result.append(p1List.get(i / p2List.size()).name).append(": \n");
-                }
-                simple_result.append(r.getSimpleResult());
-                score += r.getScore();
-                win += r.status == 1 ? 1 : 0;
-                lose += r.status == 2 ? 1 : 0;
-                draw += r.status == 0 ? 1 : 0;
-                unknown += r.status < 0 ? 1 : 0;
-                if ((i + 1) % p2List.size() == 0) {
-                    simple_result.append("\n")
-                            .append(I18n.t("result.stats", p2List.size(), win, lose, draw, unknown,
-                                    (2 * win + draw) * 50F / (win + lose + draw), score));
-                }
-                done++;
-                if (onProgress != null) {
-                    onProgress.accept(done);
-                }
-                System.out.print("\r" + I18n.t("result.progress", done, meta.size()));
-            } catch (Exception e) {
-                Throwable cause = e.getCause();
-
-                Objects.requireNonNullElse(cause, e).printStackTrace();
-                final_result.append(meta.get(i))
-                        .append("\nERROR: ")
-                        .append(cause != null ? cause : e)
-                        .append("\n\n");
+        for (int i = 0; i < results.size(); i++) {
+            final_result.append(meta.get(i)).append("\n");
+            Result r = results.get(i);
+            if (r == null) {
+                final_result.append("ERROR: ").append(errors.get(i)).append("\n\n");
+                continue;
             }
+            String resultStr = switch (r.status) {
+                case 1 -> I18n.t("result.p1win");
+                case 2 -> I18n.t("result.p2win");
+                case 0 -> I18n.t("result.draw");
+                case -1 -> I18n.t("result.timeout");
+                default -> I18n.t("result.abnormal");
+            };
+            final_result.append(I18n.t("result.line", resultStr, r.winnerHp, r.framePassed,
+                            String.format("%.3f", r.timeUsed)))
+                    .append("\n\n");
+            if (i % p2List.size() == 0) {
+                if (i > 0) {
+                    simple_result.append("\n\n");
+                    statsList.add(new FortStats(
+                            p1List.get((i / p2List.size()) - 1).name,
+                            win, lose, draw, unknown, score, p2List.size()
+                    ));
+                    score = 0;
+                    win = 0;
+                    lose = 0;
+                    draw = 0;
+                    unknown = 0;
+                }
+                simple_result.append(p1List.get(i / p2List.size()).name).append(": \n");
+            }
+            simple_result.append(r.getSimpleResult());
+            score += r.getScore();
+            win += r.status == 1 ? 1 : 0;
+            lose += r.status == 2 ? 1 : 0;
+            draw += r.status == 0 ? 1 : 0;
+            unknown += r.status < 0 ? 1 : 0;
+            if ((i + 1) % p2List.size() == 0) {
+                simple_result.append("\n")
+                        .append(I18n.t("result.stats", p2List.size(), win, lose, draw, unknown,
+                                (2 * win + draw) * 50F / (win + lose + draw), score));
+            }
+            System.out.print("\r" + I18n.t("result.progress", i + 1, meta.size()));
         }
         // Add last fort stats
         if (!p1List.isEmpty()) {

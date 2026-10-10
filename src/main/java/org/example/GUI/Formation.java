@@ -122,9 +122,25 @@ public class Formation {
     public int getAccelLevel(){
         int accelLevel = 0;
         for (Unit u : units) {
-            if (u.id == 29) accelLevel++;
-            else if (u.id == 30) accelLevel+=2;
+            accelLevel += accelPoints(u.id);
         }
         return accelLevel;
+    }
+
+    /** 按单位类型数组统计加速度等级（与 {@link #getAccelLevel()} 同口径；不含核心）。 */
+    public static int accelLevelOf(int[] types) {
+        int accelLevel = 0;
+        for (int type : types) {
+            accelLevel += accelPoints(type);
+        }
+        return accelLevel;
+    }
+
+    /** 红加速器(id 29) +1、蓝加速器(id 30) +2。 */
+    private static int accelPoints(int id) {
+        if (id == 29) {
+            return 1;
+        }
+        return id == 30 ? 2 : 0;
     }
 }

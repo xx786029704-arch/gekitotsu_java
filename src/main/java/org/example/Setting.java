@@ -48,8 +48,10 @@ public class Setting {
                 }
                 case "3":{
                     System.out.println(I18n.t("cli.reloading"));
-                    Main.p1List = Setting.CompileForts("1P.txt");
-                    Main.p2List = Setting.CompileForts("2P.txt");
+                    Main.p1Raws = Setting.ReadFortsRaw("1P.txt");
+                    Main.p2Raws = Setting.ReadFortsRaw("2P.txt");
+                    Main.p1List = Setting.compileAll(Main.p1Raws);
+                    Main.p2List = Setting.compileAll(Main.p2Raws);
                     System.out.println(I18n.t("cli.reloadDone"));
                     break;
                 }
@@ -86,7 +88,7 @@ public class Setting {
         Main.MAX_FRAME_LIMIT = Integer.parseInt(prop.getProperty("MAX_FRAME_LIMIT", "65536"));
         Main.SHOW_REMAIN_HP = Boolean.parseBoolean(prop.getProperty("SHOW_REMAIN_HP", "false"));
         Main.WORD_WRAP = Boolean.parseBoolean(prop.getProperty("WORD_WRAP", "false"));
-        Main.DARK_MODE = Boolean.parseBoolean(prop.getProperty("DARK_MODE", "false"));
+        Main.DARK_MODE = Boolean.parseBoolean(prop.getProperty("DARK_MODE", "true"));
         Main.ACCENT_COLOR = prop.getProperty("ACCENT_COLOR", "#2675BF");
         String threadsProp = prop.getProperty("MAX_THREADS");
         if (threadsProp != null) {
@@ -95,6 +97,7 @@ public class Setting {
             Main.MAX_THREADS = Runtime.getRuntime().availableProcessors();
         }
         Main.LANGUAGE = prop.getProperty("LANGUAGE", I18n.detectSystemLang());
+        Main.SKIP_UPDATE_VERSION = prop.getProperty("SKIP_UPDATE_VERSION", "");
         I18n.setLang(Main.LANGUAGE);
     }
 
@@ -107,6 +110,7 @@ public class Setting {
         prop.setProperty("ACCENT_COLOR", Main.ACCENT_COLOR);
         prop.setProperty("MAX_THREADS", String.valueOf(Main.MAX_THREADS));
         prop.setProperty("LANGUAGE", Main.LANGUAGE);
+        prop.setProperty("SKIP_UPDATE_VERSION", Main.SKIP_UPDATE_VERSION);
 
         try (FileOutputStream fos = new FileOutputStream(Main.CONFIG_FILE)) {
             prop.store(fos, "Game Config");
@@ -117,8 +121,7 @@ public class Setting {
 
     public static List<CompiledFort> CompileForts(String fileName) {
         try {
-            byte[] bytes = Files.readAllBytes(Paths.get(fileName));
-            return parseForts(readUtf8(bytes));
+            return parseForts(readFileText(fileName));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(I18n.t("cli.readFail", fileName));
@@ -126,9 +129,37 @@ public class Setting {
         }
     }
 
+    /** 读取文件并做与 {@link #parseForts} 相同的清洗/校验，返回原始阵型（名称 + 清洗后代码）。 */
+    public static List<Fort> ReadFortsRaw(String fileName) {
+        try {
+            return parseFortsRaw(readFileText(fileName));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(I18n.t("cli.readFail", fileName));
+            return new ArrayList<>();
+        }
+    }
+
+    private static String readFileText(String fileName) throws IOException {
+        return readUtf8(Files.readAllBytes(Paths.get(fileName)));
+    }
+
+    public static List<CompiledFort> compileAll(List<Fort> forts) {
+        List<CompiledFort> list = new ArrayList<>(forts.size());
+        for (Fort fort : forts) {
+            list.add(Main.compileFort(fort));
+        }
+        return list;
+    }
+
     /** 解析 name&code（多条用 / 分隔）文本；自动剥离 #HP 后缀，畸形条目会被跳过（打印提示），不会抛异常。 */
     public static List<CompiledFort> parseForts(String content) {
-        List<CompiledFort> list = new ArrayList<>();
+        return compileAll(parseFortsRaw(content));
+    }
+
+    /** 与 {@link #parseForts} 相同的解析规则，但保留名称与清洗后的代码，供 Rust 模拟器直接使用。 */
+    public static List<Fort> parseFortsRaw(String content) {
+        List<Fort> list = new ArrayList<>();
         if (content == null) {
             return list;
         }
@@ -160,13 +191,13 @@ public class Setting {
                 if (code.length() < 6) {
                     continue;
                 }
-                list.add(Main.compileFort(new Fort("", code)));
+                list.add(new Fort("", code));
             } else {
                 if (code.length() < 6 || code.length() % 6 != 0) {
                     System.out.println(I18n.t("cli.badCode", name));
                     continue;
                 }
-                list.add(Main.compileFort(new Fort(name, code)));
+                list.add(new Fort(name, code));
             }
         }
         return list;
