@@ -35,8 +35,18 @@ public class WeakCreature extends Round {   //，，弱，，生物
             new HitsDropFrames(game, x, y, game.atk[side], 1, 1.2F);
         }
         int targetRot = Math.round((float) Math.toDegrees(Math.atan2(game.core_y[1 - side] - y, game.core_x[1 - side] - x)));
-        targetRot = (targetRot % 360 + 360) % 360;
+        if (rot - 180 > targetRot) {
+            targetRot += 360;
+        }
+        if (rot + 180 < targetRot) {
+            targetRot -= 360;
+        }
         rot = rot * .875F + targetRot * .125F;
+        if (rot >= 360F) {
+            rot -= 360F;
+        } else if (rot < 0F) {
+            rot += 360F;
+        }
         xs = Utils.cosF(rot) * 3.F;
         ys = Utils.sinF(rot) * 3.F;
         x = x + xs + xs2;

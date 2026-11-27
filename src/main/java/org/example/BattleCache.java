@@ -29,7 +29,7 @@ public final class BattleCache {
 
     private static final String FILE_NAME = "battle_cache.bin";
     private static final int MAGIC = 0x474B4C47;
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     private static final int MAX_ENTRIES = 200_000;
     private static final long MAX_FILE_BYTES = 16L * 1024 * 1024;
     private static final int DATA_BYTES = 32;

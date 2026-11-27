@@ -17,7 +17,7 @@ public class TateBall extends Ball {     //盾玉
         super(GAME, X, Y, R, S, TYPE);
         hp = 30;
         max_hp = 30;
-        flipped = rot >= 90 + side && rot <= 270 + side;
+        flipped = rot >= 90 + side && rot <= 270 - side;
     }
 
     @Override

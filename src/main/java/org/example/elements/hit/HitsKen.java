@@ -24,7 +24,7 @@ public class HitsKen extends EllipticalSector {   //剑玉剑气
         side = S;
         cos_rot = _cos_rot;
         sin_rot = _sin_rot;
-        flipped = R >= 90 + side && R <= 270 + side;
+        flipped = R >= 90 + side && R <= 270 - side;
         id = game.addElement(this);
         game.atk[side].addShape(this);
     }

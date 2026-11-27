@@ -669,7 +669,7 @@ public final class MatchupAnalyzer {
     /** 缓存键：格式版本 + 引擎 + 帧上限 + 阵集代码，取 SHA-256 十六进制（避免键字符串过长）。 */
     private static String strengthCacheKey(List<Fort> raws) {
         StringBuilder sb = new StringBuilder();
-        sb.append("v3|");
+        sb.append("v4|");
         sb.append(RustBattle.available() ? "rust|" + RustBattle.engineVersion() : "java");
         sb.append('|').append(Main.MAX_FRAME_LIMIT);
         for (Fort f : raws) {

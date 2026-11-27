@@ -48,16 +48,44 @@ public class GameTask {
     }
 
     public Result run_single(CompiledFort f1, CompiledFort f2){
+        return run_single(f1, f2, Main.MAX_FRAME_LIMIT);
+    }
+
+    public Result run_single(CompiledFort f1, CompiledFort f2, int maxFrames) {
+        return run_single(f1, f2, maxFrames, null, null);
+    }
+
+    /**
+     * 运行一局可复现、可观测的对战。
+     *
+     * @param randomSeed 外部随机种子；为 null 时沿用由阵型位置生成的默认种子
+     * @param observer   只读观测器；为 null 时没有任何逐帧观测开销
+     */
+    public Result run_single(CompiledFort f1, CompiledFort f2, int maxFrames,
+                             Integer randomSeed, BattleObserver observer) {
+        if (maxFrames < 0) {
+            throw new IllegalArgumentException("maxFrames 不能为负数");
+        }
         long start = System.nanoTime();
         init();
         main_setup(f1, f2);
-        while (time < Main.MAX_FRAME_LIMIT && !end) {
+        // 放在 main_setup 之后，使显式种子不再被阵型核心位置二次改变。
+        if (randomSeed != null) {
+            seeder.setSeed(randomSeed);
+        }
+        if (observer != null) {
+            observer.onBattleStarted(this);
+        }
+        while (time < maxFrames && !end) {
             time++;
             base_move();
             judge();
             update();
             if (elements.deadCount > elements.size >> 1) {
                 elements.compact();
+            }
+            if (observer != null) {
+                observer.onFrameCompleted(this, time);
             }
         }
         int status = -1;
@@ -73,7 +101,11 @@ public class GameTask {
                 status = 0;
             }
         }
-        return new Result(status, winnerHp, time, (System.nanoTime() - start) / 1000000.F);
+        Result result = new Result(status, winnerHp, time, (System.nanoTime() - start) / 1000000.F);
+        if (observer != null) {
+            observer.onBattleFinished(this, result);
+        }
+        return result;
     }
 
     private void base_move(){    //车板移动

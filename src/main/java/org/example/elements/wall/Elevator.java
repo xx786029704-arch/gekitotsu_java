@@ -8,6 +8,8 @@ public class Elevator extends Wall {
 
     public Elevator(GameTask GAME, float X, float Y, int S, int TYPE) {
         super(GAME, X, Y, S, TYPE);
+        max_hp = 75;
+        hp = 75;
     }
 
     public void stepEx(){   //额外行为

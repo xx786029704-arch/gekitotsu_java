@@ -144,14 +144,19 @@ if not exist "%DIST%\runtime_cache" if exist "%DIST%\%APP_NAME%\runtime" (
   xcopy /E /I /Q /Y "%DIST%\%APP_NAME%\runtime" "%DIST%\runtime_cache" > nul
 )
 
-REM === 5. 复制 effects/ 插件目录 + 打包 zip ===
-echo [5/5] 复制插件目录与打包 zip...
+REM === 5. 复制 effects/ 插件目录 + 观战渲染器 + 打包 zip ===
+echo [5/5] 复制插件目录、观战渲染器与打包 zip...
 if exist "%DIST%\%APP_NAME%\effects" rmdir /s /q "%DIST%\%APP_NAME%\effects"
 xcopy /E /I /Q /Y "effects" "%DIST%\%APP_NAME%\effects" > nul
 
+if exist "native\gkt-render.exe" (
+  if not exist "%DIST%\%APP_NAME%\native" mkdir "%DIST%\%APP_NAME%\native"
+  copy /Y "native\gkt-render.exe" "%DIST%\%APP_NAME%\native\gkt-render.exe" > nul
+)
+
 set ZIP_PATH=%DIST%\激突Kit v%VERSION%.zip
 if exist "%ZIP_PATH%" del "%ZIP_PATH%"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Compress-Archive -Path '%DIST%\%APP_NAME%\*' -DestinationPath '%ZIP_PATH%' -Force"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ProgressPreference='SilentlyContinue'; Compress-Archive -Path '%DIST%\%APP_NAME%\*' -DestinationPath '%ZIP_PATH%' -Force"
 if errorlevel 1 (
   echo [警告] zip 打包失败，但 EXE 已生成
   goto :done_warn

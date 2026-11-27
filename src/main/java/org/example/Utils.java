@@ -1,16 +1,36 @@
 package org.example;
 
-import java.util.HashMap;
-
 public class Utils{     //工具类
 
+    /**
+     * 不能为 0：GameTask 会在开局时将该值与双方核心位置的种子因子相乘。
+     * 旧实现从 0 开始，导致阵型种子永远无法生效。
+     */
+    public static final int DEFAULT_SEED = 1;
+
     public Utils() {
-        return;
+        this(DEFAULT_SEED);
     }
 
-    public int universalSeed=0;
+    public Utils(int seed) {
+        setSeed(seed);
+    }
+
+    public int universalSeed;
 
     public static final int randFunc=1;//0～2依次为三个随机选项
+
+    public void setSeed(int seed) {
+        universalSeed = normalizeSeed(seed);
+    }
+
+    public int getSeed() {
+        return universalSeed;
+    }
+
+    public static int normalizeSeed(long seed) {
+        return (int) (seed & 0x7fff_ffffL);
+    }
 
     private static final float[] trigonometricLookup = {
             0F,
@@ -491,8 +511,10 @@ public class Utils{     //工具类
 
     public float random() {//备注：因为as3不会算数，所以这里的随机数没法完美还原
         if (randFunc == 1) {
-            universalSeed = (int) ((long) (universalSeed * 1103515245D + 12345) & 2147483647);
-            return (float) ((universalSeed >> 16) & 32767) / 32768;
+            // 先提升为 long 再相乘。旧实现经由 double 计算，大种子会丢失低位精度。
+            long next = (long) universalSeed * 1_103_515_245L + 12_345L;
+            universalSeed = (int) (next & 0x7fff_ffffL);
+            return (float) ((universalSeed >>> 16) & 0x7fff) / 32_768F;
         }
         return (float) Math.random();
     }

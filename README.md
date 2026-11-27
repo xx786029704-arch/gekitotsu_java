@@ -8,7 +8,7 @@
 
 English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
-GekitotsuKit is a fan-made toolkit built on a faithful reimplementation of the Gekitotsu Fortress physics engine. It provides batch battle simulation, a fortress workbench with a pluggable effect system, trajectory prediction, a unit dex, contribution analysis and curated community links. It is designed for advanced and hardcore players who want to study, verify and optimize their fortresses.
+GekitotsuKit is a fan-made toolkit built on a faithful reimplementation of the Gekitotsu Fortress physics engine. It provides batch battle simulation, a native 2D GPU battle viewer, behavior analysis (contribution analysis, matchup profiling, battlefield space telemetry), a fortress workbench with a pluggable effect system, trajectory prediction, a unit dex, and curated community links. It is designed for advanced and hardcore players who want to study, verify and optimize their fortresses.
 For performance reasons, the engine uses geometric collision instead of pixel-perfect collision. Individual match results may therefore differ from the original game, but win rates remain accurate to roughly ±5% given a sufficiently large sample size.
 
 > This is an unofficial fan project. It is not affiliated with, endorsed by, or connected to the original game or its author.
@@ -17,16 +17,16 @@ For performance reasons, the engine uses geometric collision instead of pixel-pe
 
 | Module | Description |
 |--------|-------------|
-| **Battle Simulation** | Run all-vs-all matches between a 1P fortress list and a 2P fortress list with multi-threaded simulation, progress tracking and win-rate statistics. |
-| **Contribution Analysis** | Remove `n` balls from your fortress, enumerate or sample the combinations, and rank them by win-rate change or change per point of funds. |
-| **Fortress Workbench** | Decode, edit, preview and re-encode fortress codes; inspect units and the core; run a built-in analyzer; apply workflow-based effect plugins. |
+| **Battle Simulation** | Run all-vs-all matches between 1P and 2P fortress lists with multi-threaded simulation (Rust-accelerated `gkt-core` by default with built-in Java fallback), battle caching, progress tracking, win-rate statistics, and a one-click native 2D GPU battle viewer (`gkt-render`). |
+| **Behavior Analysis** | Analyze fortresses against an evaluation set from three perspectives: **Contribution Analysis** (unit removal ranking), **Matchup Profile** (core heatmap, unit sensitivity, duration/HP distribution, acceleration affinity, Keener strength correction), and **Battlefield Space** (slot damage/death heatmap, progression curves, opening pressure via Rust telemetry). |
+| **Fortress Workbench** | Decode, edit, preview and re-encode fortress codes; inspect units and the core; run a built-in analyzer; apply workflow-based effect plugins (including built-in Angle Normalize). |
 | **Trajectory Prediction** | Visualize fortress movement and assault trajectories on an interactive canvas with expressions and user-defined variables. |
 | **Unit Dex** | Browse all 63 units with sprites, stats, descriptions, tactics and a quickest-action calculator. |
 | **Links** | One-click access to the official site and Chinese / Japanese community resources. |
 
-- GUI: Java Swing + FlatLaf 3.5.4, with dark/light theme and a customizable accent color.
-- Engine: zero external dependencies, pure `java.awt` geometry, replicated 1:1 from the Flash game.
-- Language of the UI: Simplified Chinese.
+- GUI: Java Swing + FlatLaf 3.5.4, dark theme by default (dark/light toggle & customizable accent color), startup splash window, and GitHub Releases auto-update check / one-click installer.
+- Engine: Rust `gkt-core` via JNI (`gkt_jni.dll`, bit-exact simulation) with zero-dependency pure Java fallback, plus an independent wgpu/egui 2D battle viewer (`gkt-render.exe`).
+- Language of the UI: Simplified Chinese / Japanese / English (live switching under `Options → Language`).
 
 ## Download & Run
 
@@ -47,21 +47,21 @@ Requirements: JDK 21+ (Maven is optional).
 mvn package
 
 # GUI (default)
-java -jar target/gekitotsu_java-1.8.0.jar
+java -jar target/gekitotsu_java-1.9.2.jar
 
 # CLI
-java -jar target/gekitotsu_java-1.8.0.jar --cli
+java -jar target/gekitotsu_java-1.9.2.jar --cli
 ```
 
-To build the bundled Windows executable, run `build_exe.bat` from the project root. Edit the `JDK_HOME` and `M2` paths at the top of the script to match your environment first. The output is placed in `dist/`:
+To build the bundled Windows executable, run `build_exe.bat` from the project root. Edit the `JDK_HOME` and `M2` paths at the top of the script to match your environment first (and run `build_native.ps1` beforehand if you also want to rebuild `gkt_jni.dll` and `native/gkt-render.exe`). The output is placed in `dist/`:
 
-- `dist/激突Kit/激突Kit.exe` — self-contained application image (with embedded icon)
-- `dist/激突Kit v1.8.0.zip` — release archive
+- `dist/激突Kit/激突Kit.exe` — self-contained application image (with embedded icon, bundled `native/gkt-render.exe` if built)
+- `dist/激突Kit v1.9.2.zip` — release archive
 
 ## Command-line mode
 
 ```bash
-java -jar target/gekitotsu_java-1.8.0.jar --cli
+java -jar target/gekitotsu_java-1.9.2.jar --cli
 ```
 
 The CLI reads `1P.txt` and `2P.txt` (one fortress per line, `name&code`), then shows an interactive menu:
@@ -82,21 +82,24 @@ The CLI reads `1P.txt` and `2P.txt` (one fortress per line, `name&code`), then s
 Runs every pairing of the 1P and 2P fortress lists and reports win-rate statistics.
 
 1. **Edit fortresses** — paste fortress codes into the `1P阵容` and `2P阵容` tabs. Edits are auto-saved to `1P.txt` and `2P.txt` with a 500 ms debounce.
-2. **Set parameters**:
+2. **Set parameters** (auto-wrapping settings bar):
    - **Frame limit** — maximum simulation frames per match (default 65536).
    - **Threads** — number of parallel simulation threads (defaults to the number of CPU cores).
    - **HP score** — include remaining HP in the results.
    - **Word wrap** — wrap long result lines.
-3. **Start** — click `开始模拟`. The progress bar and status line show progress and elapsed time.
+   - **Watch** (rightmost button) — launch the native 2D GPU battle viewer (`gkt-render.exe`) loaded with the current 1P and 2P lists (defaults to the first 1P vs first 2P matchup; other pairings can be switched inside the viewer).
+3. **Start** — click `开始模拟` / `Start Simulation`. The progress bar and status line show progress and elapsed time.
 4. **Review** — the `详细结果` and `简要结果` tabs show the contents of `result.txt` and `simple_result.txt`.
 
-### 2. Contribution Analysis
+### 2. Behavior Analysis
+
+Shares a split input area at the top (**Original fortress** on the left, **Evaluation set** on the right) across three analysis tabs:
+
+#### Contribution Analysis
 
 Measures how much each ball contributes to your fortress's win rate.
 
-1. **Inputs**:
-   - **Original fortress** — the fortress to analyze; can be imported from `1P.txt`.
-   - **Evaluation set** — the opponent fortresses used as a benchmark; can be imported from `1P.txt` / `2P.txt` or cleared.
+1. **Inputs** — import from `1P.txt` / `2P.txt` or paste directly.
 2. **Parameters**:
    - **Exploration rate (%)** — proportion of removal combinations to sample (100% = exhaustive enumeration).
    - **Remove count (n)** — how many balls to remove per combination.
@@ -106,7 +109,25 @@ Measures how much each ball contributes to your fortress's win rate.
 4. **Results**:
    - **Unit summary** tab — average win-rate change and average change per point of funds for each ball.
    - **Combination ranking** tab — the best/worst removal combinations sorted by win-rate change or change per point of funds (click a column header to re-sort). When `n = 1`, only the unit summary is shown.
-   - Select a row and click `复制` (or double-click it) to copy the fortress code with the selected units removed.
+   - Select a row and click `复制` / `Copy` (or double-click it) to copy the fortress code with the selected units removed.
+
+#### Matchup Profile
+
+Summarizes match-outcome patterns across the evaluation set:
+
+- **Core Position** — smoothed win-rate heatmap across opponent core coordinates (`0..276`) with individual sample markers.
+- **Unit Sensitivity** — ranks opponent unit types by win-rate difference with low-sample shrinkage.
+- **Tempo & Margin** — battle duration distribution with win-rate trend and winning-side remaining HP distribution.
+- **Acceleration Affinity** — win rate grouped by opponent acceleration level.
+- **Keener Correction** — estimates opponent strength via an internal evaluation-set round-robin (cached persistently in `strength_cache.bin`) and reports Keener-corrected win rate and ranking.
+
+#### Battlefield Space (requires Rust engine)
+
+Runs Rust telemetry aggregation over filtered matches (`All` / `Wins` / `Losses` / `Draws` / `Timeouts`):
+
+- **Fortress Damage** — bubble or smoothed slot map showing damage taken or death count across your units and walls.
+- **Progression Curve** — time-series curves of remaining HP, alive count, and projectile count grouped by outcome.
+- **Opening Pressure** — distribution of first-contact frames and first core-hit frames for both sides.
 
 ### 3. Trajectory Prediction
 
@@ -150,13 +171,13 @@ The workbench automatically detects the following issues and suggests fixes:
 
 The right column hosts a workflow of effects that transform the current fortress.
 
-- **Effect library** — filter with the search box, then double-click or drag an effect into the workflow panel.
+- **Effect library** — filter with the search box, then double-click or drag an effect into the workflow panel (includes built-in effects such as `Angle Normalize`, which sets wall/core angles to 0).
 - **Nodes** — click to toggle an effect on/off (●/×), double-click to edit parameters, right-click for a context menu, long-press and drag to reorder, or select and press `Delete` to remove.
 - **Errors** — a failing node shows a red border with a ⚠ icon; hover it to see the message.
 
 #### Writing custom effects
 
-Effect plugin JARs live in `effects/`. Drop a `.java` file onto `effects/build_plugin.bat` to compile and package it as a plugin JAR automatically (JDK 21+ required). `effects/samples/CopyAndRenameEffect.java` is a complete example demonstrating all four parameter types (`INT`, `STRING`, `BOOLEAN`, `UNIT_ID`) plus the `validate` / `execute` interface. See `effects/samples/README.md` for details.
+Effect plugin JARs live in `effects/`. Drop a `.java` file onto `effects/build_plugin.bat` to compile and package it as a plugin JAR automatically (JDK 21+ required). `effects/samples/CopyAndRenameEffect.java` is a complete example demonstrating all four parameter types (`INT`, `STRING`, `BOOLEAN`, `UNIT_ID`) plus the `validate` / `execute` interface. Plugin JARs whose filenames start with `_` (such as `_CopyAndRenameEffect.jar`) are disabled by default; remove the `_` prefix to enable them. See `effects/samples/README.md` for details.
 
 ### 5. Unit Dex
 
@@ -221,10 +242,10 @@ Make sure the plugin JAR is in the `effects/` directory, implements the `Effect`
 Theme switching refreshes all tabs. If anything still looks wrong, restart the application.
 
 **Q7. How do I build the EXE?**
-Run `build_exe.bat` in the project root. The output goes to `dist/`:
+Run `build_exe.bat` in the project root (if `native/gkt-render.exe` has been built via `build_native.ps1`, it will be bundled automatically). The output goes to `dist/`:
 
 - `dist/激突Kit/激突Kit.exe` — application image
-- `dist/激突Kit v1.8.0.zip` — release archive
+- `dist/激突Kit v1.9.2.zip` — release archive
 
 The first build is slow because a JRE runtime is generated; later builds reuse `dist/runtime_cache`.
 

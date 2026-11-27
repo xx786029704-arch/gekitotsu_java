@@ -47,7 +47,13 @@ public class WrapLayout extends FlowLayout {
             target.setSize(target.getWidth(), preferred.height);
             Container parent = target.getParent();
             if (parent != null) {
-                parent.revalidate();
+                // layoutContainer 运行在 Container.validate() 内部，调用栈退出时会把祖先的 valid 置回 true；
+                // 若同步调用 parent.revalidate()，排队的 RepaintManager 验证会因 valid==true 而跳过，
+                // 因此延后到当前 validate 结束后再触发一次重排以更新父容器高度。
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    parent.revalidate();
+                    parent.repaint();
+                });
             }
         }
     }

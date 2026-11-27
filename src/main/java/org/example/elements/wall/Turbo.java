@@ -7,8 +7,8 @@ import org.example.elements.Wall;
 public class Turbo extends Wall {
     public Turbo(GameTask GAME, float X, float Y, int S, int TYPE) {
         super(GAME, X, Y, S, TYPE);
-        max_hp = 150;
-        hp = 150;
+        max_hp = 100;
+        hp = 100;
         game.bases[S].axl+=2;
     }
 

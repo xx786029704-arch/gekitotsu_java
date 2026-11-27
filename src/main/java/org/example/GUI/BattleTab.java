@@ -24,6 +24,7 @@ public class BattleTab extends JPanel {
     private final JCheckBox showHpCheck;
     private final JCheckBox wordWrapCheck;
     private final JButton battleButton;
+    private final JButton watchButton;
     private final JLabel engineLabel;
     private final JProgressBar progressBar;
     private final JLabel statusLabel;
@@ -46,10 +47,14 @@ public class BattleTab extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
         // --- 设置栏 ---
-        JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 4));
+        // 左侧设置项用 WrapLayout：窗口变窄时自动换行（FlowLayout 的首选高度恒为单行，多出的控件会被裁掉）；
+        // 观战按钮固定在最右侧，垂直居中
+        JPanel settingsPanel = new JPanel(new BorderLayout(8, 0));
         settingsPanel.setBorder(BorderFactory.createTitledBorder(org.example.I18n.t("battle.settings")));
+        JPanel settingsFlow = new JPanel(new WrapLayout(FlowLayout.LEFT, 16, 4));
+        settingsPanel.add(settingsFlow, BorderLayout.CENTER);
 
-        settingsPanel.add(new JLabel(org.example.I18n.t("battle.frameLimit")));
+        settingsFlow.add(new JLabel(org.example.I18n.t("battle.frameLimit")));
         NumberFormat fmt = NumberFormat.getIntegerInstance();
         fmt.setGroupingUsed(false);
         NumberFormatter nf = new NumberFormatter(fmt);
@@ -58,29 +63,35 @@ public class BattleTab extends JPanel {
         nf.setMaximum(Integer.MAX_VALUE);
         frameLimitField = new JFormattedTextField(nf);
         frameLimitField.setPreferredSize(new Dimension(80, 22));
-        settingsPanel.add(frameLimitField);
+        settingsFlow.add(frameLimitField);
 
-        settingsPanel.add(new JLabel(org.example.I18n.t("battle.threads")));
+        settingsFlow.add(new JLabel(org.example.I18n.t("battle.threads")));
         int cores = Runtime.getRuntime().availableProcessors();
         threadSpinner = new JSpinner(new SpinnerNumberModel(cores, 1, 256, 1));
         threadSpinner.setPreferredSize(new Dimension(60, 22));
-        settingsPanel.add(threadSpinner);
+        settingsFlow.add(threadSpinner);
 
         JLabel coresLabel = new JLabel(org.example.I18n.t("battle.cores", cores));
-        settingsPanel.add(coresLabel);
+        settingsFlow.add(coresLabel);
 
         showHpCheck = new JCheckBox(org.example.I18n.t("battle.hpScore"));
-        settingsPanel.add(showHpCheck);
+        settingsFlow.add(showHpCheck);
 
         wordWrapCheck = new JCheckBox(org.example.I18n.t("battle.wordWrap"));
-        settingsPanel.add(wordWrapCheck);
+        settingsFlow.add(wordWrapCheck);
 
         battleButton = new JButton(org.example.I18n.t("battle.start"));
-        settingsPanel.add(battleButton);
+        settingsFlow.add(battleButton);
 
         engineLabel = new JLabel();
         refreshEngineLabel();
-        settingsPanel.add(engineLabel);
+        settingsFlow.add(engineLabel);
+
+        watchButton = new JButton(org.example.I18n.t("battle.watch"));
+        watchButton.setToolTipText(org.example.I18n.t("battle.watchTip"));
+        JPanel watchHolder = new JPanel(new GridBagLayout());
+        watchHolder.add(watchButton);
+        settingsPanel.add(watchHolder, BorderLayout.EAST);
 
         add(settingsPanel, BorderLayout.NORTH);
 
@@ -137,6 +148,7 @@ public class BattleTab extends JPanel {
         showHpCheck.addChangeListener(e -> applySettings());
         wordWrapCheck.addChangeListener(e -> applySettings());
         battleButton.addActionListener(e -> startBattle());
+        watchButton.addActionListener(e -> openWatchWindow());
 
         loadEditorContent();
         refreshResultTabs();
@@ -229,6 +241,42 @@ public class BattleTab extends JPanel {
             }
         };
         worker.execute();
+    }
+
+    /**
+     * 打开 Rust 渲染器观战窗口：带入当前 1P/2P 编辑器内容（默认首个阵型对阵，
+     * 其余阵型可在观战窗口内切换）与当前帧上限。
+     */
+    private void openWatchWindow() {
+        applySettings();
+        org.example.rust.RenderLauncher.Location location = org.example.rust.RenderLauncher.locate();
+        if (location.path() == null) {
+            JOptionPane.showMessageDialog(this,
+                    org.example.I18n.t("battle.watchNotFound",
+                            String.join("\n", location.attempts())),
+                    org.example.I18n.t("battle.watch"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        List<org.example.Fort> p1 = Setting.parseFortsRaw(p1TextArea.getText());
+        List<org.example.Fort> p2 = Setting.parseFortsRaw(p2TextArea.getText());
+        if (p1.isEmpty() || p2.isEmpty()) {
+            JOptionPane.showMessageDialog(this, org.example.I18n.t("battle.watchNoForts"),
+                    org.example.I18n.t("battle.watch"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            org.example.rust.RenderLauncher.launch(location.path(), p1, p2, Main.MAX_FRAME_LIMIT,
+                    (code, log) -> SwingUtilities.invokeLater(() ->
+                            JOptionPane.showMessageDialog(this,
+                                    org.example.I18n.t("battle.watchCrashed", code,
+                                            log.isEmpty() ? "-" : log),
+                                    org.example.I18n.t("battle.watch"),
+                                    JOptionPane.ERROR_MESSAGE)));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    org.example.I18n.t("battle.watchFailed", ex.getMessage()),
+                    org.example.I18n.t("battle.watch"), JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void refreshEngineLabel() {

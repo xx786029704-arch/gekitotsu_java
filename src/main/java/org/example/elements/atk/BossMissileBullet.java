@@ -71,13 +71,18 @@ public class BossMissileBullet extends Bullet {   //导玉导弹
                 this.targetRot = this.targetRot - 360;
             }
             this.rot = this.rot * .875F + this.targetRot * .125F;
+            if (this.rot >= 360F) {
+                this.rot -= 360F;
+            } else if (this.rot < 0F) {
+                this.rot += 360F;
+            }
             updateVelocity();
             move();
         }
     }
 
     private void updateVelocity() {   //更新速度向量
-        float rad = (float) Math.toRadians(this.targetRot);
+        float rad = (float) Math.toRadians(this.rot);
         this.xs = (float) Math.cos(rad) * 20F;
         this.ys = (float) Math.sin(rad) * 20F;
     }

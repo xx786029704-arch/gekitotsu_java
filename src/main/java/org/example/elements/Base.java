@@ -37,6 +37,7 @@ public class Base extends CompositeShape {  //车板类
     public void kill() {
         game.bases[side] = null;
         game.elements.remove(id);
+        game.wall[side].removeShape(this);
     }
 
     @Override
